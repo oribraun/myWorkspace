@@ -231,11 +231,14 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
   ];
   public currentViewIndex = 0;
   public currentTemplateIndex = 0;
+  private document: Document;
   constructor(
     private dynamicTemplateService: DynamicTemplateService,
     private alertService: AlertService,
-    @Inject(DOCUMENT) private document: Document
-  ) { }
+    @Inject(DOCUMENT) document?: any
+  ) {
+    this.document = document as Document;
+  }
 
   ngOnInit(): void {
     const lastState = this.getState();

@@ -44,3 +44,10 @@ const settings = {
 ```
   
 <lib-dynamic-template [settings]="settings"></lib-dynamic-template>
+
+each time drag started class disable-mobile-refresh injected to body element
+in order to prevent iframe events behavior:
+
+body.disable-mobile-refresh {
+    overscroll-behavior-y: contain;
+}
