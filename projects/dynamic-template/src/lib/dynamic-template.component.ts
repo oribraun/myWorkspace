@@ -263,7 +263,6 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
 
   loadSettings(): void {
     if (this.settings) {
-      console.log('this.settings',this.settings)
       if (this.settings.firstComponent) {
         this.defaultSettings.firstComponent = this.settings.firstComponent;
       }
@@ -278,27 +277,29 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       }
       if (this.settings.css) {
         if (this.settings.css.position) {
-          this.defaultSettings.css.position = this.settings.position;
+          this.defaultSettings.css.position = this.settings.css.position;
         }
         if (this.settings.css.margin) {
-          this.defaultSettings.css.margin = this.settings.margin;
+          this.defaultSettings.css.margin = this.settings.css.margin;
         }
         if (this.settings.css.top) {
-          this.defaultSettings.css.top = this.settings.top;
+          this.defaultSettings.css.top = this.settings.css.top;
         }
         if (this.settings.css.left) {
-          this.defaultSettings.css.left = this.settings.left;
+          this.defaultSettings.css.left = this.settings.css.left;
         }
         if (this.settings.css.right) {
-          this.defaultSettings.css.right = this.settings.right;
+          this.defaultSettings.css.right = this.settings.css.right;
         }
         if (this.settings.css.bottom) {
-          this.defaultSettings.css.bottom = this.settings.bottom;
+          this.defaultSettings.css.bottom = this.settings.css.bottom;
         }
         if (this.settings.css.height) {
-          this.defaultSettings.css.height = this.settings.height;
+          this.defaultSettings.css.height = this.settings.css.height;
         }
       }
+      console.log('this.settings',this.settings)
+      console.log('this.defaultSettings',this.defaultSettings)
     }
   }
 
