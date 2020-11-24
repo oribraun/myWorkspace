@@ -261,7 +261,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     this.loadSettings();
   }
 
-  loadSettings() {
+  loadSettings(): void {
     if (this.settings) {
       console.log('this.settings',this.settings)
       if (this.settings.firstComponent) {
@@ -275,6 +275,29 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       }
       if (this.settings.onDrag) {
         this.defaultSettings.onDrag = this.settings.onDrag;
+      }
+      if (this.settings.css) {
+        if (this.settings.css.position) {
+          this.defaultSettings.css.position = this.settings.position;
+        }
+        if (this.settings.css.margin) {
+          this.defaultSettings.css.margin = this.settings.margin;
+        }
+        if (this.settings.css.top) {
+          this.defaultSettings.css.top = this.settings.top;
+        }
+        if (this.settings.css.left) {
+          this.defaultSettings.css.left = this.settings.left;
+        }
+        if (this.settings.css.right) {
+          this.defaultSettings.css.right = this.settings.right;
+        }
+        if (this.settings.css.bottom) {
+          this.defaultSettings.css.bottom = this.settings.bottom;
+        }
+        if (this.settings.css.height) {
+          this.defaultSettings.css.height = this.settings.height;
+        }
       }
     }
   }

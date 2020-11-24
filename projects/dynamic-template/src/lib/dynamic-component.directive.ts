@@ -37,7 +37,9 @@ export class DynamicComponentDirective implements OnInit, OnChanges {
         this.viewContainerRef.clear();
       }
       this.componentRef = this.viewContainerRef.createComponent(componentFactory);
-      this.loadInputs();
+      if (this.componentRef) {
+        this.loadInputs();
+      }
       // this.loadOutputs();
     }
     // componentRef.instance.disableWebsiteControl = true;
@@ -79,7 +81,9 @@ export class DynamicComponentDirective implements OnInit, OnChanges {
     }
     else {
       if (changes.inputs && !changes.inputs.firstChange) {
+        if (this.componentRef) {
         this.loadInputs();
+        }
       }
       // if (changes.outputs && !changes.outputs.firstChange) {
       //     this.loadOutputs();
