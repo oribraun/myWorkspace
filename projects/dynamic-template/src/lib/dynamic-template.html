@@ -1,0 +1,132 @@
+<section class="playground" [ngStyle]="{
+  'position': defaultSettings.css.position,
+  'height': defaultSettings.css.height,
+  'top': defaultSettings.css.top,
+  'bottom': defaultSettings.css.bottom,
+  'left': defaultSettings.css.left,
+  'right': defaultSettings.css.right,
+  'margin': defaultSettings.css.margin.join(' ')
+}">
+  <div #playground class="inner-playground">
+    <div class="firstBox" [ngStyle]="{
+        'height': (drag.firstBox.height !== '' ? drag.firstBox.height + '%' : ''),
+        'top': drag.firstBox.top + '%',
+        'bottom': drag.firstBox.bottom + '%',
+        'left': drag.firstBox.left + '%',
+        'right': drag.firstBox.right + '%',
+        'margin-right': drag.firstBox.marginRight + '%',
+        'margin-left': drag.firstBox.marginLeft + '%',
+        'z-index': drag.firstBox.zIndex
+        }"
+         [ngClass]="{'animated-all': resetViewAnimate,
+             'expended': drag.firstBox.expended,
+             'closed': drag.secondBox.expended || drag.thirdBox.expended,
+             'no-shadow': drag.firstBox.onMove.currentPos === 'top1'}">
+      <div class="box-shadow">
+        <div (click)="setExpand('firstBox')" class="expand">
+          <fa-icon [icon]="icons.faExpand"></fa-icon>
+        </div>
+        <div *ngFor="let item of drag.firstBox.dragBars"
+             (mousedown)="onMouseDown($event, 'firstBox', item.type)"
+             (touchstart)="onMouseDown($event, 'firstBox', item.type)"
+             class="drag" [ngClass]="'drag-' + item.position">
+          <!--        <i class="fa fa-arrows" aria-hidden="true"></i>-->
+        </div>
+        <!--                <app-firstBox></app-firstBox>-->
+        <div [libDynamicComponent]="defaultSettings.firstComponent" [inputs]="{'disableWebsiteControl': dragStarted}"></div>
+      </div>
+    </div>
+    <div class="results" [ngClass]="{'expended': drag.secondBox.expended || drag.thirdBox.expended}">
+      <div [ngClass]="{'animated-all': resetViewAnimate,
+            'expended': drag.secondBox.expended,
+            'closed': drag.thirdBox.expended || drag.firstBox.expended,
+            'no-shadow': drag.secondBox.onMove.currentPos === 'top1'}" [ngStyle]="{
+        'height': (drag.secondBox.height !== '' ? drag.secondBox.height + '%' : ''),
+        'top': drag.secondBox.top + '%',
+        'bottom': drag.secondBox.bottom + '%',
+        'left': drag.secondBox.left + '%',
+        'right': drag.secondBox.right + '%',
+        'margin-right': drag.secondBox.marginRight + '%',
+        'margin-left': drag.secondBox.marginLeft + '%',
+        'z-index': drag.secondBox.zIndex
+        }" class="second-box">
+        <div class="box-shadow">
+          <div class="url-window">
+            <div (click)="setExpand('secondBox')" class="expand">
+              <fa-icon [icon]="icons.faExpand"></fa-icon>
+            </div>
+            <div *ngFor="let item of drag.secondBox.dragBars"
+                 (mousedown)="onMouseDown($event, 'secondBox', item.type)"
+                 (touchstart)="onMouseDown($event, 'secondBox', item.type)"
+                 class="drag" [ngClass]="'drag-' + item.position">
+            </div>
+            <div [libDynamicComponent]="defaultSettings.secondComponent" [inputs]="{'disableWebsiteControl': dragStarted}"></div>
+            <!--                        <app-view-->
+            <!--                            [disableWebsiteControl]="dragStarted"-->
+            <!--                        ></app-view>-->
+            <!--                    <app-url-window *ngIf="modelType !== 'sig-parser'" [disableWebsiteControl]="dragStarted" [openInNewWindow]="openInNewWindow"-->
+            <!--                                    [url]="urlToSend" [showLoader]="checkingUrlForIframe"></app-url-window>-->
+            <!--                    <div class="sig-parser-window sig-parser-window-background" *ngIf="modelType === 'sig-parser'">-->
+            <!--                        <div class="sample">-->
+            <!--                            <textarea class="form-control" name="" id="" [(ngModel)]="currentSignature">-->
+            <!--                            </textarea>-->
+            <!--                            &lt;!&ndash;                        <div class="ribbon">&ndash;&gt;-->
+            <!--                            &lt;!&ndash;                            Signature&ndash;&gt;-->
+            <!--                            &lt;!&ndash;                        </div>&ndash;&gt;-->
+            <!--                            <div class="buttons text-center">-->
+            <!--                                <button type="button" class="btn btn-primary" (click)="parseSignature()">Parse</button>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+          </div>
+        </div>
+      </div>
+      <div [ngClass]="{'animated-all': resetViewAnimate,
+            'expended': drag.thirdBox.expended,
+            'closed': drag.secondBox.expended || drag.firstBox.expended,
+            'no-shadow': drag.thirdBox.onMove.currentPos === 'top1'}" [ngStyle]="{
+        'height': (drag.thirdBox.height !== '' ? drag.thirdBox.height + '%' : ''),
+        'top': drag.thirdBox.top + '%',
+        'bottom': drag.thirdBox.bottom + '%',
+        'left': drag.thirdBox.left + '%',
+        'right': drag.thirdBox.right + '%',
+        'margin-right': drag.thirdBox.marginRight + '%',
+        'margin-left': drag.thirdBox.marginLeft + '%',
+        'z-index': drag.thirdBox.zIndex
+        }" class="third-box">
+        <div class="box-shadow">
+          <div (click)="setExpand('thirdBox')" class="expand">
+            <fa-icon [icon]="icons.faExpand"></fa-icon>
+          </div>
+          <div *ngFor="let item of drag.thirdBox.dragBars"
+               (mousedown)="onMouseDown($event, 'thirdBox', item.type)"
+               (touchstart)="onMouseDown($event, 'thirdBox', item.type)"
+               class="drag" [ngClass]="'drag-' + item.position">
+          </div>
+          <div [libDynamicComponent]="defaultSettings.thirdComponent"></div>
+          <!--                    <app-service-results></app-service-results>-->
+        </div>
+      </div>
+    </div>
+    <div class="small-menu" #smallMenu [ngClass]="{'small-menu-open': smallMenuExpanded}">
+      <div (click)="toggleSmallMenu()" (mouseenter)="smallMenuExpanded = true" title="reset to default state" class="arrow reset-floating pointer" [ngClass]="{'arrow-spin': smallMenuExpanded}">
+        <fa-icon [icon]="icons.faCog"></fa-icon>
+      </div>
+      <div class="small-menu-options" [ngClass]="{'small-menu-options-open': smallMenuExpanded}">
+        <div (click)="resetView()" title="reset to default state" class="icon icon-one reset-floating pointer">
+          <fa-icon [icon]="icons.faSyncAlt"></fa-icon>
+        </div>
+        <div (click)="saveState()" title="save current state" class="icon icon-two save-floating pointer">
+          <fa-icon [icon]="icons.faSave"></fa-icon>
+        </div>
+        <div (click)="changeComponentOrder()" title="change box order" class="icon icon-three change-order-floating pointer">
+          <fa-icon [icon]="icons.faRetweet"></fa-icon>
+        </div>
+        <div (click)="changeTemplateType()" title="change template" class="icon icon-four change-template-floating pointer">
+          <fa-icon [icon]="icons.faColumns"></fa-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--<app-floating-menu></app-floating-menu>-->
