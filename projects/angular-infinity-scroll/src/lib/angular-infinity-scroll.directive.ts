@@ -83,7 +83,7 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
         //   this.lastScrollTop = this.elementCurrentScrollTop;
         //   this.angularInfinityScrollDisabled = false;
         this.element.nativeElement.scrollTop += 1;
-        console.log(this.element.nativeElement.scrollTop)
+        // console.log(this.element.nativeElement.scrollTop)
         // });
       }
       if (this.elementCurrentScrollTop <= distanceFromUp && scrollDirection < 0) {
