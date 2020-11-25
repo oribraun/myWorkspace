@@ -19,6 +19,10 @@
       "dynamic-template": [
         "dist/dynamic-template/dynamic-template",
         "dist/dynamic-template"
+      ],
+      "angular-infinity-scroll": [
+        "dist/angular-infinity-scroll/angular-infinity-scroll",
+        "dist/angular-infinity-scroll"
       ]
     }
   },
