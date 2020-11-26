@@ -66,31 +66,43 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
         }
       }
       const scrollDirection = this.elementCurrentScrollTop - this.lastScrollTop;
-      if (this.element.nativeElement.scrollTop === 0) {
-        this.element.nativeElement.scrollTop += 1;
-      }
       // console.log('scrollDirection', scrollDirection)
       this.lastScrollTop = this.elementCurrentScrollTop;
       const distanceFromBottom = (this.elementScrollHeight - this.elementClientHeight) * ( 1 - this.angularInfinityScrollDownDistance / 100);
       const distanceFromUp = (this.elementScrollHeight - this.elementClientHeight) * (this.angularInfinityScrollUpDistance / 100);
       // console.log('this.elementCurrentScrollTop', this.elementCurrentScrollTop);
       // console.log('this.elementCurrentScrollTop', this.elementCurrentScrollTop);
-      if (distanceFromBottom <= this.elementCurrentScrollTop && scrollDirection > 0) {
+      if (distanceFromBottom - 1 <= this.elementCurrentScrollTop && scrollDirection > 0) {
         this.scrolledDown.emit();
         this.triggeredDown = true;
         this.angularInfinityScrollDisabled = true;
+        if (this.element.nativeElement.scrollTop === (this.elementScrollHeight - this.elementClientHeight)) {
+          setTimeout(() => {
+            if (this.element.nativeElement.scrollTop === 0) {
+              this.element.nativeElement.scrollTop += 1;
+            }
+          });
+        }
         // setTimeout(() => {
         //   this.lastScrollTop = this.elementCurrentScrollTop;
         //   this.angularInfinityScrollDisabled = false;
-        this.element.nativeElement.scrollTop += 1;
+        // this.element.nativeElement.scrollTop += 1;
         // console.log(this.element.nativeElement.scrollTop)
         // });
       }
-      if (this.elementCurrentScrollTop <= distanceFromUp && scrollDirection < 0) {
+      if (this.elementCurrentScrollTop <= distanceFromUp - 1 && scrollDirection < 0) {
         this.scrolledUp.emit();
         this.triggeredUp = true;
         // this.element.nativeElement.scrollTop += 1;
         this.angularInfinityScrollDisabled = true;
+        if (this.element.nativeElement.scrollTop === 0) {
+          this.element.nativeElement.scrollTop += 1;
+          setTimeout(() => {
+            if (this.element.nativeElement.scrollTop === (this.elementScrollHeight - this.elementClientHeight)) {
+              this.element.nativeElement.scrollTop -= 1;
+            }
+          });
+        }
         // setTimeout(() => {
         //   this.lastScrollTop = this.elementCurrentScrollTop;
         //   this.angularInfinityScrollDisabled = false;
