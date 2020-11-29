@@ -149,12 +149,12 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
       this.lastScrollTop = this.elementCurrentScrollTop;
       const distanceFromBottom = (this.elementScrollHeight - this.elementClientHeight) / 2 * (this.angularInfinityScrollDownDistance / 100);
       const distanceFromUp = (this.elementScrollHeight - this.elementClientHeight) / 2 * (this.angularInfinityScrollUpDistance / 100);
-      console.log('(this.elementScrollHeight - this.elementClientHeight)', (this.elementScrollHeight - this.elementClientHeight));
-      console.log('scrollDirection', scrollDirection);
-      console.log('distanceFromBottom', distanceFromBottom);
-      console.log('distanceFromUp', distanceFromUp);
-      console.log('this.elementScrollHeight', (this.elementScrollHeight - this.elementClientHeight) - distanceFromBottom);
-      console.log('this.elementCurrentScrollTop', this.elementCurrentScrollTop);
+      // console.log('(this.elementScrollHeight - this.elementClientHeight)', (this.elementScrollHeight - this.elementClientHeight));
+      // console.log('scrollDirection', scrollDirection);
+      // console.log('distanceFromBottom', distanceFromBottom);
+      // console.log('distanceFromUp', distanceFromUp);
+      // console.log('this.elementScrollHeight', (this.elementScrollHeight - this.elementClientHeight) - distanceFromBottom);
+      // console.log('this.elementCurrentScrollTop', this.elementCurrentScrollTop);
       if ((this.elementScrollHeight - this.elementClientHeight) - distanceFromBottom <= this.elementCurrentScrollTop && scrollDirection > 0) {
         this.scrolledDown.emit();
         this.triggeredDown = true;
