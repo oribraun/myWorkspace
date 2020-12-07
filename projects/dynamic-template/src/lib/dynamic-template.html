@@ -130,8 +130,8 @@
           <span [innerHTML]="defaultSettings.icons.retweet" *ngIf="defaultSettings.icons.retweet"></span>
         </div>
         <div (click)="changeTemplateType()" title="change template" class="icon icon-four change-template-floating pointer">
-          <fa-icon [icon]="icons.columns" *ngIf="!defaultSettings.icons.expand"></fa-icon>
-          <span [innerHTML]="defaultSettings.icons.columns" *ngIf="defaultSettings.icons.expand"></span>
+          <fa-icon [icon]="icons.columns" *ngIf="!defaultSettings.icons.columns"></fa-icon>
+          <span [innerHTML]="defaultSettings.icons.columns" *ngIf="defaultSettings.icons.columns"></span>
         </div>
       </div>
     </div>
