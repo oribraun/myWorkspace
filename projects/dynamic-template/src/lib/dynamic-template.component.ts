@@ -21,7 +21,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     onDrag: new EventEmitter(),
     css: {
       position: 'absolute',
-      margin: ['0px','0px','0px','0px'],
+      margin: ['0px', '0px', '0px', '0px'],
       top: 0,
       left: 0,
       right: 0,
@@ -500,8 +500,8 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
           this.defaultSettings.icons.columns = this.settings.icons.columns;
         }
       }
-      console.log('this.settings',this.settings)
-      console.log('this.defaultSettings',this.defaultSettings)
+      // console.log('this.settings', this.settings)
+      // console.log('this.defaultSettings', this.defaultSettings)
     }
   }
 
