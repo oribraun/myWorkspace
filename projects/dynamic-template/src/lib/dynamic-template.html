@@ -24,7 +24,8 @@
              'no-shadow': drag.firstBox.onMove.currentPos === 'top1'}">
       <div class="box-shadow">
         <div (click)="setExpand('firstBox')" class="expand">
-          <fa-icon [icon]="icons.faExpand"></fa-icon>
+          <fa-icon [icon]="icons.expand" *ngIf="!defaultSettings.icons.expand"></fa-icon>
+          <span [innerHTML]="defaultSettings.icons.expand" *ngIf="defaultSettings.icons.expand"></span>
         </div>
         <div *ngFor="let item of drag.firstBox.dragBars"
              (mousedown)="onMouseDown($event, 'firstBox', item.type)"
@@ -53,7 +54,8 @@
         <div class="box-shadow">
           <div class="url-window">
             <div (click)="setExpand('secondBox')" class="expand">
-              <fa-icon [icon]="icons.faExpand"></fa-icon>
+              <fa-icon [icon]="icons.expand" *ngIf="!defaultSettings.icons.expand"></fa-icon>
+              <span [innerHTML]="defaultSettings.icons.expand" *ngIf="defaultSettings.icons.expand"></span>
             </div>
             <div *ngFor="let item of drag.secondBox.dragBars"
                  (mousedown)="onMouseDown($event, 'secondBox', item.type)"
@@ -96,7 +98,8 @@
         }" class="third-box">
         <div class="box-shadow">
           <div (click)="setExpand('thirdBox')" class="expand">
-            <fa-icon [icon]="icons.faExpand"></fa-icon>
+            <fa-icon [icon]="icons.expand" *ngIf="!defaultSettings.icons.expand"></fa-icon>
+            <span [innerHTML]="defaultSettings.icons.expand" *ngIf="defaultSettings.icons.expand"></span>
           </div>
           <div *ngFor="let item of drag.thirdBox.dragBars"
                (mousedown)="onMouseDown($event, 'thirdBox', item.type)"
@@ -109,21 +112,26 @@
       </div>
     </div>
     <div class="small-menu" #smallMenu [ngClass]="{'small-menu-open': smallMenuExpanded}">
-      <div (click)="toggleSmallMenu()" (mouseenter)="smallMenuExpanded = true" title="reset to default state" class="arrow reset-floating pointer" [ngClass]="{'arrow-spin': smallMenuExpanded}">
-        <fa-icon [icon]="icons.faCog"></fa-icon>
+      <div (click)="toggleSmallMenu()" title="reset to default state" class="arrow reset-floating pointer" [ngClass]="{'arrow-spin': smallMenuExpanded}">
+        <fa-icon [icon]="icons.cog" *ngIf="!defaultSettings.icons.cog"></fa-icon>
+        <span [innerHTML]="defaultSettings.icons.cog" *ngIf="defaultSettings.icons.cog"></span>
       </div>
       <div class="small-menu-options" [ngClass]="{'small-menu-options-open': smallMenuExpanded}">
         <div (click)="resetView()" title="reset to default state" class="icon icon-one reset-floating pointer">
-          <fa-icon [icon]="icons.faSyncAlt"></fa-icon>
+          <fa-icon [icon]="icons.syncAlt" *ngIf="!defaultSettings.icons.syncAlt"></fa-icon>
+          <span [innerHTML]="defaultSettings.icons.syncAlt" *ngIf="defaultSettings.icons.syncAlt"></span>
         </div>
         <div (click)="saveState()" title="save current state" class="icon icon-two save-floating pointer">
-          <fa-icon [icon]="icons.faSave"></fa-icon>
+          <fa-icon [icon]="icons.save" *ngIf="!defaultSettings.icons.save"></fa-icon>
+          <span [innerHTML]="defaultSettings.icons.save" *ngIf="defaultSettings.icons.save"></span>
         </div>
         <div (click)="changeComponentOrder()" title="change box order" class="icon icon-three change-order-floating pointer">
-          <fa-icon [icon]="icons.faRetweet"></fa-icon>
+          <fa-icon [icon]="icons.retweet" *ngIf="!defaultSettings.icons.retweet"></fa-icon>
+          <span [innerHTML]="defaultSettings.icons.retweet" *ngIf="defaultSettings.icons.retweet"></span>
         </div>
         <div (click)="changeTemplateType()" title="change template" class="icon icon-four change-template-floating pointer">
-          <fa-icon [icon]="icons.faColumns"></fa-icon>
+          <fa-icon [icon]="icons.columns" *ngIf="!defaultSettings.icons.expand"></fa-icon>
+          <span [innerHTML]="defaultSettings.icons.columns" *ngIf="defaultSettings.icons.expand"></span>
         </div>
       </div>
     </div>

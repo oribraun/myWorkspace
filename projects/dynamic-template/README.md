@@ -39,6 +39,14 @@ const settings = {
       right: 0,
       bottom: 0,
       height: 'auto'
+    },
+    icons: {
+      expand: '',
+      cog: '',
+      syncAlt: '',
+      save: '',
+      retweet: '',
+      columns: '',
     }
   };
 ```

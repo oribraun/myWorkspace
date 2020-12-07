@@ -27,6 +27,14 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       right: 0,
       bottom: 0,
       height: '100%'
+    },
+    icons: {
+      expand: '',
+      cog: '',
+      syncAlt: '',
+      save: '',
+      retweet: '',
+      columns: '',
     }
   };
   @Input() settings: any;
@@ -36,12 +44,12 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
   public modelType = '';
   public resultsType: string;
   public icons = {
-    faExpand: faExpand,
-    faCog: faCog,
-    faSyncAlt: faSyncAlt,
-    faSave: faSave,
-    faRetweet: faRetweet,
-    faColumns: faColumns,
+    expand: faExpand,
+    cog: faCog,
+    syncAlt: faSyncAlt,
+    save: faSave,
+    retweet: faRetweet,
+    columns: faColumns,
   };
   public drag: any = {
     version: 1,
@@ -50,7 +58,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       mousedown: false,
       height: '',
       top: 0,
-      bottom: 66.5,
+      bottom: 50,
       right: 0,
       left: 0,
       marginLeft: 0,
@@ -74,11 +82,11 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     thirdBox: {
       mousedown: false,
       height: '',
-      top: 33.5,
+      top: 50,
       bottom: 0,
       right: 0,
       left: 50,
-      marginLeft: 1,
+      marginLeft: 0,
       marginRight: 0,
       zIndex: 1,
       startPos: null,
@@ -100,12 +108,12 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     secondBox: {
       mousedown: false,
       height: '',
-      top: 33.5,
+      top: 50,
       bottom: 0,
       right: 50,
       left: 0,
       marginLeft: 0,
-      marginRight: 1,
+      marginRight: 0,
       zIndex: 1,
       startPos: null,
       target: null,
@@ -141,7 +149,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       left: 0,
       marginLeft: 0,
       marginRight: 0,
-      zIndex: 1,
+      zIndex: 0,
       startPos: null,
       target: null,
       type: null,
@@ -167,7 +175,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       left: 50,
       marginLeft: 0,
       marginRight: 0,
-      zIndex: 0,
+      zIndex: 1,
       startPos: null,
       target: null,
       type: null,
@@ -192,7 +200,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       left: 0,
       marginLeft: 0,
       marginRight: 0,
-      zIndex: 1,
+      zIndex: 2,
       startPos: null,
       target: null,
       type: null,
@@ -215,6 +223,178 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     maxLeft: 100,
     playgroundHeight: 91,
   };
+  public drag2: any = {
+    version: 3,
+    // all numbers are percent values
+    firstBox: {
+      mousedown: false,
+      height: '',
+      top: 50,
+      bottom: 0,
+      right: 0,
+      left: 0,
+      marginLeft: 0,
+      marginRight: 0,
+      zIndex: 2,
+      startPos: null,
+      target: null,
+      type: null,
+      dragBars: [
+        {type: 'right,left,top', position: 'top'}
+      ],
+      expended: false,
+      onMove: {
+        currentPos: 'bottom',
+        top: 'top',
+        bottom: false,
+        left: false,
+        right: false,
+      }
+    },
+    thirdBox: {
+      mousedown: false,
+      height: '',
+      top: 0,
+      bottom: 50,
+      right: 0,
+      left: 50,
+      marginLeft: 0,
+      marginRight: 0,
+      zIndex: 1,
+      startPos: null,
+      target: null,
+      type: null,
+      dragBars: [
+        {type: 'bottom,left', position: 'bottom'},
+        {type: 'left,bottom', position: 'left'}
+      ],
+      expended: false,
+      onMove: {
+        currentPos: 'top-right',
+        top: false,
+        bottom: 'bottom',
+        left: 'left',
+        right: false,
+      }
+    },
+    secondBox: {
+      mousedown: false,
+      height: '',
+      top: 0,
+      bottom: 50,
+      right: 50,
+      left: 0,
+      marginLeft: 0,
+      marginRight: 0,
+      zIndex: 0,
+      startPos: null,
+      target: null,
+      type: null,
+      dragBars: [
+        {type: 'bottom,right', position: 'bottom'},
+        {type: 'right,bottom', position: 'right'}
+      ],
+      expended: false,
+      onMove: {
+        currentPos: 'top-left',
+        top: false,
+        bottom: 'bottom',
+        left: false,
+        right: 'right',
+      }
+    },
+    minTop: 0,
+    maxTop: 100,
+    minLeft: 0,
+    maxLeft: 100,
+    playgroundHeight: 91,
+  };
+  public drag3: any = {
+    version: 2,
+    // all numbers are percent values
+    firstBox: {
+      mousedown: false,
+      height: '',
+      top: 0,
+      bottom: 50,
+      right: 0,
+      left: 50,
+      marginLeft: 0,
+      marginRight: 0,
+      zIndex: 1,
+      startPos: null,
+      target: null,
+      type: null,
+      dragBars: [
+        {type: 'left,top,bottom', position: 'left'},
+        {type: 'left,top,bottom', position: 'bottom'}
+      ],
+      expended: false,
+      onMove: {
+        currentPos: 'right-top',
+        top: false,
+        bottom: 'bottom',
+        left: 'left',
+        right: false,
+      }
+    },
+    thirdBox: {
+      mousedown: false,
+      height: '',
+      top: 0,
+      bottom: 0,
+      right: 50,
+      left: 0,
+      marginLeft: 0,
+      marginRight: 0,
+      zIndex: 0,
+      startPos: null,
+      target: null,
+      type: null,
+      dragBars: [
+        {type: 'right,bottom,top', position: 'right'}
+      ],
+      expended: false,
+      onMove: {
+        currentPos: 'left',
+        top: false,
+        bottom: false,
+        left: false,
+        right: 'right',
+      }
+    },
+    secondBox: {
+      mousedown: false,
+      height: '',
+      top: 50,
+      bottom: 0,
+      right: 0,
+      left: 50,
+      marginLeft: 0,
+      marginRight: 0,
+      zIndex: 2,
+      startPos: null,
+      target: null,
+      type: null,
+      dragBars: [
+        {type: 'left,top,bottom', position: 'left'},
+        {type: 'top,left,bottom', position: 'top'}
+      ],
+      expended: false,
+      onMove: {
+        currentPos: 'right-bottom',
+        top: 'top',
+        bottom: false,
+        left: 'left',
+        right: false,
+      }
+    },
+    minTop: 0,
+    maxTop: 100,
+    minLeft: 0,
+    maxLeft: 100,
+    playgroundHeight: 91,
+  };
 
   public smallMenuExpanded = false;
 
@@ -227,7 +407,9 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
   ];
   public templateOptions = [
     JSON.parse(JSON.stringify(this.drag)),
-    JSON.parse(JSON.stringify(this.drag1))
+    JSON.parse(JSON.stringify(this.drag1)),
+    JSON.parse(JSON.stringify(this.drag2)),
+    JSON.parse(JSON.stringify(this.drag3))
   ];
   public currentViewIndex = 0;
   public currentTemplateIndex = 0;
@@ -266,7 +448,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       if (this.settings.firstComponent) {
         this.defaultSettings.firstComponent = this.settings.firstComponent;
       }
-     if (this.settings.secondComponent) {
+      if (this.settings.secondComponent) {
         this.defaultSettings.secondComponent = this.settings.secondComponent;
       }
       if (this.settings.thirdComponent) {
@@ -296,6 +478,26 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
         }
         if (this.settings.css.height) {
           this.defaultSettings.css.height = this.settings.css.height;
+        }
+      }
+      if (this.settings.icons) {
+        if (this.settings.icons.expand) {
+          this.defaultSettings.icons.expand = this.settings.icons.expand;
+        }
+        if (this.settings.icons.cog) {
+          this.defaultSettings.icons.cog = this.settings.icons.cog;
+        }
+        if (this.settings.icons.syncAlt) {
+          this.defaultSettings.icons.syncAlt = this.settings.icons.syncAlt;
+        }
+        if (this.settings.icons.save) {
+          this.defaultSettings.icons.save = this.settings.icons.save;
+        }
+        if (this.settings.icons.retweet) {
+          this.defaultSettings.icons.retweet = this.settings.icons.retweet;
+        }
+        if (this.settings.icons.columns) {
+          this.defaultSettings.icons.columns = this.settings.icons.columns;
         }
       }
       console.log('this.settings',this.settings)
@@ -387,6 +589,26 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
         this.drag.secondBox[this.drag.secondBox.onMove.right] = this.dragDefault.secondBox.right;
       }
     }
+    else if (this.drag.firstBox.onMove.currentPos === 'bottom') {
+      if (this.drag.thirdBox.onMove.top) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.thirdBox.onMove.left) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.left] = this.dragDefault.thirdBox.left;
+      }
+      if (this.drag.secondBox.onMove.left) {
+        this.drag.secondBox[this.drag.secondBox.onMove.left] = this.dragDefault.secondBox.left;
+      }
+      if (this.drag.thirdBox.onMove.right) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.right] = this.dragDefault.thirdBox.right;
+      }
+      if (this.drag.secondBox.onMove.right) {
+        this.drag.secondBox[this.drag.secondBox.onMove.right] = this.dragDefault.secondBox.right;
+      }
+    }
     else if (this.drag.firstBox.onMove.currentPos === 'left-top') {
       if (this.drag.thirdBox.onMove.top) {
         this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.drag.maxTop;
@@ -428,6 +650,71 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       if (this.drag.thirdBox.onMove.bottom) {
         this.drag.thirdBox[this.drag.thirdBox.onMove.bottom] = this.dragDefault.thirdBox.bottom;
       }
+    } else if (this.drag.firstBox.onMove.currentPos === 'top-right') {
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.secondBox.onMove.bottom) {
+        this.drag.secondBox[this.drag.secondBox.onMove.bottom] = this.drag.minTop;
+      }
+      if (this.drag.thirdBox.onMove.top) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.thirdBox.onMove.bottom) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.bottom] = this.drag.minTop;
+      }
+    } else if (this.drag.firstBox.onMove.currentPos === 'top-left') {
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.secondBox.onMove.bottom) {
+        this.drag.secondBox[this.drag.secondBox.onMove.bottom] = this.drag.minTop;
+      }
+      if (this.drag.thirdBox.onMove.top) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.thirdBox.onMove.bottom) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.bottom] = this.drag.minTop;
+      }
+    } else if (this.drag.firstBox.onMove.currentPos === 'right-top') {
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.secondBox.onMove.left) {
+        this.drag.secondBox[this.drag.secondBox.onMove.left] = this.drag.minLeft;
+      }
+      if (this.drag.thirdBox.onMove.top) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.thirdBox.onMove.left) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.left] = this.drag.minLeft;
+      }
+    } else if (this.drag.firstBox.onMove.currentPos === 'right-bottom') {
+      if (this.drag.secondBox.onMove.bottom) {
+        this.drag.secondBox[this.drag.secondBox.onMove.bottom] = this.drag.maxTop;
+      }
+      if (this.drag.secondBox.onMove.left) {
+        this.drag.secondBox[this.drag.secondBox.onMove.left] = this.drag.minLeft;
+      }
+      if (this.drag.thirdBox.onMove.bottom) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.bottom] = this.drag.maxTop;
+      }
+      if (this.drag.thirdBox.onMove.left) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.left] = this.drag.minLeft;
+      }
+    } else if (this.drag.firstBox.onMove.currentPos === 'left') {
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.dragDefault.secondBox.top;
+      }
+      if (this.drag.secondBox.onMove.bottom) {
+        this.drag.secondBox[this.drag.secondBox.onMove.bottom] = this.dragDefault.secondBox.bottom;
+      }
+      if (this.drag.thirdBox.onMove.top) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.dragDefault.thirdBox.top;
+      }
+      if (this.drag.thirdBox.onMove.bottom) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.bottom] = this.dragDefault.thirdBox.bottom;
+      }
     }
     if (this.drag.firstBox.onMove.top) {
       this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.minTop;
@@ -450,6 +737,26 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
   }
   expandThirdBox(): void {
     if (this.drag.thirdBox.onMove.currentPos === 'top') {
+      if (this.drag.firstBox.onMove.top) {
+        this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.firstBox.onMove.left) {
+        this.drag.firstBox[this.drag.firstBox.onMove.left] = this.dragDefault.firstBox.left;
+      }
+      if (this.drag.secondBox.onMove.left) {
+        this.drag.secondBox[this.drag.secondBox.onMove.left] = this.dragDefault.secondBox.left;
+      }
+      if (this.drag.firstBox.onMove.right) {
+        this.drag.firstBox[this.drag.firstBox.onMove.right] = this.dragDefault.firstBox.right;
+      }
+      if (this.drag.secondBox.onMove.right) {
+        this.drag.secondBox[this.drag.secondBox.onMove.right] = this.dragDefault.secondBox.right;
+      }
+    }
+    else if (this.drag.thirdBox.onMove.currentPos === 'bottom') {
       if (this.drag.firstBox.onMove.top) {
         this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.maxTop;
       }
@@ -523,6 +830,71 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       if (this.drag.secondBox.onMove.right) {
         this.drag.secondBox[this.drag.secondBox.onMove.right] = this.drag.maxLeft;
       }
+    } else if (this.drag.thirdBox.onMove.currentPos === 'top-right') {
+      if (this.drag.secondBox.onMove.bottom) {
+        this.drag.secondBox[this.drag.secondBox.onMove.bottom] = this.drag.minTop;
+      }
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.firstBox.onMove.bottom) {
+        this.drag.firstBox[this.drag.firstBox.onMove.bottom] = this.drag.minTop;
+      }
+      if (this.drag.firstBox.onMove.top) {
+        this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.maxTop;
+      }
+    } else if (this.drag.thirdBox.onMove.currentPos === 'top-left') {
+      if (this.drag.secondBox.onMove.bottom) {
+        this.drag.secondBox[this.drag.secondBox.onMove.bottom] = this.drag.minTop;
+      }
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.firstBox.onMove.bottom) {
+        this.drag.firstBox[this.drag.firstBox.onMove.bottom] = this.drag.minTop;
+      }
+      if (this.drag.firstBox.onMove.top) {
+        this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.maxTop;
+      }
+    } else if (this.drag.thirdBox.onMove.currentPos === 'right-top') {
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.secondBox.onMove.left) {
+        this.drag.secondBox[this.drag.secondBox.onMove.left] = this.drag.minLeft;
+      }
+      if (this.drag.firstBox.onMove.top) {
+        this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.firstBox.onMove.left) {
+        this.drag.firstBox[this.drag.firstBox.onMove.left] = this.drag.minLeft;
+      }
+    } else if (this.drag.thirdBox.onMove.currentPos === 'right-bottom') {
+      if (this.drag.firstBox.onMove.bottom) {
+        this.drag.firstBox[this.drag.firstBox.onMove.bottom] = this.drag.maxTop;
+      }
+      if (this.drag.firstBox.onMove.left) {
+        this.drag.firstBox[this.drag.firstBox.onMove.left] = this.drag.minLeft;
+      }
+      if (this.drag.secondBox.onMove.bottom) {
+        this.drag.secondBox[this.drag.secondBox.onMove.bottom] = this.drag.maxTop;
+      }
+      if (this.drag.secondBox.onMove.left) {
+        this.drag.secondBox[this.drag.secondBox.onMove.left] = this.drag.minLeft;
+      }
+    } else if (this.drag.thirdBox.onMove.currentPos === 'left') {
+      if (this.drag.firstBox.onMove.top) {
+        this.drag.firstBox[this.drag.firstBox.onMove.top] = this.dragDefault.firstBox.top;
+      }
+      if (this.drag.firstBox.onMove.bottom) {
+        this.drag.firstBox[this.drag.firstBox.onMove.bottom] = this.dragDefault.firstBox.bottom;
+      }
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.dragDefault.secondBox.top;
+      }
+      if (this.drag.secondBox.onMove.bottom) {
+        this.drag.secondBox[this.drag.secondBox.onMove.bottom] = this.dragDefault.secondBox.bottom;
+      }
     }
     if (this.drag.thirdBox.onMove.top) {
       this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.drag.minTop;
@@ -545,6 +917,27 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
   }
   expandSecondBox(): void {
     if (this.drag.secondBox.onMove.currentPos === 'top') {
+      // this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
+      if (this.drag.firstBox.onMove.top) {
+        this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.thirdBox.onMove.top) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.firstBox.onMove.left) {
+        this.drag.firstBox[this.drag.firstBox.onMove.left] = this.dragDefault.firstBox.left;
+      }
+      if (this.drag.thirdBox.onMove.left) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.left] = this.dragDefault.thirdBox.left;
+      }
+      if (this.drag.firstBox.onMove.right) {
+        this.drag.firstBox[this.drag.firstBox.onMove.right] = this.dragDefault.firstBox.right;
+      }
+      if (this.drag.thirdBox.onMove.right) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.right] = this.dragDefault.thirdBox.right;
+      }
+    }
+    else if (this.drag.secondBox.onMove.currentPos === 'bottom') {
       // this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
       if (this.drag.firstBox.onMove.top) {
         this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.maxTop;
@@ -605,6 +998,71 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       }
       if (this.drag.firstBox.onMove.bottom) {
         this.drag.firstBox[this.drag.firstBox.onMove.bottom] = this.dragDefault.firstBox.bottom;
+      }
+    } else if (this.drag.secondBox.onMove.currentPos === 'top-left') {
+      if (this.drag.firstBox.onMove.top) {
+        this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.firstBox.onMove.bottom) {
+        this.drag.firstBox[this.drag.firstBox.onMove.bottom] = this.drag.minTop;
+      }
+      if (this.drag.thirdBox.onMove.top) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.thirdBox.onMove.bottom) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.bottom] = this.drag.minTop;
+      }
+    } else if (this.drag.secondBox.onMove.currentPos === 'top-right') {
+      if (this.drag.firstBox.onMove.top) {
+        this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.firstBox.onMove.bottom) {
+        this.drag.firstBox[this.drag.firstBox.onMove.bottom] = this.drag.minTop;
+      }
+      if (this.drag.thirdBox.onMove.top) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.thirdBox.onMove.bottom) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.bottom] = this.drag.minTop;
+      }
+    } else if (this.drag.secondBox.onMove.currentPos === 'right-top') {
+      if (this.drag.firstBox.onMove.top) {
+        this.drag.firstBox[this.drag.firstBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.firstBox.onMove.left) {
+        this.drag.firstBox[this.drag.firstBox.onMove.left] = this.drag.minLeft;
+      }
+      if (this.drag.secondBox.onMove.top) {
+        this.drag.secondBox[this.drag.secondBox.onMove.top] = this.drag.maxTop;
+      }
+      if (this.drag.secondBox.onMove.left) {
+        this.drag.secondBox[this.drag.secondBox.onMove.left] = this.drag.minLeft;
+      }
+    } else if (this.drag.secondBox.onMove.currentPos === 'right-bottom') {
+      if (this.drag.firstBox.onMove.bottom) {
+        this.drag.firstBox[this.drag.firstBox.onMove.bottom] = this.drag.maxTop;
+      }
+      if (this.drag.firstBox.onMove.left) {
+        this.drag.firstBox[this.drag.firstBox.onMove.left] = this.drag.minLeft;
+      }
+      if (this.drag.thirdBox.onMove.bottom) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.bottom] = this.drag.maxTop;
+      }
+      if (this.drag.thirdBox.onMove.left) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.left] = this.drag.minLeft;
+      }
+    } else if (this.drag.secondBox.onMove.currentPos === 'left') {
+      if (this.drag.firstBox.onMove.top) {
+        this.drag.firstBox[this.drag.firstBox.onMove.top] = this.dragDefault.firstBox.top;
+      }
+      if (this.drag.firstBox.onMove.bottom) {
+        this.drag.firstBox[this.drag.firstBox.onMove.bottom] = this.dragDefault.firstBox.bottom;
+      }
+      if (this.drag.thirdBox.onMove.top) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.top] = this.dragDefault.thirdBox.top;
+      }
+      if (this.drag.thirdBox.onMove.bottom) {
+        this.drag.thirdBox[this.drag.thirdBox.onMove.bottom] = this.dragDefault.thirdBox.bottom;
       }
     }
     if (this.drag.secondBox.onMove.top) {
@@ -765,7 +1223,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     } else if (this.drag.version === 2) {
       this.onMoveVersion1(type, moveXPercent, moveYPercent);
     } else if (this.drag.version === 3) {
-      this.onMoveVersion3(type, moveXPercent, moveYPercent);
+      this.onMoveVersion1(type, moveXPercent, moveYPercent);
     }
     this.onMoveLimitTopBottom();
     this.onMoveLimitLeft();
@@ -977,7 +1435,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     }
     if (this.drag.secondBox.onMove.bottom) {
       if (this.drag.secondBox[this.drag.secondBox.onMove.bottom] < 0) {
-        this.drag.secondBox[this.drag.secondBox.onMove.top] = 0;
+        this.drag.secondBox[this.drag.secondBox.onMove.bottom] = 0;
       }
       if (this.drag.secondBox[this.drag.secondBox.onMove.bottom] > this.drag.maxTop) {
         this.drag.secondBox[this.drag.secondBox.onMove.bottom] = this.drag.maxTop;
@@ -1098,6 +1556,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     this.drag[obj.from].bottom = this.drag[obj.to].bottom;
     this.drag[obj.from].marginLeft = this.drag[obj.to].marginLeft;
     this.drag[obj.from].marginRight = this.drag[obj.to].marginRight;
+    this.drag[obj.from].zIndex = this.drag[obj.to].zIndex;
     this.drag[obj.from].dragBars = this.drag[obj.to].dragBars;
     this.drag[obj.from].onMove = this.drag[obj.to].onMove;
 
@@ -1108,6 +1567,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     this.drag[obj.to].bottom = copy.bottom;
     this.drag[obj.to].marginLeft = copy.marginLeft;
     this.drag[obj.to].marginRight = copy.marginRight;
+    this.drag[obj.to].zIndex = copy.zIndex;
     this.drag[obj.to].dragBars = copy.dragBars;
     this.drag[obj.to].onMove = copy.onMove;
     this.dragDefault = JSON.parse(JSON.stringify(this.drag));
