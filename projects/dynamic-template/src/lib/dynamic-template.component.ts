@@ -26,6 +26,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       left: 0,
       right: 0,
       bottom: 0,
+      maxWidth: 0,
       height: '100%'
     },
     icons: {
@@ -478,6 +479,9 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
         }
         if (this.settings.css.height) {
           this.defaultSettings.css.height = this.settings.css.height;
+        }
+        if (this.settings.css.maxWidth) {
+          this.defaultSettings.css.maxWidth = this.settings.css.maxWidth;
         }
       }
       if (this.settings.icons) {
