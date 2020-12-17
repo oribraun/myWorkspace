@@ -1,7 +1,7 @@
 import {Component, HostListener, Inject, Input, OnDestroy, OnInit, ViewChild, EventEmitter} from '@angular/core';
 import {DynamicTemplateService} from './dynamic-template.service';
 import {DOCUMENT} from '@angular/common';
-import {AlertService} from './alert.service';
+// import {AlertService} from './alert.service';
 import { faExpand, faCog, faSyncAlt, faSave, faRetweet, faColumns } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -19,6 +19,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     secondComponent: '',
     thirdComponent: '',
     onDrag: new EventEmitter(),
+    onClick: new EventEmitter(),
     css: {
       position: 'absolute',
       margin: ['0px', '0px', '0px', '0px'],
@@ -417,7 +418,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
   private document: Document;
   constructor(
     private dynamicTemplateService: DynamicTemplateService,
-    private alertService: AlertService,
+    // private alertService: AlertService,
     @Inject(DOCUMENT) document?: any
   ) {
     this.document = document as Document;
@@ -457,6 +458,9 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       }
       if (this.settings.onDrag) {
         this.defaultSettings.onDrag = this.settings.onDrag;
+      }
+      if (this.settings.onClick) {
+        this.defaultSettings.onClick = this.settings.onClick;
       }
       if (this.settings.css) {
         if (this.settings.css.position) {
@@ -1524,7 +1528,8 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
   saveState(): void {
     localStorage.setItem('state', JSON.stringify(this.drag));
     this.dragDefault = JSON.parse(JSON.stringify(this.drag));
-    this.alertService.success('state successfully saved');
+    // this.alertService.success('state successfully saved');
+    this.defaultSettings.onClick.emit({type: 'state', msg: 'state successfully saved'});
   }
   getState(): any {
     let currentState = localStorage.getItem('state');
