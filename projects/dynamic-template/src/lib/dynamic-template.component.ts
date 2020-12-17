@@ -26,7 +26,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       left: 0,
       right: 0,
       bottom: 0,
-      maxWidth: 0,
+      maxWidth: '100%',
       height: '100%'
     },
     icons: {
