@@ -37,7 +37,8 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       save: '',
       retweet: '',
       columns: '',
-    }
+    },
+    stateLabel: ''
   };
   @Input() settings: any;
   public dragDefault: any;
@@ -507,6 +508,9 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
         if (this.settings.icons.columns) {
           this.defaultSettings.icons.columns = this.settings.icons.columns;
         }
+      }
+      if(this.settings.stateLabel) {
+        this.defaultSettings.stateLabel = this.settings.stateLabel;
       }
       // console.log('this.settings', this.settings)
       // console.log('this.defaultSettings', this.defaultSettings)
@@ -1526,13 +1530,13 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
   }
 
   saveState(): void {
-    localStorage.setItem('state', JSON.stringify(this.drag));
+    localStorage.setItem('state' + (this.defaultSettings.stateLabel ? '-' + this.defaultSettings.stateLabel : ''), JSON.stringify(this.drag));
     this.dragDefault = JSON.parse(JSON.stringify(this.drag));
     // this.alertService.success('state successfully saved');
     this.defaultSettings.onClick.emit({type: 'state', msg: 'state successfully saved'});
   }
   getState(): any {
-    let currentState = localStorage.getItem('state');
+    let currentState = localStorage.getItem('state' + (this.defaultSettings.stateLabel ? '-' + this.defaultSettings.stateLabel : ''));
     if (currentState) {
       currentState = JSON.parse(currentState);
       // this.helpersService.extendObjects(currentState, this.drag);

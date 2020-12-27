@@ -47,7 +47,8 @@ const settings = {
       save: '',
       retweet: '',
       columns: '',
-    }
+    },
+    "stateLabel": ''
   };
 ```
   
