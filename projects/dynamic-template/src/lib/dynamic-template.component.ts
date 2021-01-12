@@ -450,9 +450,15 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy, OnChanges {
       if (this.settings.thirdComponent) {
         this.defaultSettings.thirdComponent = this.settings.thirdComponent;
       }
-      this.settings.firstComponentInputs.disableWebsiteControl = this.dragStarted;
-      this.settings.secondComponentInputs.disableWebsiteControl = this.dragStarted;
-      this.settings.thirdComponentInputs.disableWebsiteControl = this.dragStarted;
+      if(this.settings.firstComponentInputs) {
+        this.settings.firstComponentInputs.disableWebsiteControl = this.dragStarted;
+      }
+      if(this.settings.secondComponentInputs) {
+        this.settings.secondComponentInputs.disableWebsiteControl = this.dragStarted;
+      }
+      if(this.settings.thirdComponentInputs) {
+        this.settings.thirdComponentInputs.disableWebsiteControl = this.dragStarted;
+      }
       if (this.settings.firstComponentInputs &&
         JSON.stringify(this.settings.firstComponentInputs) !== JSON.stringify(this.defaultSettings.firstComponentInputs)) {
         this.defaultSettings.firstComponentInputs = {...this.settings.firstComponentInputs};
