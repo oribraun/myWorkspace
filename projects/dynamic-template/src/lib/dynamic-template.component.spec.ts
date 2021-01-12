@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DynamicTemplateComponent } from './dynamic-template.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DynamicComponentDirective } from './dynamic-component.directive';
 
 describe('DynamicTemplateComponent', () => {
@@ -10,7 +9,7 @@ describe('DynamicTemplateComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FontAwesomeModule],
+      imports: [],
       declarations: [ DynamicTemplateComponent, DynamicComponentDirective ],
       providers: [DynamicComponentDirective],
     })

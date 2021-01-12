@@ -8,18 +8,29 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
   @Input() angularInfinityScroll: string;
   @Input() angularInfinityScrollDownDistance: number;
   @Input() angularInfinityScrollUpDistance: number;
+  @Input() angularInfinityScrollLeftDistance: number;
+  @Input() angularInfinityScrollRightDistance: number;
   // @Input() angularInfinityScrollThrottle: number;
   @Input() angularInfinityScrollDisabled: boolean;
   @Output() scrolledDown = new EventEmitter();
   @Output() scrolledUp = new EventEmitter();
+  @Output() scrolledLeft = new EventEmitter();
+  @Output() scrolledRight = new EventEmitter();
 
   private elementScrollHeight;
   private elementClientHeight;
+  private elementScrollWidth;
+  private elementClientWidth;
   private elementCurrentScrollTop;
+  private elementCurrentScrollLeft;
   private lastScrollTop: number;
+  private lastScrollLeft: number;
   private lastScrollDirection = 0;
+  private lastScrollDirectionHorizontal = 0;
   private triggeredUp = false;
   private triggeredDown = false;
+  private triggeredLeft = false;
+  private triggeredRight = false;
   private mouseDown = false;
   private mouseDownPos: any = false;
   private lastScrollPos = 0;
@@ -34,13 +45,22 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
   ngOnInit(): void {
     this.elementScrollHeight = this.element.nativeElement.scrollHeight;
     this.elementClientHeight = this.element.nativeElement.clientHeight;
+    this.elementScrollWidth = this.element.nativeElement.scrollWidth;
+    this.elementClientWidth = this.element.nativeElement.clientWidth;
     this.elementCurrentScrollTop = this.element.nativeElement.scrollTop;
     this.lastScrollTop = this.elementCurrentScrollTop;
+    this.lastScrollLeft = this.elementCurrentScrollLeft;
     if (!this.angularInfinityScrollDownDistance) {
       this.angularInfinityScrollDownDistance = 1.5;
     }
     if (!this.angularInfinityScrollUpDistance) {
       this.angularInfinityScrollUpDistance = 1.5;
+    }
+    if (!this.angularInfinityScrollLeftDistance) {
+      this.angularInfinityScrollLeftDistance = 1.5;
+    }
+    if (!this.angularInfinityScrollRightDistance) {
+      this.angularInfinityScrollRightDistance = 1.5;
     }
     if (!this.angularInfinityScrollDisabled) {
       this.angularInfinityScrollDisabled = false;
@@ -73,6 +93,7 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
     this.mouseDown = true;
     this.mouseDownPos = this.getPointerPos(event, false);
     this.lastScrollPos = this.element.nativeElement.scrollTop;
+    this.lastScrollLeft = this.element.nativeElement.scrollLeft;
   }
 
   @HostListener('keydown', ['$event'])
@@ -127,7 +148,10 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
     if (!this.angularInfinityScrollDisabled) {
       this.elementScrollHeight = this.element.nativeElement.scrollHeight;
       this.elementClientHeight = this.element.nativeElement.clientHeight;
+      this.elementScrollWidth = this.element.nativeElement.scrollWidth;
+      this.elementClientWidth = this.element.nativeElement.clientWidth;
       this.elementCurrentScrollTop = this.element.nativeElement.scrollTop;
+      this.elementCurrentScrollLeft = this.element.nativeElement.scrollLeft;
       if (this.triggeredUp || this.triggeredDown) {
         this.lastScrollTop = this.elementCurrentScrollTop;
         if (this.triggeredUp) {
@@ -136,19 +160,35 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
         if (this.triggeredDown) {
           this.triggeredDown = false;
         }
+        if (this.triggeredLeft) {
+          this.triggeredLeft = false;
+        }
+        if (this.triggeredRight) {
+          this.triggeredRight = false;
+        }
       }
       let scrollDirection = this.elementCurrentScrollTop - this.lastScrollTop;
+      let scrollDirectionHorizontal = this.elementCurrentScrollLeft - this.lastScrollLeft;
+      console.log('scrollDirectionHorizontal', scrollDirectionHorizontal)
       if (!scrollDirection) {
         scrollDirection = this.lastScrollDirection;
+      }
+      if (!scrollDirectionHorizontal) {
+        scrollDirectionHorizontal = this.lastScrollDirectionHorizontal;
       }
       if (this.scrollDirection) {
         scrollDirection = this.scrollDirection;
       }
       this.lastScrollDirection = scrollDirection;
+      this.lastScrollDirectionHorizontal = scrollDirectionHorizontal;
       // console.log('scrollDirection', scrollDirection)
       this.lastScrollTop = this.elementCurrentScrollTop;
+      this.lastScrollLeft = this.elementCurrentScrollLeft;
       const distanceFromBottom = (this.elementScrollHeight - this.elementClientHeight) / 2 * (this.angularInfinityScrollDownDistance / 100);
       const distanceFromUp = (this.elementScrollHeight - this.elementClientHeight) / 2 * (this.angularInfinityScrollUpDistance / 100);
+      const distanceFromLeft = (this.elementScrollWidth - this.elementClientWidth) / 2 * (this.angularInfinityScrollLeftDistance / 100);
+      const distanceFromRight = (this.elementScrollWidth - this.elementClientWidth) / 2 * (this.angularInfinityScrollRightDistance / 100);
+
       // console.log('(this.elementScrollHeight - this.elementClientHeight)', (this.elementScrollHeight - this.elementClientHeight));
       // console.log('scrollDirection', scrollDirection);
       // console.log('distanceFromBottom', distanceFromBottom);
@@ -190,6 +230,45 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
             }
             if (this.element.nativeElement.scrollTop === (this.element.nativeElement.scrollHeight - this.element.nativeElement.clientHeight)) {
               this.element.nativeElement.scrollTop -= 1;
+            }
+          });
+        }
+      }
+      if ((this.elementScrollWidth - this.elementClientWidth) - distanceFromRight <= this.elementCurrentScrollLeft && scrollDirectionHorizontal > 0) {
+        this.scrolledRight.emit();
+        this.triggeredRight = true;
+        if (!this.mouseDown) {
+          // this.angularInfinityScrollDisabled = true;
+        }
+        if (Math.ceil(this.elementCurrentScrollLeft) === (this.elementScrollWidth - this.elementClientWidth)) {
+          setTimeout(() => {
+            if (this.element.nativeElement.scrollLeft === 0) {
+              this.element.nativeElement.scrollLeft += 1;
+              // this.angularInfinityScrollDisabled = true;
+            }
+            if (Math.ceil(this.elementCurrentScrollLeft) === (this.element.nativeElement.scrollWidth - this.element.nativeElement.clientWidth)) {
+              this.element.nativeElement.scrollLeft -= 1;
+            }
+          });
+        }
+      }
+      if (this.elementCurrentScrollLeft <= distanceFromLeft && scrollDirectionHorizontal < 0) {
+        this.scrolledLeft.emit();
+        this.triggeredLeft = true;
+        // this.element.nativeElement.scrollTop += 1;
+        if (!this.mouseDown) {
+          // this.angularInfinityScrollDisabled = true;
+        }
+        if (this.element.nativeElement.scrollLeft === 0) {
+          this.element.nativeElement.scrollLeft += 1;
+          // this.angularInfinityScrollDisabled = true;
+          setTimeout(() => {
+            if (this.element.nativeElement.scrollLeft === 0) {
+              this.element.nativeElement.scrollLeft += 1;
+              // this.angularInfinityScrollDisabled = true;
+            }
+            if (this.element.nativeElement.scrollLeft === (this.element.nativeElement.scrollWidth - this.element.nativeElement.clientWidth)) {
+              this.element.nativeElement.scrollLeft -= 1;
             }
           });
         }

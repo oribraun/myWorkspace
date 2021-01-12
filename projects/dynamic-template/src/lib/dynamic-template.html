@@ -25,7 +25,11 @@
              'no-shadow': drag.firstBox.onMove.currentPos === 'top1'}">
       <div class="box-shadow">
         <div (click)="setExpand('firstBox')" class="expand">
-          <fa-icon [icon]="icons.expand" *ngIf="!defaultSettings.icons.expand"></fa-icon>
+          <span *ngIf="!defaultSettings.icons.expand">
+              <svg role="img" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="expand" class="svg-inline--fa fa-expand fa-w-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path fill="currentColor" d="M0 180V56c0-13.3 10.7-24 24-24h124c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H64v84c0 6.6-5.4 12-12 12H12c-6.6 0-12-5.4-12-12zM288 44v40c0 6.6 5.4 12 12 12h84v84c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12V56c0-13.3-10.7-24-24-24H300c-6.6 0-12 5.4-12 12zm148 276h-40c-6.6 0-12 5.4-12 12v84h-84c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h124c13.3 0 24-10.7 24-24V332c0-6.6-5.4-12-12-12zM160 468v-40c0-6.6-5.4-12-12-12H64v-84c0-6.6-5.4-12-12-12H12c-6.6 0-12 5.4-12 12v124c0 13.3 10.7 24 24 24h124c6.6 0 12-5.4 12-12z"></path>
+              </svg>
+            </span>
           <span [innerHTML]="defaultSettings.icons.expand" *ngIf="defaultSettings.icons.expand"></span>
         </div>
         <div *ngFor="let item of drag.firstBox.dragBars"
@@ -35,7 +39,7 @@
           <!--        <i class="fa fa-arrows" aria-hidden="true"></i>-->
         </div>
         <!--                <app-firstBox></app-firstBox>-->
-        <div [libDynamicComponent]="defaultSettings.firstComponent" [inputs]="{'disableWebsiteControl': dragStarted}"></div>
+        <div [libDynamicComponent]="defaultSettings.firstComponent" [inputs]="defaultSettings.firstComponentInputs"></div>
       </div>
     </div>
     <div class="results" [ngClass]="{'expended': drag.secondBox.expended || drag.thirdBox.expended}">
@@ -55,7 +59,11 @@
         <div class="box-shadow">
           <div class="url-window">
             <div (click)="setExpand('secondBox')" class="expand">
-              <fa-icon [icon]="icons.expand" *ngIf="!defaultSettings.icons.expand"></fa-icon>
+              <span *ngIf="!defaultSettings.icons.expand">
+              <svg role="img" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="expand" class="svg-inline--fa fa-expand fa-w-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path fill="currentColor" d="M0 180V56c0-13.3 10.7-24 24-24h124c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H64v84c0 6.6-5.4 12-12 12H12c-6.6 0-12-5.4-12-12zM288 44v40c0 6.6 5.4 12 12 12h84v84c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12V56c0-13.3-10.7-24-24-24H300c-6.6 0-12 5.4-12 12zm148 276h-40c-6.6 0-12 5.4-12 12v84h-84c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h124c13.3 0 24-10.7 24-24V332c0-6.6-5.4-12-12-12zM160 468v-40c0-6.6-5.4-12-12-12H64v-84c0-6.6-5.4-12-12-12H12c-6.6 0-12 5.4-12 12v124c0 13.3 10.7 24 24 24h124c6.6 0 12-5.4 12-12z"></path>
+              </svg>
+            </span>
               <span [innerHTML]="defaultSettings.icons.expand" *ngIf="defaultSettings.icons.expand"></span>
             </div>
             <div *ngFor="let item of drag.secondBox.dragBars"
@@ -63,7 +71,7 @@
                  (touchstart)="onMouseDown($event, 'secondBox', item.type)"
                  class="drag" [ngClass]="'drag-' + item.position">
             </div>
-            <div [libDynamicComponent]="defaultSettings.secondComponent" [inputs]="{'disableWebsiteControl': dragStarted}"></div>
+            <div [libDynamicComponent]="defaultSettings.secondComponent" [inputs]="defaultSettings.secondComponentInputs"></div>
             <!--                        <app-view-->
             <!--                            [disableWebsiteControl]="dragStarted"-->
             <!--                        ></app-view>-->
@@ -99,7 +107,11 @@
         }" class="third-box">
         <div class="box-shadow">
           <div (click)="setExpand('thirdBox')" class="expand">
-            <fa-icon [icon]="icons.expand" *ngIf="!defaultSettings.icons.expand"></fa-icon>
+            <span *ngIf="!defaultSettings.icons.expand">
+              <svg role="img" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="expand" class="svg-inline--fa fa-expand fa-w-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path fill="currentColor" d="M0 180V56c0-13.3 10.7-24 24-24h124c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H64v84c0 6.6-5.4 12-12 12H12c-6.6 0-12-5.4-12-12zM288 44v40c0 6.6 5.4 12 12 12h84v84c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12V56c0-13.3-10.7-24-24-24H300c-6.6 0-12 5.4-12 12zm148 276h-40c-6.6 0-12 5.4-12 12v84h-84c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h124c13.3 0 24-10.7 24-24V332c0-6.6-5.4-12-12-12zM160 468v-40c0-6.6-5.4-12-12-12H64v-84c0-6.6-5.4-12-12-12H12c-6.6 0-12 5.4-12 12v124c0 13.3 10.7 24 24 24h124c6.6 0 12-5.4 12-12z"></path>
+              </svg>
+            </span>
             <span [innerHTML]="defaultSettings.icons.expand" *ngIf="defaultSettings.icons.expand"></span>
           </div>
           <div *ngFor="let item of drag.thirdBox.dragBars"
@@ -107,31 +119,51 @@
                (touchstart)="onMouseDown($event, 'thirdBox', item.type)"
                class="drag" [ngClass]="'drag-' + item.position">
           </div>
-          <div [libDynamicComponent]="defaultSettings.thirdComponent"></div>
+          <div [libDynamicComponent]="defaultSettings.thirdComponent" [inputs]="defaultSettings.thirdComponentInputs"></div>
           <!--                    <app-service-results></app-service-results>-->
         </div>
       </div>
     </div>
     <div class="small-menu" #smallMenu [ngClass]="{'small-menu-open': smallMenuExpanded}">
       <div (click)="toggleSmallMenu()" title="reset to default state" class="arrow reset-floating pointer" [ngClass]="{'arrow-spin': smallMenuExpanded}">
-        <fa-icon [icon]="icons.cog" *ngIf="!defaultSettings.icons.cog"></fa-icon>
+        <span *ngIf="!defaultSettings.icons.cog">
+          <svg role="img" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="cog" class="svg-inline--fa fa-cog fa-w-16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path fill="currentColor" d="M487.4 315.7l-42.6-24.6c4.3-23.2 4.3-47 0-70.2l42.6-24.6c4.9-2.8 7.1-8.6 5.5-14-11.1-35.6-30-67.8-54.7-94.6-3.8-4.1-10-5.1-14.8-2.3L380.8 110c-17.9-15.4-38.5-27.3-60.8-35.1V25.8c0-5.6-3.9-10.5-9.4-11.7-36.7-8.2-74.3-7.8-109.2 0-5.5 1.2-9.4 6.1-9.4 11.7V75c-22.2 7.9-42.8 19.8-60.8 35.1L88.7 85.5c-4.9-2.8-11-1.9-14.8 2.3-24.7 26.7-43.6 58.9-54.7 94.6-1.7 5.4.6 11.2 5.5 14L67.3 221c-4.3 23.2-4.3 47 0 70.2l-42.6 24.6c-4.9 2.8-7.1 8.6-5.5 14 11.1 35.6 30 67.8 54.7 94.6 3.8 4.1 10 5.1 14.8 2.3l42.6-24.6c17.9 15.4 38.5 27.3 60.8 35.1v49.2c0 5.6 3.9 10.5 9.4 11.7 36.7 8.2 74.3 7.8 109.2 0 5.5-1.2 9.4-6.1 9.4-11.7v-49.2c22.2-7.9 42.8-19.8 60.8-35.1l42.6 24.6c4.9 2.8 11 1.9 14.8-2.3 24.7-26.7 43.6-58.9 54.7-94.6 1.5-5.5-.7-11.3-5.6-14.1zM256 336c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z"></path>
+          </svg>
+        </span>
         <span [innerHTML]="defaultSettings.icons.cog" *ngIf="defaultSettings.icons.cog"></span>
       </div>
       <div class="small-menu-options" [ngClass]="{'small-menu-options-open': smallMenuExpanded}">
         <div (click)="resetView()" title="reset to default state" class="icon icon-one reset-floating pointer">
-          <fa-icon [icon]="icons.syncAlt" *ngIf="!defaultSettings.icons.syncAlt"></fa-icon>
+          <span *ngIf="!defaultSettings.icons.syncAlt">
+            <svg role="img" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sync-alt" class="svg-inline--fa fa-sync-alt fa-w-16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <path fill="currentColor" d="M370.72 133.28C339.458 104.008 298.888 87.962 255.848 88c-77.458.068-144.328 53.178-162.791 126.85-1.344 5.363-6.122 9.15-11.651 9.15H24.103c-7.498 0-13.194-6.807-11.807-14.176C33.933 94.924 134.813 8 256 8c66.448 0 126.791 26.136 171.315 68.685L463.03 40.97C478.149 25.851 504 36.559 504 57.941V192c0 13.255-10.745 24-24 24H345.941c-21.382 0-32.09-25.851-16.971-40.971l41.75-41.749zM32 296h134.059c21.382 0 32.09 25.851 16.971 40.971l-41.75 41.75c31.262 29.273 71.835 45.319 114.876 45.28 77.418-.07 144.315-53.144 162.787-126.849 1.344-5.363 6.122-9.15 11.651-9.15h57.304c7.498 0 13.194 6.807 11.807 14.176C478.067 417.076 377.187 504 256 504c-66.448 0-126.791-26.136-171.315-68.685L48.97 471.03C33.851 486.149 8 475.441 8 454.059V320c0-13.255 10.745-24 24-24z"></path>
+            </svg>
+          </span>
           <span [innerHTML]="defaultSettings.icons.syncAlt" *ngIf="defaultSettings.icons.syncAlt"></span>
         </div>
         <div (click)="saveState()" title="save current state" class="icon icon-two save-floating pointer">
-          <fa-icon [icon]="icons.save" *ngIf="!defaultSettings.icons.save"></fa-icon>
+          <span *ngIf="!defaultSettings.icons.save">
+            <svg role="img" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="save" class="svg-inline--fa fa-save fa-w-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+              <path fill="currentColor" d="M433.941 129.941l-83.882-83.882A48 48 0 0 0 316.118 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V163.882a48 48 0 0 0-14.059-33.941zM224 416c-35.346 0-64-28.654-64-64 0-35.346 28.654-64 64-64s64 28.654 64 64c0 35.346-28.654 64-64 64zm96-304.52V212c0 6.627-5.373 12-12 12H76c-6.627 0-12-5.373-12-12V108c0-6.627 5.373-12 12-12h228.52c3.183 0 6.235 1.264 8.485 3.515l3.48 3.48A11.996 11.996 0 0 1 320 111.48z"></path>
+            </svg>
+          </span>
           <span [innerHTML]="defaultSettings.icons.save" *ngIf="defaultSettings.icons.save"></span>
         </div>
         <div (click)="changeComponentOrder()" title="change box order" class="icon icon-three change-order-floating pointer">
-          <fa-icon [icon]="icons.retweet" *ngIf="!defaultSettings.icons.retweet"></fa-icon>
+          <span *ngIf="!defaultSettings.icons.retweet">
+            <svg role="img" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="retweet" class="svg-inline--fa fa-retweet fa-w-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+              <path fill="currentColor" d="M629.657 343.598L528.971 444.284c-9.373 9.372-24.568 9.372-33.941 0L394.343 343.598c-9.373-9.373-9.373-24.569 0-33.941l10.823-10.823c9.562-9.562 25.133-9.34 34.419.492L480 342.118V160H292.451a24.005 24.005 0 0 1-16.971-7.029l-16-16C244.361 121.851 255.069 96 276.451 96H520c13.255 0 24 10.745 24 24v222.118l40.416-42.792c9.285-9.831 24.856-10.054 34.419-.492l10.823 10.823c9.372 9.372 9.372 24.569-.001 33.941zm-265.138 15.431A23.999 23.999 0 0 0 347.548 352H160V169.881l40.416 42.792c9.286 9.831 24.856 10.054 34.419.491l10.822-10.822c9.373-9.373 9.373-24.569 0-33.941L144.971 67.716c-9.373-9.373-24.569-9.373-33.941 0L10.343 168.402c-9.373 9.373-9.373 24.569 0 33.941l10.822 10.822c9.562 9.562 25.133 9.34 34.419-.491L96 169.881V392c0 13.255 10.745 24 24 24h243.549c21.382 0 32.09-25.851 16.971-40.971l-16.001-16z"></path>
+            </svg>
+          </span>
           <span [innerHTML]="defaultSettings.icons.retweet" *ngIf="defaultSettings.icons.retweet"></span>
         </div>
         <div (click)="changeTemplateType()" title="change template" class="icon icon-four change-template-floating pointer">
-          <fa-icon [icon]="icons.columns" *ngIf="!defaultSettings.icons.columns"></fa-icon>
+          <span *ngIf="!defaultSettings.icons.columns">
+            <svg role="img" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="columns" class="svg-inline--fa fa-columns fa-w-16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <path fill="currentColor" d="M464 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zM224 416H64V160h160v256zm224 0H288V160h160v256z"></path>
+            </svg>
+          </span>
           <span [innerHTML]="defaultSettings.icons.columns" *ngIf="defaultSettings.icons.columns"></span>
         </div>
       </div>

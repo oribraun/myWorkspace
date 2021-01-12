@@ -1,23 +1,26 @@
-import {Component, HostListener, Inject, Input, OnDestroy, OnInit, ViewChild, EventEmitter} from '@angular/core';
+import {Component, HostListener, Inject, Input, OnDestroy, OnInit, ViewChild, EventEmitter, OnChanges, SimpleChanges} from '@angular/core';
 import {DynamicTemplateService} from './dynamic-template.service';
 import {DOCUMENT} from '@angular/common';
 // import {AlertService} from './alert.service';
-import { faExpand, faCog, faSyncAlt, faSave, faRetweet, faColumns } from '@fortawesome/free-solid-svg-icons';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'lib-dynamic-template',
   templateUrl: './dynamic-template.html',
   styleUrls: ['./dynamic-template.less']
 })
-export class DynamicTemplateComponent implements OnInit, OnDestroy {
+export class DynamicTemplateComponent implements OnInit, OnDestroy, OnChanges {
 
   @ViewChild('playground') playground: any;
   @ViewChild('scroller') scroller: any;
   @ViewChild('smallMenu') smallMenu: any;
-  public defaultSettings = {
+  public defaultSettings: any = {
     firstComponent: '',
+    firstComponentInputs: new Observable<any>(),
     secondComponent: '',
+    secondComponentInputs: new Observable<any>(),
     thirdComponent: '',
+    thirdComponentInputs: new Observable<any>(),
     onDrag: new EventEmitter(),
     onClick: new EventEmitter(),
     css: {
@@ -46,14 +49,6 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
   public dragStarted = false;
   public modelType = '';
   public resultsType: string;
-  public icons = {
-    expand: faExpand,
-    cog: faCog,
-    syncAlt: faSyncAlt,
-    save: faSave,
-    retweet: faRetweet,
-    columns: faColumns,
-  };
   public drag: any = {
     version: 1,
     // all numbers are percent values
@@ -442,8 +437,6 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
         return;
       }
     });
-
-    this.loadSettings();
   }
 
   loadSettings(): void {
@@ -456,6 +449,21 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
       }
       if (this.settings.thirdComponent) {
         this.defaultSettings.thirdComponent = this.settings.thirdComponent;
+      }
+      this.settings.firstComponentInputs.disableWebsiteControl = this.dragStarted;
+      this.settings.secondComponentInputs.disableWebsiteControl = this.dragStarted;
+      this.settings.thirdComponentInputs.disableWebsiteControl = this.dragStarted;
+      if (this.settings.firstComponentInputs &&
+        JSON.stringify(this.settings.firstComponentInputs) !== JSON.stringify(this.defaultSettings.firstComponentInputs)) {
+        this.defaultSettings.firstComponentInputs = {...this.settings.firstComponentInputs};
+      }
+      if (this.settings.secondComponentInputs &&
+        JSON.stringify(this.settings.secondComponentInputs) !== JSON.stringify(this.defaultSettings.secondComponentInputs)) {
+        this.defaultSettings.secondComponentInputs = {...this.settings.secondComponentInputs};
+      }
+      if (this.settings.thirdComponentInputs &&
+        JSON.stringify(this.settings.thirdComponentInputs) !== JSON.stringify(this.defaultSettings.thirdComponentInputs)) {
+        this.defaultSettings.thirdComponentInputs = {...this.settings.thirdComponentInputs};
       }
       if (this.settings.onDrag) {
         this.defaultSettings.onDrag = this.settings.onDrag;
@@ -1170,6 +1178,15 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     // }
     return results;
   }
+
+  emitDragStarted() {
+    // this.defaultSettings.firstComponentInputs['disableWebsiteControl'] = this.dragStarted;
+    // this.defaultSettings.secondComponentInputs['disableWebsiteControl'] = this.dragStarted;
+    // this.defaultSettings.thirdComponentInputs['disableWebsiteControl'] = this.dragStarted;
+    if (this.defaultSettings.onDrag) {
+      this.defaultSettings.onDrag.emit(this.dragStarted);
+    }
+  }
   onMouseDown(e: any, name: string, type: string): void {
     const pos = this.dynamicTemplateService.getPointerPos(e, false);
     this.drag[name].mousedown = true;
@@ -1177,32 +1194,30 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
     // this.drag[name].target = e.target;
     this.drag[name].type = type;
     this.dragStarted = true;
-    if (this.defaultSettings.onDrag) {
-      this.defaultSettings.onDrag.emit(this.dragStarted);
-    }
+    this.emitDragStarted();
     this.document.body.classList.add('disable-mobile-refresh');
   }
 
   @HostListener('document:mouseup', ['$event'])
   @HostListener('document:touchend', ['$event'])
   onMouseUp(e): void {
-    if (this.drag.firstBox.mousedown) {
-      this.drag.firstBox.mousedown = false;
-      this.drag.firstBox.startPos = null;
+    if (this.dragStarted) {
+      if (this.drag.firstBox.mousedown) {
+        this.drag.firstBox.mousedown = false;
+        this.drag.firstBox.startPos = null;
+      }
+      if (this.drag.thirdBox.mousedown) {
+        this.drag.thirdBox.mousedown = false;
+        this.drag.thirdBox.startPos = null;
+      }
+      if (this.drag.secondBox.mousedown) {
+        this.drag.secondBox.mousedown = false;
+        this.drag.secondBox.startPos = null;
+      }
+      this.dragStarted = false;
+      this.emitDragStarted();
+      this.document.body.classList.remove('disable-mobile-refresh');
     }
-    if (this.drag.thirdBox.mousedown) {
-      this.drag.thirdBox.mousedown = false;
-      this.drag.thirdBox.startPos = null;
-    }
-    if (this.drag.secondBox.mousedown) {
-      this.drag.secondBox.mousedown = false;
-      this.drag.secondBox.startPos = null;
-    }
-    this.dragStarted = false;
-    if (this.defaultSettings.onDrag) {
-      this.defaultSettings.onDrag.emit(this.dragStarted);
-    }
-    this.document.body.classList.remove('disable-mobile-refresh');
   }
 
   @HostListener('document:mousemove', ['$event'])
@@ -1614,6 +1629,10 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy {
         this.toggleSmallMenu();
       }
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadSettings();
   }
 
   ngOnDestroy(): void {
