@@ -36,6 +36,7 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
   private lastScrollPos = 0;
   private scrollDirection = 0;
   private isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+  private isSafari = navigator.userAgent.toLowerCase().indexOf('safari') > -1 && navigator.userAgent.toLowerCase().indexOf('chrome') === -1;
   private stopEventForFirefox = false;
   private keyUpDownPressed = false;
   constructor(
@@ -119,11 +120,16 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
   handleWheelEvent(event): void {
     // if (this.isFirefox) {
     this.scrollDirection = event.deltaY;
+    // console.log('asdf', event.webkitDirectionInvertedFromDevice)
+    // console.log('asdf', event)
     this.handleScroll();
     // }
   }
   @HostListener('scroll', ['$event'])
   onScroll(e): void {
+    if(this.isSafari) {
+      return;
+    }
     if(this.keyUpDownPressed) {
       // this.keyUpDownPressed = false;
       // this.scrollDirection = 0;
