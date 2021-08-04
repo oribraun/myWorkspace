@@ -1,6 +1,6 @@
 {
   "name": "angular-dynamic-template",
-  "version": "0.0.4",
+  "version": "0.0.18",
   "peerDependencies": {
     "@angular/common": "^10.2.0",
     "@angular/core": "^10.2.0"
