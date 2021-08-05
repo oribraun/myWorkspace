@@ -450,13 +450,13 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy, OnChanges {
       if (this.settings.thirdComponent) {
         this.defaultSettings.thirdComponent = this.settings.thirdComponent;
       }
-      if(this.settings.firstComponentInputs) {
+      if (this.settings.firstComponentInputs) {
         this.settings.firstComponentInputs.disableWebsiteControl = this.dragStarted;
       }
-      if(this.settings.secondComponentInputs) {
+      if (this.settings.secondComponentInputs) {
         this.settings.secondComponentInputs.disableWebsiteControl = this.dragStarted;
       }
-      if(this.settings.thirdComponentInputs) {
+      if (this.settings.thirdComponentInputs) {
         this.settings.thirdComponentInputs.disableWebsiteControl = this.dragStarted;
       }
       if (this.settings.firstComponentInputs &&
@@ -523,7 +523,7 @@ export class DynamicTemplateComponent implements OnInit, OnDestroy, OnChanges {
           this.defaultSettings.icons.columns = this.settings.icons.columns;
         }
       }
-      if(this.settings.stateLabel) {
+      if (this.settings.stateLabel) {
         this.defaultSettings.stateLabel = this.settings.stateLabel;
       }
       // console.log('this.settings', this.settings)

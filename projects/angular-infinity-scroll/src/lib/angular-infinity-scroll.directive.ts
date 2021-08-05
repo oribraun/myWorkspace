@@ -127,10 +127,10 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
   }
   @HostListener('scroll', ['$event'])
   onScroll(e): void {
-    if(this.isSafari) {
+    if (this.isSafari) {
       return;
     }
-    if(this.keyUpDownPressed) {
+    if (this.keyUpDownPressed) {
       // this.keyUpDownPressed = false;
       // this.scrollDirection = 0;
       // this.scrollDirection = this.element.nativeElement.scrollTop - this.lastScrollPos;
@@ -175,7 +175,7 @@ export class AngularInfinityScrollDirective implements OnInit, OnChanges {
       }
       let scrollDirection = this.elementCurrentScrollTop - this.lastScrollTop;
       let scrollDirectionHorizontal = this.elementCurrentScrollLeft - this.lastScrollLeft;
-      console.log('scrollDirectionHorizontal', scrollDirectionHorizontal)
+      // console.log('scrollDirectionHorizontal', scrollDirectionHorizontal)
       if (!scrollDirection) {
         scrollDirection = this.lastScrollDirection;
       }
