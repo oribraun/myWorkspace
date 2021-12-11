@@ -59,47 +59,51 @@ export class Data {
     }
 </style>
 dsProjectRoomData = {
-        text: '',
-        url: 'https://polkadotmama.org/board-of-directors/',
-        // url: 'https://www.apple.com/leadership/',
-        showInIframe: true
-    };
-    dsProjectRoomObj: any = [
-        {
-            blockName: '',
-            numColumns: 2,
-            fields: [
-                {label: 'not_a_signature', inputType: 'checkbox', description: '*not a signature description'},
-                {label: 'non_english_text', inputType: 'checkbox'},
-                {label: 'other', inputType: 'checkbox'},
-                {label: 'reason', inputType: 'text', depend: 'other', dependOnValue: 1}
-            ],
-        },
-        {
-            blockName: 'name',
-            numColumns: 2,
-            fields: [
-                {label: 'first_name', inputType: 'text', breakLine: true, center: true},
-                {label: 'last_name', inputType: 'text', fullLine: true},
-                {label: 'prefix', inputType: 'text', center: true, description: '*prefix description'},
-            ],
-        },
-        {
-            blockName: 'connections',
-            numColumns: 2,
-            fields: [
-                {label: 'phones', inputType: 'text_list', description: '*phones description'},
-                {label: 'faxes', inputType: 'text_list'},
-                {label: 'comments', inputType: 'textarea'},
-                {label: 'other', inputType: 'checkbox', value: 0},
-                {label: 'type', inputType: 'select', selectOptions: ['one', 'two', 'three'], depend: 'other'}
-            ],
-        }
-    ];
-    templateType = 1;
-    mainCssObj = {};
-    viewCssObj = {padding: '10px'};
-    formCssObj = {padding: '0 10px'};
+    text: '',
+    url: 'https://polkadotmama.org/board-of-directors/',
+    // url: 'https://www.apple.com/leadership/',
+    showInIframe: true
+};
+dsProjectRoomObj: any = [
+    {
+        blockName: '',
+        numColumns: 2,
+        fields: [
+            {label: 'not_a_signature', inputType: 'checkbox', description: '*not a signature description'},
+            {label: 'non_english_text', inputType: 'checkbox'},
+            {label: 'other', inputType: 'checkbox'},
+            {label: 'reason', inputType: 'text', depend: 'other', dependOnValue: 1}
+        ],
+    },
+    {
+        blockName: 'name',
+        numColumns: 2,
+        fields: [
+            {label: 'first_name', inputType: 'text', breakLine: true, center: true},
+            {label: 'last_name', inputType: 'text', fullLine: true},
+            {label: 'prefix', inputType: 'text', center: true, description: '*prefix description'},
+        ],
+    },
+    {
+        blockName: 'connections',
+        numColumns: 2,
+        fields: [
+            {label: 'phones', inputType: 'text_list', description: '*phones description'},
+            {label: 'faxes', inputType: 'text_list'},
+            {label: 'comments', inputType: 'textarea'},
+            {label: 'other', inputType: 'checkbox', value: 0},
+            {label: 'type', inputType: 'select', selectOptions: ['one', 'two', 'three'], depend: 'other'}
+        ],
+    }
+];
+templateType = 1;
+mainCssObj = {};
+viewCssObj = {padding: '10px'};
+formCssObj = {padding: '0 10px'};
+
+onDsProjectRoomChange(e) {
+    console.log('e', e)
+}
 
 <div class="home">
     <lib-ds-project-room
@@ -109,6 +113,7 @@ dsProjectRoomData = {
         [mainCssObj]="mainCssObj"
         [viewCssObj]="viewCssObj"
         [formCssObj]="formCssObj"
+        (onChange)="onDsProjectRoomChange($event)"
     ></lib-ds-project-room>
 </div>
 ```
