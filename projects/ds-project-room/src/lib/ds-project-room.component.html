@@ -2,7 +2,6 @@
      [ngStyle]="mainCssObj">
     <div class="view"
          [ngClass]="{'view-with-url': data.url, 'animated-all': resetViewAnimate}"
-         [style]="!data.url ? viewCssObj : ''"
          [ngStyle]="{
             'height': (currentDrag.view.height !== '' ? currentDrag.view.height + '%' : ''),
             'top': currentDrag.view.top + '%',
@@ -10,7 +9,9 @@
             'left': currentDrag.view.left + '%',
             'right': currentDrag.view.right + '%'
             }">
-        <div *ngIf="!data.url && data.text">{{data.text}}</div>
+        <div class="view-text"
+             [style]="!data.url ? viewCssObj : ''"
+             *ngIf="!data.url && data.text">{{data.text}}</div>
         <!--        <div *ngIf="show.url"><a [href]="show.url" target="_blank">{{show.url}}</a></div>-->
         <div class="iframe-wrapper" *ngIf="data.url">
             <ng-container *ngIf="data.showInIframe">
