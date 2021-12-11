@@ -555,6 +555,25 @@ export class DsProjectRoomBlock {
     blockDesc = '';
     numColumns: 2;
     fields: DsProjectRoomBlockField[] = [];
+
+    constructor(obj) {
+        if (obj) {
+            if (obj.blockName) {
+                this.blockName = obj.blockName;
+            },
+            if (obj.blockDesc) {
+                this.blockDesc = obj.blockDesc;
+            },
+            if (obj.numColumns) {
+                this.numColumns = obj.numColumns;
+            }
+            if (obj.fields) {
+                for (const i in obj.fields) {
+                    this.fields.push( new DsProjectRoomBlockField(obj.fields[i]));
+                }
+            }
+        }
+    }
 }
 
 export class DsProjectRoomBlockField {
