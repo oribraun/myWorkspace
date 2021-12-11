@@ -560,10 +560,10 @@ export class DsProjectRoomBlock {
         if (obj) {
             if (obj.blockName) {
                 this.blockName = obj.blockName;
-            },
+            }
             if (obj.blockDesc) {
                 this.blockDesc = obj.blockDesc;
-            },
+            }
             if (obj.numColumns) {
                 this.numColumns = obj.numColumns;
             }
