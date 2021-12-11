@@ -120,7 +120,7 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
     @Input() viewCssObj;
     @Input() formCssObj;
     @Input() templateType = 1;
-    @Input() data: Data = {
+    @Input() data: DsProjectRoomData = {
         // text: 'signature',
         // url: 'https://polkadotmama.org/board-of-directors/',
         // // url: 'https://www.apple.com/leadership/',
@@ -129,7 +129,7 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
         url: '',
         showInIframe: false,
     };
-    @Input() obj: Block[] = [
+    @Input() obj: DsProjectRoomBlock[] = [
         // {
         //     blockName: '',
         //     numColumns: 2,
@@ -163,11 +163,9 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
     ];
     @Output() onChange: EventEmitter<any> = new EventEmitter<any>();
     constructor(
-        private el: ElementRef,
         @Inject(DOCUMENT) document?: any
     ) {
         this.document = document;
-        console.log(this.el.nativeElement.styles)
     }
 
 
@@ -552,14 +550,14 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
     }
 }
 
-export class Block {
+export class DsProjectRoomBlock {
     blockName = '';
     blockDesc = '';
     numColumns: 2;
-    fields: BlockField[] = [];
+    fields: DsProjectRoomBlockField[] = [];
 }
 
-export class BlockField {
+export class DsProjectRoomBlockField {
     label = '';
     description = '';
     value: any = '';
@@ -583,7 +581,7 @@ export class BlockField {
     }
 }
 
-export class Data {
+export class DsProjectRoomData {
     text = '';
     url = '';
     showInIframe = false;
