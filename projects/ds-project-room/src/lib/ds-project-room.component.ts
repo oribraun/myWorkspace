@@ -238,7 +238,7 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
         return index;
     }
     preetyLabel(label): string {
-        const str =  label.replace('_', ' ').replace('-', ' ');
+        const str =  label.replace(/_/g, ' ').replace(/-/g, ' ');
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
