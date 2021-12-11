@@ -120,6 +120,7 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
     @Input() viewCssObj;
     @Input() formCssObj;
     @Input() templateType = 1;
+    @Input() uniqueId: number;
     @Input() data: DsProjectRoomData = {
         // text: 'signature',
         // url: 'https://polkadotmama.org/board-of-directors/',
@@ -529,7 +530,7 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
         this.onChange.emit(this.getFinalObject());
     }
 
-    getFinalObject(): any[] {
+    getFinalObject(): any {
         const blocks = [];
         for (const block of this.obj) {
             const obj = {
@@ -546,7 +547,7 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
             }
             blocks.push(obj);
         }
-        return blocks;
+        return {uniqueId: this.uniqueId, text: this.data.text || this.data.url, blocks};
     }
 }
 

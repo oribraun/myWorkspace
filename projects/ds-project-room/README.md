@@ -107,6 +107,7 @@ onDsProjectRoomChange(e) {
 
 <div class="home">
     <lib-ds-project-room
+        [uniqueId]="1"
         [data]="dsProjectRoomData"
         [obj]="dsProjectRoomObj"
         [templateType]="templateType"
