@@ -581,13 +581,13 @@ export class DsProjectRoomBlockField {
     description = '';
     value: any = '';
     inputType = '';
-    depend = '';
-    dependOnValue: any = '';
-    breakLine = false;
-    fullLine = false;
-    center = false;
-    selectOptions = [];
-    css = {};
+    depend: string;
+    dependOnValue: any;
+    breakLine: boolean;
+    fullLine: boolean;
+    center: boolean;
+    selectOptions: any[];
+    css: any;
 
     constructor(obj) {
         if (obj) {

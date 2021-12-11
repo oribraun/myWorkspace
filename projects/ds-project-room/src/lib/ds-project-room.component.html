@@ -84,7 +84,7 @@
                                                    [(ngModel)]="item.value"
                                                    (ngModelChange)="onChangeObj()"
                                                    [attr.value]="item.value"
-                                                   [disabled]="item.depend && checkDepend(block.fields, item)">
+                                                   [disabled]="checkDepend(block.fields, item)">
                                             <input *ngIf="item.inputType === 'checkbox'"
                                                    [type]="item.inputType"
                                                    [ngStyle]="item.css"
@@ -96,14 +96,14 @@
                                                       [(ngModel)]="item.value"
                                                       (ngModelChange)="onChangeObj()"
                                                       [attr.value]="item.value"
-                                                      [disabled]="item.depend && checkDepend(block.fields, item)">
+                                                      [disabled]="checkDepend(block.fields, item)">
                                             </textarea>
                                             <select name="" id="" *ngIf="item.inputType === 'select'"
                                                     [ngStyle]="item.css"
                                                     [name]="item.label"
                                                     [(ngModel)]="item.value"
                                                     (ngModelChange)="onChangeObj()"
-                                                    [disabled]="item.depend && checkDepend(block.fields, item)"
+                                                    [disabled]="checkDepend(block.fields, item)"
                                                     [attr.value]="item.value">
                                                 <option value=""></option>
                                                 <option *ngFor="let o of item.selectOptions" [value]="o">{{o}}</option>
