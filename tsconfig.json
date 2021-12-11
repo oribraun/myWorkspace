@@ -20,6 +20,10 @@
         "dist/dynamic-template/dynamic-template",
         "dist/dynamic-template"
       ],
+      "ds-project-room": [
+        "dist/ds-project-room/ds-project-room",
+        "dist/ds-project-room"
+      ],
       "angular-infinity-scroll": [
         "dist/angular-infinity-scroll/angular-infinity-scroll",
         "dist/angular-infinity-scroll"

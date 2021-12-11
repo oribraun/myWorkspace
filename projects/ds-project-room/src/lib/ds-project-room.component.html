@@ -1,0 +1,150 @@
+<div class="ds-project-room" #ds_project_room
+     [ngStyle]="mainCssObj">
+    <div class="view"
+         [ngClass]="{'view-with-url': data.url, 'animated-all': resetViewAnimate}"
+         [style]="!data.url ? viewCssObj : ''"
+         [ngStyle]="{
+            'height': (currentDrag.view.height !== '' ? currentDrag.view.height + '%' : ''),
+            'top': currentDrag.view.top + '%',
+            'bottom': currentDrag.view.bottom + '%',
+            'left': currentDrag.view.left + '%',
+            'right': currentDrag.view.right + '%'
+            }">
+        <div *ngIf="!data.url && data.text">{{data.text}}</div>
+        <!--        <div *ngIf="show.url"><a [href]="show.url" target="_blank">{{show.url}}</a></div>-->
+        <div class="iframe-wrapper" *ngIf="data.url">
+            <ng-container *ngIf="data.showInIframe">
+                <div class="iframe-loader-wrapper" *ngIf="iframeLoading">
+                    <div class="iframe-loader"><div></div><div></div><div></div><div></div></div>
+                </div>
+                <iframe [ngClass]="{'dragging': dragStarted}" #iframe [src]="data.url | safe"></iframe>
+            </ng-container>
+            <ng-container *ngIf="!data.showInIframe">
+                <a [href]="data.url" target="_blank">{{data.url}}</a>
+            </ng-container>
+        </div>
+        <div class="horizontal-drag horizontal-drag-bottom"
+             *ngIf="currentDrag.view.onMove.bottom"
+             (mousedown)="onMouseDown($event, 'view', 'top, bottom')"
+             (touchstart)="onMouseDown($event, 'view', 'top, bottom')"></div>
+        <div class="vertical-drag vertical-drag-right"
+             *ngIf="currentDrag.view.onMove.left"
+             (mousedown)="onMouseDown($event, 'view', 'left, right')"
+             (touchstart)="onMouseDown($event, 'view', 'left, right')"></div>
+    </div>
+    <form #f="ngForm">
+        <div class="labeling"
+             [ngClass]="{'animated-all': resetViewAnimate}"
+             [ngStyle]="{
+                'height': (currentDrag.labeling.height !== '' ? currentDrag.labeling.height + '%' : ''),
+                'top': currentDrag.labeling.top + '%',
+                'bottom': currentDrag.labeling.bottom + '%',
+                'left': currentDrag.labeling.left + '%',
+                'right': currentDrag.labeling.right + '%'
+                }">
+            <div class="horizontal-drag horizontal-drag-top"
+                 *ngIf="currentDrag.labeling.onMove.top"
+                 (mousedown)="onMouseDown($event, 'labeling', 'top, bottom')"
+                 (touchstart)="onMouseDown($event, 'labeling', 'top, bottom')"></div>
+            <div class="vertical-drag vertical-drag-left"
+                 *ngIf="currentDrag.labeling.onMove.right"
+                 (mousedown)="onMouseDown($event, 'labeling', 'left, right')"
+                 (touchstart)="onMouseDown($event, 'labeling', 'left, right')"></div>
+            <div class="labeling-overflow"
+                 [style]="formCssObj">
+                <div class="labeling-block" *ngFor="let block of obj">
+                    <div class="labeling-block-row">
+                        <div class="labeling-block-row-column">
+                            <div class="labeling-block-row-column-header">
+                                {{preetyLabel(block.blockName)}}
+                                <div class="labeling-block-row-column-header-description">
+                                    {{block.blockDesc}}
+                                </div>
+                            </div>
+                            <div class="labeling-block-row-column-body">
+                                <div class="labeling-block-row-column-body-item labeling-block-row-column-body-item-col
+                            labeling-block-row-column-body-item-{{item.inputType}}"
+                                     *ngFor="let item of block.fields"
+                                     [ngStyle]="{
+                                'flex': '0 0 ' + (10/block.numColumns*10) + '%',
+                                'max-width': (10/block.numColumns*10) + '%'
+                               }"
+                                     [ngClass]="{
+                             'labeling-block-row-column-body-item-box-break-line': item.breakLine,
+                             'labeling-block-row-column-body-item-box-full-line': item.fullLine,
+                             'labeling-block-row-column-body-item-box-center': item.center
+                             }">
+                                    <div class="labeling-block-row-column-body-item-box">
+                                        <div class="labeling-block-row-column-body-item-box-input">
+                                            <input *ngIf="item.inputType === 'text'"
+                                                   [type]="item.inputType"
+                                                   [ngStyle]="item.css"
+                                                   [name]="item.label"
+                                                   [(ngModel)]="item.value"
+                                                   (ngModelChange)="onChangeObj()"
+                                                   [attr.value]="item.value"
+                                                   [disabled]="item.depend && checkDepend(block.fields, item)">
+                                            <input *ngIf="item.inputType === 'checkbox'"
+                                                   [type]="item.inputType"
+                                                   [ngStyle]="item.css"
+                                                   [name]="item.label"
+                                                   (change)="!item.value ? item.value = 1 : item.value = 0; onChangeObj();">
+                                            <textarea *ngIf="item.inputType === 'textarea'"
+                                                      [ngStyle]="item.css"
+                                                      [name]="item.label"
+                                                      [(ngModel)]="item.value"
+                                                      (ngModelChange)="onChangeObj()"
+                                                      [attr.value]="item.value"
+                                                      [disabled]="item.depend && checkDepend(block.fields, item)">
+                                            </textarea>
+                                            <select name="" id="" *ngIf="item.inputType === 'select'"
+                                                    [ngStyle]="item.css"
+                                                    [name]="item.label"
+                                                    [(ngModel)]="item.value"
+                                                    (ngModelChange)="onChangeObj()"
+                                                    [disabled]="item.depend && checkDepend(block.fields, item)"
+                                                    [attr.value]="item.value">
+                                                <option value=""></option>
+                                                <option *ngFor="let o of item.selectOptions" [value]="o">{{o}}</option>
+                                            </select>
+                                            <div class="labeling-block-row-column-body-item-box-input-label"
+                                                 [ngClass]="{'labeling-block-row-column-body-item-box-input-label-hover': item.inputType === 'text'
+                                          || item.inputType === 'textarea'
+                                          || item.inputType === 'select'}">
+                                                {{preetyLabel(item.label)}}  <span *ngIf="item.inputType === 'text_list'" class="labeling-block-row-column-body-item-box-input-label-plus no-highlight"
+                                                                                   (click)="appendItemToList(item)">+</span>
+                                            </div>
+                                            <ng-container *ngIf="item.inputType === 'text_list' && isArray(item.value)">
+                                                <div class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
+                                                    {{item.description}}
+                                                </div>
+                                                <div class="labeling-block-row-column-body-item-box-input-list-item" *ngFor="let list_item of item.value; index as i; trackBy: trackByFn">
+                                                    <input [type]="item.inputType"
+                                                           [name]="item.label + '-' + i"
+                                                           [(ngModel)]="item.value[i]"
+                                                           (ngModelChange)="onChangeObj()">
+                                                    <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="removeItemToList(item, i)">-</div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                        <small class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description && item.inputType !== 'text_list'">
+                                            {{item.description}}
+                                        </small>
+                                    </div>
+                                    <!--                        <div class="labeling-block-row-column-body-item-box-break-line" *ngIf="item.break_line"></div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--    <div class="floating-template-button"-->
+    <!--         [ngClass]="{'floating-template-button-vertical': templateType === 2}"-->
+    <!--         (click)="changeTemplateType()">-->
+    <!--        <div class="lds-hourglass"-->
+    <!--             [title]="templateType === 1 ? 'vertical' : 'horizontal'"-->
+    <!--        [ngClass]="{'animate': changeTemplateAnimation}"></div>-->
+    <!--    </div>-->
+</div>

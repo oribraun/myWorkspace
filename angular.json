@@ -82,6 +82,37 @@
           }
         }
       }
+    },
+    "ds-project-room": {
+      "projectType": "library",
+      "root": "projects/ds-project-room",
+      "sourceRoot": "projects/ds-project-room/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ds-project-room/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ds-project-room/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ds-project-room/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ds-project-room/src/test.ts",
+            "tsConfig": "projects/ds-project-room/tsconfig.spec.json",
+            "karmaConfig": "projects/ds-project-room/karma.conf.js"
+          }
+        }
+      }
     }},
   "defaultProject": "dynamic-template"
 }

@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build-project": "ng build --project dynamic-template",
+    "publish-project": "cd dist/dynamic-template & npm publish",
     "test": "ng test",
     "lint": "ng lint"
   },
