@@ -556,7 +556,7 @@ export class DsProjectRoomBlock {
     numColumns: 2;
     fields: DsProjectRoomBlockField[] = [];
 
-    constructor(obj) {
+    constructor(obj?) {
         if (obj) {
             if (obj.blockName) {
                 this.blockName = obj.blockName;
@@ -589,7 +589,7 @@ export class DsProjectRoomBlockField {
     selectOptions: any[];
     css: any;
 
-    constructor(obj) {
+    constructor(obj?) {
         if (obj) {
             for (const key in obj) {
                 if (obj[key]) {
@@ -605,7 +605,7 @@ export class DsProjectRoomData {
     url = '';
     showInIframe = false;
 
-    constructor(obj) {
+    constructor(obj?) {
         if (obj) {
             for (const key in obj) {
                 if (obj[key]) {
