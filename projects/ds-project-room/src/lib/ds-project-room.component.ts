@@ -248,12 +248,12 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
         this.mainList.push(obj);
         this.listCurrentIndex = this.mainList.length - 1;
         this.obj = this.mainList[this.listCurrentIndex];
-        console.log('this.mainList', this.mainList);
+        // console.log('this.mainList', this.mainList);
     }
     removeFromMainList(index): void {
         this.mainList.splice(index, 1);
-        console.log('this.listCurrentIndex', this.listCurrentIndex)
-        console.log('index', index)
+        // console.log('this.listCurrentIndex', this.listCurrentIndex)
+        // console.log('index', index)
         if (this.listCurrentIndex > 0) {
             this.listCurrentIndex--;
         } else {
@@ -651,7 +651,7 @@ export class DsProjectRoomBlockField {
     constructor(obj?) {
         if (obj) {
             for (const key in obj) {
-                if (obj[key]) {
+                if (obj[key] !== undefined && obj[key] !== null) {
                     this[key] = obj[key];
                 }
             }
@@ -673,7 +673,7 @@ export class DsProjectRoomData {
     constructor(obj?) {
         if (obj) {
             for (const key in obj) {
-                if (obj[key]) {
+                if (obj[key] !== undefined && obj[key] !== null) {
                     this[key] = obj[key];
                 }
             }

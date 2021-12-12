@@ -57,7 +57,7 @@
                     {{data.listHeader}} <span class="labeling-header-plus no-highlight"
                     (click)="addToMainList()">+</span>
                     <br>
-                    <div class="labeling-header-item" *ngFor="let item of mainList; let i = index"
+                    <div class="labeling-header-item no-highlight" *ngFor="let item of mainList; let i = index"
                     (click)="selectMainItem(i)"
                     [ngClass]="{'labeling-header-item-selected': listCurrentIndex === i}">
                         {{getMainObjHeader(i)}} <span *ngIf="i > 0" class="labeling-header-item-minus no-highlight" (click)="removeFromMainList(i)">x</span>
