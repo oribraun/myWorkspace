@@ -8,7 +8,7 @@ import {
     SimpleChanges,
     ViewChild, ViewEncapsulation
 } from '@angular/core';
-import {DOCUMENT} from '@angular/common';
+import {DOCUMENT, KeyValue} from '@angular/common';
 
 @Component({
     selector: 'lib-ds-project-room',
@@ -280,16 +280,26 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
         return header;
     }
     appendItemToList(item): void {
-        item.value.push('');
+        let val = '';
+        if (item.listObj) {
+            val = this.cloneObject(item.listObj);
+        }
+        item.value.push(val);
     }
     removeItemToList(item, index): void {
         item.value.splice(index, 1);
+    }
+    cloneObject(obj): any {
+        return JSON.parse(JSON.stringify(obj));
     }
     isArray(arr): boolean {
         return Array.isArray(arr);
     }
     trackByFn(index: any, item: any): number {
         return index;
+    }
+    originalObjectOrder(a: KeyValue<number, string>, b: KeyValue<number, string>): number {
+        return 0;
     }
     preetyLabel(label): string {
         const str =  label.replace(/_/g, ' ').replace(/-/g, ' ');
@@ -609,6 +619,10 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
         }
         return blocks;
     }
+
+    getObjKeysLength(listObj): number {
+        return Object.keys(listObj).length;
+    }
 }
 
 export class DsProjectRoomBlock {
@@ -642,6 +656,7 @@ export class DsProjectRoomBlockField {
     description = '';
     value: any = '';
     inputType = '';
+    listObj?: any;
     depend: string;
     dependOnValue: any;
     breakLine: boolean;

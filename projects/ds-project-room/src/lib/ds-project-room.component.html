@@ -55,11 +55,11 @@
                  [style]="formCssObj">
                 <div class="labeling-header" *ngIf="data.isList">
                     {{data.listHeader}} <span class="labeling-header-plus no-highlight"
-                    (click)="addToMainList()">+</span>
+                                              (click)="addToMainList()">+</span>
                     <br>
                     <div class="labeling-header-item no-highlight" *ngFor="let item of mainList; let i = index"
-                    (click)="selectMainItem(i)"
-                    [ngClass]="{'labeling-header-item-selected': listCurrentIndex === i}">
+                         (click)="selectMainItem(i)"
+                         [ngClass]="{'labeling-header-item-selected': listCurrentIndex === i}">
                         {{getMainObjHeader(i)}} <span *ngIf="i > 0" class="labeling-header-item-minus no-highlight" (click)="removeFromMainList(i)">x</span>
 
                     </div>
@@ -131,12 +131,31 @@
                                                 <div class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
                                                     {{item.description}}
                                                 </div>
-                                                <div class="labeling-block-row-column-body-item-box-input-list-item" *ngFor="let list_item of item.value; index as i; trackBy: trackByFn">
-                                                    <input [type]="item.inputType"
-                                                           [name]="item.label + '-' + i"
-                                                           [(ngModel)]="item.value[i]"
-                                                           (ngModelChange)="onChangeObj()">
-                                                    <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="removeItemToList(item, i)">-</div>
+                                                <div class="labeling-block-row-column-body-item-box-input-list-item" *ngFor="let listItem of item.value; index as i; trackBy: trackByFn">
+                                                    <ng-container *ngIf="!item.listObj">
+                                                        <input [type]="item.inputType"
+                                                               [name]="item.label + '-' + i"
+                                                               [(ngModel)]="item.value[i]"
+                                                               (ngModelChange)="onChangeObj()">
+                                                        <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="removeItemToList(item, i)">-</div>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="item.listObj">
+                                                        <div class="labeling-block-row-column-body-item-box-input-list-item-wrapper"
+                                                             [ngStyle]="{'width': (10 / getObjKeysLength(item.listObj) * 10 - 2) + '%'}"
+                                                             *ngFor="let objItem of item.value[i]; index as j;">
+                                                            <input [type]="objItem.inputType"
+                                                                   [name]="item.label + '-' + objItem.label + '-' + i + '-' + j"
+                                                                   [(ngModel)]="objItem.value"
+                                                                   [attr.value]="objItem.value"
+                                                                   (ngModelChange)="onChangeObj()">
+                                                            <div class="labeling-block-row-column-body-item-box-input-list-item-label"
+                                                                 [ngClass]="{'labeling-block-row-column-body-item-box-input-list-item-label-hover': true}">
+                                                                {{preetyLabel(objItem.label)}}
+                                                            </div>
+                                                            <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="removeItemToList(item, i)">-</div>
+
+                                                        </div>
+                                                    </ng-container>
                                                 </div>
                                             </ng-container>
                                         </div>
