@@ -206,7 +206,7 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
                 }
             }
         }
-        if (this.data.isList) {
+        if (this.data && this.data.isList) {
             this.listObj = JSON.parse(JSON.stringify(this.obj));
             this.addToMainList();
         }
@@ -592,7 +592,7 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
     }
 
     onChangeObj(): void {
-        if (this.data.isList) {
+        if (this.data && this.data.isList) {
             const map = this.mainList.map((o) => this.getFinalObject(o));
             this.onChange.emit(map);
         } else {

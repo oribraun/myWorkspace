@@ -1,4 +1,5 @@
 <div class="ds-project-room" #ds_project_room
+     *ngIf="data && obj"
      [ngStyle]="mainCssObj">
     <div class="view"
          [ngClass]="{'view-with-url': data.url, 'animated-all': resetViewAnimate}"
