@@ -83,23 +83,23 @@
         }
       }
     },
-    "ds-project-room": {
+    "dynamic-labeling-room": {
       "projectType": "library",
-      "root": "projects/ds-project-room",
-      "sourceRoot": "projects/ds-project-room/src",
+      "root": "projects/dynamic-labeling-room",
+      "sourceRoot": "projects/dynamic-labeling-room/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/ds-project-room/ng-package.json"
+            "project": "projects/dynamic-labeling-room/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/ds-project-room/tsconfig.lib.prod.json"
+              "tsConfig": "projects/dynamic-labeling-room/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/ds-project-room/tsconfig.lib.json"
+              "tsConfig": "projects/dynamic-labeling-room/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -107,9 +107,9 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/ds-project-room/src/test.ts",
-            "tsConfig": "projects/ds-project-room/tsconfig.spec.json",
-            "karmaConfig": "projects/ds-project-room/karma.conf.js"
+            "main": "projects/dynamic-labeling-room/src/test.ts",
+            "tsConfig": "projects/dynamic-labeling-room/tsconfig.spec.json",
+            "karmaConfig": "projects/dynamic-labeling-room/karma.conf.js"
           }
         }
       }

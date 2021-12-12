@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, '../../coverage/ds-project-room'),
+      dir: require('path').join(__dirname, '../../coverage/dynamic-labeling-room'),
       subdir: '.',
       reporters: [
         { type: 'html' },

@@ -112,7 +112,7 @@ onDsProjectRoomChange(e) {
 }
 
 <div class="home">
-    <lib-ds-project-room
+    <lib-dynamic-labeling-room
         [data]="dsProjectRoomData"
         [obj]="dsProjectRoomObj"
         [templateType]="templateType"
@@ -120,7 +120,7 @@ onDsProjectRoomChange(e) {
         [viewCssObj]="viewCssObj"
         [formCssObj]="formCssObj"
         (onChange)="onDsProjectRoomChange($event)"
-    ></lib-ds-project-room>
+    ></lib-dynamic-labeling-room>
 </div>
 ```
 
@@ -129,7 +129,7 @@ onDsProjectRoomChange(e) {
 * this example change inputs background to red.
 ```angular2html
 &::ng-deep {
-        .ds-project-room {
+        .dynamic-labeling-room {
             .labeling {
                 .labeling-overflow {}
                 &-block {

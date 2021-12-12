@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DsProjectRoomComponent } from './ds-project-room.component';
+import { DynamicLabelingRoomComponent } from './dynamic-labeling-room.component';
 import {SafePipe} from './safe.pipe';
 import {HttpClientModule} from '@angular/common/http';
 
@@ -9,7 +9,7 @@ import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
     declarations: [
-        DsProjectRoomComponent,
+        DynamicLabelingRoomComponent,
         SafePipe
     ],
     imports: [
@@ -18,7 +18,7 @@ import {HttpClientModule} from '@angular/common/http';
         HttpClientModule
     ],
     exports: [
-        DsProjectRoomComponent
+        DynamicLabelingRoomComponent
     ]
 })
-export class DsProjectRoomModule { }
+export class DynamicLabelingRoomModule { }

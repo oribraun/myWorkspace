@@ -11,12 +11,12 @@ import {
 import {DOCUMENT, KeyValue} from '@angular/common';
 
 @Component({
-    selector: 'lib-ds-project-room',
-    templateUrl: './ds-project-room.component.html',
-    styleUrls: ['./ds-project-room.component.less'],
+    selector: 'lib-dynamic-labeling-room',
+    templateUrl: './dynamic-labeling-room.component.html',
+    styleUrls: ['./dynamic-labeling-room.component.less'],
     encapsulation: ViewEncapsulation.None
 })
-export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges {
+export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnChanges {
 
     @ViewChild('ds_project_room') dsProjectRoom: any;
     @ViewChild('iframe') iframe: any;

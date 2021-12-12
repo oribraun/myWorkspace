@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DsProjectRoomComponent } from './ds-project-room.component';
+import { DynamicLabelingRoomComponent } from './dynamic-labeling-room.component';
 
 describe('DsProjectRoomComponent', () => {
-  let component: DsProjectRoomComponent;
-  let fixture: ComponentFixture<DsProjectRoomComponent>;
+  let component: DynamicLabelingRoomComponent;
+  let fixture: ComponentFixture<DynamicLabelingRoomComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DsProjectRoomComponent ]
+      declarations: [ DynamicLabelingRoomComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DsProjectRoomComponent);
+    fixture = TestBed.createComponent(DynamicLabelingRoomComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
