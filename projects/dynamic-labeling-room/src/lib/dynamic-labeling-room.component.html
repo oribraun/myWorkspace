@@ -1,4 +1,4 @@
-<div class="dynamic-labeling-room" #ds_project_room
+<div class="dynamic-labeling-room" #dynamic_labeling_room
      *ngIf="data && obj"
      [ngStyle]="mainCssObj">
     <div class="view"
@@ -125,8 +125,11 @@
                                                  [ngClass]="{'labeling-block-row-column-body-item-box-input-label-hover': item.inputType === 'text'
                                           || item.inputType === 'textarea'
                                           || item.inputType === 'select'}">
-                                                {{preetyLabel(item.label)}}  <span *ngIf="item.inputType === 'text_list'" class="labeling-block-row-column-body-item-box-input-label-plus no-highlight"
-                                                                                   (click)="appendItemToList(item)">+</span>
+                                                <div class="labeling-block-row-column-body-item-box-input-label-text">
+                                                    {{preetyLabel(item.label)}}
+                                                    <span *ngIf="item.inputType === 'text_list'" class="labeling-block-row-column-body-item-box-input-label-plus no-highlight"
+                                                    (click)="appendItemToList(item)">+</span>
+                                                </div>
                                             </div>
                                             <ng-container *ngIf="item.inputType === 'text_list' && isArray(item.value)">
                                                 <div class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
@@ -151,7 +154,9 @@
                                                                    (ngModelChange)="onChangeObj()">
                                                             <div class="labeling-block-row-column-body-item-box-input-list-item-label"
                                                                  [ngClass]="{'labeling-block-row-column-body-item-box-input-list-item-label-hover': true}">
-                                                                {{preetyLabel(objItem.label)}}
+                                                                <div class="labeling-block-row-column-body-item-box-input-list-item-label-text">
+                                                                    {{preetyLabel(objItem.label)}}
+                                                                </div>
                                                             </div>
                                                             <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="removeItemToList(item, i)">-</div>
 

@@ -18,7 +18,7 @@ import {DOCUMENT, KeyValue} from '@angular/common';
 })
 export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnChanges {
 
-    @ViewChild('ds_project_room') dsProjectRoom: any;
+    @ViewChild('dynamic_labeling_room') dynamicLabelingRoom: any;
     @ViewChild('iframe') iframe: any;
     @ViewChild('f') form: any;
     private document: Document;
@@ -349,8 +349,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             const pos = this.getPointerPos(e, false);
             const moveX = pos.x - this.currentDrag[type].startPos.x;
             const moveY = pos.y - this.currentDrag[type].startPos.y;
-            const moveXPercent = moveX / this.dsProjectRoom.nativeElement.clientWidth * 100;
-            const moveYPercent = moveY / this.dsProjectRoom.nativeElement.clientHeight * 100;
+            const moveXPercent = moveX / this.dynamicLabelingRoom.nativeElement.clientWidth * 100;
+            const moveYPercent = moveY / this.dynamicLabelingRoom.nativeElement.clientHeight * 100;
             // if (this.currentDrag[type].onMove.currentPos === 'top') {
             //     moveYPercent = -moveYPercent;
             // }
