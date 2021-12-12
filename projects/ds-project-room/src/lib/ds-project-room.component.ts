@@ -537,7 +537,9 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
             this.onChangeObj();
         }
         if (changes.data && !changes.data.firstChange) {
-            this.listenToIframeLoad();
+            setTimeout(() => {
+                this.listenToIframeLoad();
+            });
         }
         if (changes.templateType && !changes.templateType.firstChange) {
             this.resetView();
