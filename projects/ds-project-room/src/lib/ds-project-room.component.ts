@@ -116,6 +116,9 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
         maxLeft: 100
     };
     public iframeLoading = false;
+    public mainList = [];
+    public listCurrentIndex = 0;
+    public listObj: any;
     @Input() mainCssObj;
     @Input() viewCssObj;
     @Input() formCssObj;
@@ -127,7 +130,7 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
         // showInIframe: true
         text: '',
         url: '',
-        showInIframe: false,
+        showInIframe: false
     };
     @Input() obj: DsProjectRoomBlock[] = [
         // {
@@ -180,18 +183,32 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
     }
 
     initObj(): void {
+        this.mainList = [];
+        this.listCurrentIndex = 0;
         for (const i in this.obj) {
             for (const j in this.obj[i].fields) {
                 if (this.obj[i].fields[j].inputType === 'checkbox') {
-                    this.obj[i].fields[j].value = 0;
+                    if (!this.obj[i].fields[j].value) {
+                        this.obj[i].fields[j].value = 0;
+                    }
                 } else if (this.obj[i].fields[j].inputType === 'text') {
-                    this.obj[i].fields[j].value = '';
+                    if (!this.obj[i].fields[j].value) {
+                        this.obj[i].fields[j].value = '';
+                    }
                 } else if (this.obj[i].fields[j].inputType === 'text_list') {
-                    this.obj[i].fields[j].value = [];
+                    if (!this.obj[i].fields[j].value) {
+                        this.obj[i].fields[j].value = [];
+                    }
                 } else {
-                    this.obj[i].fields[j].value = '';
+                    if (!this.obj[i].fields[j].value) {
+                        this.obj[i].fields[j].value = '';
+                    }
                 }
             }
+        }
+        if (this.data.isList) {
+            this.listObj = JSON.parse(JSON.stringify(this.obj));
+            this.addToMainList();
         }
     }
     ngOnInit(): void {
@@ -224,6 +241,43 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
             }
             return true;
         }
+    }
+
+    addToMainList(): void {
+        const obj = JSON.parse(JSON.stringify(this.listObj));
+        this.mainList.push(obj);
+        this.listCurrentIndex = this.mainList.length - 1;
+        this.obj = this.mainList[this.listCurrentIndex];
+        console.log('this.mainList', this.mainList);
+    }
+    removeFromMainList(index): void {
+        this.mainList.splice(index, 1);
+        console.log('this.listCurrentIndex', this.listCurrentIndex)
+        console.log('index', index)
+        if (this.listCurrentIndex > 0) {
+            this.listCurrentIndex--;
+        } else {
+            this.listCurrentIndex = 0;
+        }
+        this.obj = this.mainList[this.listCurrentIndex];
+    }
+    selectMainItem(index): void {
+        this.listCurrentIndex = index;
+        console.log('this.mainList[this.listCurrentIndex]', this.mainList[this.listCurrentIndex])
+        this.obj = this.mainList[this.listCurrentIndex];
+    }
+    getMainObjHeader(index): string {
+        let header =  this.data.listItemDefaultHeader + ' ' + (index + 1);
+        try {
+            const firstLabelValue = this.mainList[index][this.data.listObjIndex].fields[this.data.listFirstItemIndex].value || '';
+            const secondLabelValue = this.mainList[index][this.data.listObjIndex].fields[this.data.listSecondItemIndex].value || '';
+            if (firstLabelValue || secondLabelValue) {
+                header = firstLabelValue + (firstLabelValue ? ' ' : '') + secondLabelValue;
+            }
+        } catch (err) {
+            console.log(err)
+        }
+        return header;
     }
     appendItemToList(item): void {
         item.value.push('');
@@ -526,19 +580,24 @@ export class DsProjectRoomComponent implements OnInit, AfterViewInit, OnChanges 
     }
 
     onChangeObj(): void {
-        this.onChange.emit(this.getFinalObject());
+        if (this.data.isList) {
+            const map = this.mainList.map((o) => this.getFinalObject(o));
+            this.onChange.emit(map);
+        } else {
+            this.onChange.emit(this.getFinalObject(this.obj));
+        }
     }
 
-    getFinalObject(): any[] {
+    getFinalObject(currrentObj): any[] {
         const blocks = [];
-        for (const block of this.obj) {
+        for (const block of currrentObj) {
             const obj = {
                 blockName: block.blockName, fields: []
             };
             for (const field of block.fields) {
                 const val = field.value === undefined ?
                     (field.inputType === 'checkbox' ? 0 :
-                        (field.inputType === 'text_list' ? [] : '')
+                            (field.inputType === 'text_list' ? [] : '')
                     ) : field.value;
                 obj.fields.push({
                     label: field.label, value: field.value
@@ -604,6 +663,12 @@ export class DsProjectRoomData {
     text = '';
     url = '';
     showInIframe = false;
+    isList?: boolean;
+    listHeader?: string;
+    listItemDefaultHeader?: string;
+    listObjIndex?: number;
+    listFirstItemIndex?: number;
+    listSecondItemIndex?: number;
 
     constructor(obj?) {
         if (obj) {

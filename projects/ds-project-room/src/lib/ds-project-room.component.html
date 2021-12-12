@@ -53,6 +53,17 @@
                  (touchstart)="onMouseDown($event, 'labeling', 'left, right')"></div>
             <div class="labeling-overflow"
                  [style]="formCssObj">
+                <div class="labeling-header" *ngIf="data.isList">
+                    {{data.listHeader}} <span class="labeling-header-plus no-highlight"
+                    (click)="addToMainList()">+</span>
+                    <br>
+                    <div class="labeling-header-item" *ngFor="let item of mainList; let i = index"
+                    (click)="selectMainItem(i)"
+                    [ngClass]="{'labeling-header-item-selected': listCurrentIndex === i}">
+                        {{getMainObjHeader(i)}} <span *ngIf="i > 0" class="labeling-header-item-minus no-highlight" (click)="removeFromMainList(i)">x</span>
+
+                    </div>
+                </div>
                 <div class="labeling-block" *ngFor="let block of obj">
                     <div class="labeling-block-row">
                         <div class="labeling-block-row-column">
@@ -87,6 +98,7 @@
                                                    [disabled]="checkDepend(block.fields, item)">
                                             <input *ngIf="item.inputType === 'checkbox'"
                                                    [type]="item.inputType"
+                                                   [checked]="item.value === 1"
                                                    [ngStyle]="item.css"
                                                    [name]="item.label"
                                                    (change)="!item.value ? item.value = 1 : item.value = 0; onChangeObj();">

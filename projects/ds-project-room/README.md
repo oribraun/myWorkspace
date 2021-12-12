@@ -62,7 +62,13 @@ dsProjectRoomData = {
     text: '',
     url: 'https://polkadotmama.org/board-of-directors/',
     // url: 'https://www.apple.com/leadership/',
-    showInIframe: true
+    showInIframe: true,
+    isList: true,
+    listHeader: 'People',
+    listItemDefaultHeader: 'Person',
+    listObjIndex: 1,
+    listFirstItemIndex: 1,
+    listSecondItemIndex: 2
 };
 dsProjectRoomObj: any = [
     {
@@ -107,7 +113,6 @@ onDsProjectRoomChange(e) {
 
 <div class="home">
     <lib-ds-project-room
-        [uniqueId]="1"
         [data]="dsProjectRoomData"
         [obj]="dsProjectRoomObj"
         [templateType]="templateType"
