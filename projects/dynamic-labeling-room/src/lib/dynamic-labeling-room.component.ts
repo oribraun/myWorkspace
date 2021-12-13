@@ -9,6 +9,7 @@ import {
     ViewChild, ViewEncapsulation
 } from '@angular/core';
 import {DOCUMENT, KeyValue} from '@angular/common';
+import {NgForm} from '@angular/forms';
 
 @Component({
     selector: 'lib-dynamic-labeling-room',
@@ -20,8 +21,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     @ViewChild('dynamic_labeling_room') dynamicLabelingRoom: any;
     @ViewChild('iframe') iframe: any;
-    @ViewChild('f') form: any;
+    @ViewChild('form') form: NgForm;
     private document: Document;
+    public formSubmitted = false;
     public dragStarted = false;
     public resetViewAnimate = false;
     public changeTemplateAnimation = false;
@@ -248,7 +250,17 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         this.mainList.push(obj);
         this.listCurrentIndex = this.mainList.length - 1;
         this.obj = this.mainList[this.listCurrentIndex];
+        this.formSubmitted = false;
         // console.log('this.mainList', this.mainList);
+    }
+
+    addToMainListIfFormIsValid(): void {
+        if (this.form && !(this.formSubmitted && this.form.invalid)) {
+            this.formSubmitted = false;
+            this.addToMainList();
+        } else {
+            alert('please fill all required data before adding ' + this.data.listHeader);
+        }
     }
     removeFromMainList(index): void {
         this.mainList.splice(index, 1);
@@ -263,7 +275,6 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
     selectMainItem(index): void {
         this.listCurrentIndex = index;
-        console.log('this.mainList[this.listCurrentIndex]', this.mainList[this.listCurrentIndex])
         this.obj = this.mainList[this.listCurrentIndex];
     }
     getMainObjHeader(index): string {
@@ -275,7 +286,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 header = firstLabelValue + (firstLabelValue ? ' ' : '') + secondLabelValue;
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
         return header;
     }
@@ -413,8 +424,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             y = e.touches[0].clientY;
         }
         return {
-            x: x,
-            y: y
+            x,
+            y
         };
     }
 
@@ -592,11 +603,15 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     onChangeObj(): void {
-        if (this.data && this.data.isList) {
-            const map = this.mainList.map((o) => this.getFinalObject(o));
-            this.onChange.emit(map);
-        } else {
-            this.onChange.emit(this.getFinalObject(this.obj));
+        if (this.form) {
+            this.formSubmitted = true;
+            this.form.onSubmit(undefined);
+            if (this.data && this.data.isList) {
+                const map = this.mainList.map((o) => this.getFinalObject(o));
+                this.onChange.emit(map);
+            } else {
+                this.onChange.emit(this.getFinalObject(this.obj));
+            }
         }
     }
 
@@ -656,6 +671,8 @@ export class DsProjectRoomBlockField {
     description = '';
     value: any = '';
     inputType = '';
+    required?: boolean;
+    pattern?: string;
     listObj?: any;
     depend: string;
     dependOnValue: any;
