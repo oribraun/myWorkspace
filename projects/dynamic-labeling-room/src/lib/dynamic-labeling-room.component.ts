@@ -275,15 +275,25 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
     selectMainItem(index): void {
         this.listCurrentIndex = index;
+        console.log('this.mainList[this.listCurrentIndex]', this.mainList[this.listCurrentIndex]);
         this.obj = this.mainList[this.listCurrentIndex];
     }
     getMainObjHeader(index): string {
         let header =  this.data.listItemDefaultHeader + ' ' + (index + 1);
         try {
-            const firstLabelValue = this.mainList[index][this.data.listObjIndex].fields[this.data.listFirstItemIndex].value || '';
-            const secondLabelValue = this.mainList[index][this.data.listObjIndex].fields[this.data.listSecondItemIndex].value || '';
+            let firstLabelValue = '';
+            let secondLabelValue = '';
+            if (this.data.listFirstItemIndex >= 0) {
+                firstLabelValue = this.mainList[index][this.data.listObjIndex].fields[this.data.listFirstItemIndex].value;
+            }
+            if (this.data.listSecondItemIndex >= 0) {
+                secondLabelValue = this.mainList[index][this.data.listObjIndex].fields[this.data.listSecondItemIndex].value;
+            }
             if (firstLabelValue || secondLabelValue) {
-                header = firstLabelValue + (firstLabelValue ? ' ' : '') + secondLabelValue;
+                if (secondLabelValue) {
+                    firstLabelValue += ' ';
+                }
+                header = firstLabelValue + secondLabelValue;
             }
         } catch (err) {
             console.log(err);
@@ -424,8 +434,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             y = e.touches[0].clientY;
         }
         return {
-            x,
-            y
+            x: x,
+            y: y
         };
     }
 
