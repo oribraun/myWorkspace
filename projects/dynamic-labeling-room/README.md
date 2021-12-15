@@ -1,4 +1,4 @@
-# DsProjectRoom
+# Dynamic Labeling Room
 
 * structure of input obj
 ```angular2html
