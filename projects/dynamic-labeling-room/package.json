@@ -2,8 +2,8 @@
   "name": "dynamic-labeling-room",
   "version": "0.0.3",
   "peerDependencies": {
-    "@angular/common": "^12.1.0",
-    "@angular/core": "^12.1.0"
+    "@angular/common": "^13.1.1",
+    "@angular/core": "^13.1.1"
   },
   "dependencies": {
     "tslib": "^2.2.0"

@@ -2,8 +2,8 @@
   "name": "angular-dynamic-template",
   "version": "0.0.19",
   "peerDependencies": {
-    "@angular/common": "^12.1.4",
-    "@angular/core": "^12.1.4"
+    "@angular/common": "^13.1.1",
+    "@angular/core": "^13.1.1"
   },
   "dependencies": {
     "tslib": "^2.0.0"
