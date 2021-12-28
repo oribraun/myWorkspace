@@ -1,0 +1,48 @@
+<div class="buttons">
+    <button (click)="changedsProjectRoomData()">text</button>
+    <button (click)="changedsProjectRoomObj()">obj</button>
+    <button (click)="change()">url</button>
+    <button (click)="changedsProjectRoomData();changedsProjectRoomObj()">both</button>
+<button (click)="changeTemplate();">template</button>
+</div>
+
+<div class="home">
+    <lib-dynamic-labeling-room
+        [data]="dsProjectRoomData"
+        [obj]="dsProjectRoomObj"
+        [templateType]="templateType"
+        [mainCssObj]="mainCssObj"
+        [viewCssObj]="viewCssObj"
+        [formCssObj]="formCssObj"
+        (onChange)="onDsProjectRoomChange($event)"
+    ></lib-dynamic-labeling-room>
+</div>
+<!--<lib-dynamic-template-->
+<!--  [settings]="settings"-->
+<!--&gt;</lib-dynamic-template>-->
+<!--<button (click)="click()">click me {{test}}</button>-->
+
+<!--Vertical {{from}}: {{to}}-->
+
+<!--Horizontal {{fromHorizontal}}: {{toHorizontal}}-->
+<!--<div class="scroll-box">-->
+<!--  <div class="infinity-scroll"-->
+<!--       [angularInfinityScroll]-->
+<!--       [angularInfinityScrollDownDistance]="50"-->
+<!--       [angularInfinityScrollUpDistance]="50"-->
+<!--       [angularInfinityScrollLeftDistance]="50"-->
+<!--       [angularInfinityScrollRightDistance]="50"-->
+<!--       [angularInfinityScrollDisabled]=""-->
+<!--       (scrolledDown)="onScrollBottom()"-->
+<!--       (scrolledUp)="onScrollUp()"-->
+<!--       (scrolledLeft)="onScrollLeft()"-->
+<!--       (scrolledRight)="onScrollRight()"-->
+<!--  >-->
+<!--    <table>-->
+<!--      <tr class="item-{{i}}" *ngFor="let item of array | slice: from: to; let i = index">-->
+<!--        <td>{{from + i}}</td>-->
+<!--        <td class="item" *ngFor="let j of item | keyvalue  | slice: fromHorizontal: toHorizontal">{{j.value}}</td>-->
+<!--      </tr>-->
+<!--    </table>-->
+<!--  </div>-->
+<!--</div>-->
