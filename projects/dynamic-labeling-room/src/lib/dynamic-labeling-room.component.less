@@ -3,6 +3,7 @@
     font-size: 14px;
     position: relative;
     overflow: hidden;
+    border: solid 1px;
     .labeling {
         position: absolute;
         top:50%;
@@ -477,7 +478,7 @@
     .floating-template-button {
         position: absolute;
         top: 5px;
-        left:5px;
+        right:5px;
         //top: 50%;
         //left:0;
         //transform: translateY(-50%);
@@ -524,6 +525,168 @@
         //left: 50%;
         //top: 100%;
         //transform: translateY(-100%) translateX(-50%);
+    }
+    .menu {
+        @borderStartColor: #79d6d7;
+        @borderHoverColor: #004a4b;
+        @padding: 5;
+        @animateTime: .3s;
+        @iconWidth: 20;
+        @iconBorder: 2;
+        @iconMargin: 4;
+        @numIcons: 3;
+        position: absolute;
+        top: 0;
+        right:0;
+        padding: unit(@padding, px);
+        z-index: 2;
+        overflow: hidden;
+        &:before {
+            content: '';
+            position: absolute;
+            top:0;
+            right:0;
+            transition: all @animateTime ease-in-out;
+            border: solid 5px @borderStartColor;
+            border-left: solid 5px transparent;
+            border-bottom: solid 5px transparent;
+        }
+        .inner-menu {
+            overflow: hidden;
+            position: relative;
+            transition: all @animateTime ease-in-out;
+            right: unit(-1* (@numIcons * @iconWidth + @numIcons * @iconMargin * 2 + @padding), px);
+            [class*=d-icon-] {
+                display: inline-block;
+                vertical-align: middle;
+                position: relative;
+                //font-style: normal;
+                //color: currentColor;
+                //text-align: left;
+                //text-indent: -9999px;
+                //direction: ltr;
+                &:before, &:after {
+                    content: '';
+                    pointer-events: none;
+                }
+            }
+            i {
+                transition: all .2s;
+            }
+            .d-icon-sync {
+                width: unit(@iconWidth, px);
+                height: unit(@iconWidth, px);
+                border: unit(@iconBorder, px) solid;
+                border-right-color: transparent;
+                box-sizing: border-box;
+                &:before {
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    border-width: 6px;
+                    border-style: solid;
+                    border-bottom-color: transparent;
+                    border-left-color: transparent;
+                    border-right-color: transparent;
+                    transform: rotate(-45deg);
+                    right: -7px;
+                    top: 0;
+                }
+                &:after {
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    border-width: 6px;
+                    border-style: solid;
+                    border-bottom-color: transparent;
+                    border-left-color: transparent;
+                    border-right-color: transparent;
+                    transform: rotate(135deg);
+                    left: -7px;
+                    bottom: 0;
+                }
+            }
+            .d-icon-expend {
+                width: unit(@iconWidth, px);
+                height: unit(@iconWidth, px);
+                border: transparent solid 4px;
+                border-right-color: transparent;
+                box-sizing: border-box;
+                .line {
+                    position: absolute;
+                    top: -3px;
+                    bottom: -3px;
+                    right: 5px;
+                    transform: rotate(45deg);
+                    background: unit(@iconBorder, px);
+                    border-width: 0.5px;
+                    border-style: solid;
+                }
+                &:before {
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    border-width: 4px;
+                    border-style: solid;
+                    border-top-color: transparent;
+                    border-left-color: transparent;
+                    border-right-color: transparent;
+                    transform: rotate(45deg);
+                    right: -7px;
+                    top: -7px;
+                }
+                &:after {
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    border-width: 4px;
+                    border-style: solid;
+                    border-bottom-color: transparent;
+                    border-left-color: transparent;
+                    border-right-color: transparent;
+                    transform: rotate(45deg);
+                    left: -7px;
+                    bottom: -7px;
+                }
+            }
+            .d-icon-reset {
+                width: unit(@iconWidth, px);
+                height: unit(@iconWidth, px);
+                border-width: unit(@iconBorder, px);
+                border-style: solid;
+                &:before {
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    left: -7px;
+                    bottom: 0;
+                    border-width: 6px;
+                    border-style: solid;
+                    border-left-color: transparent;
+                    border-bottom-color: transparent;
+                    border-right-color: transparent;
+                    -webkit-transform: rotate(135deg);
+                    transform: rotate(135deg);
+                }
+            }
+            .d-icon-reset, .d-icon-sync,.d-icon-expend  {
+                border-radius: 50%;
+                margin: unit(@iconMargin, px);
+                border-left-color: transparent;
+                &.d-icon-animate {
+                    animation: lds-hourglass 1s infinite;
+                }
+            }
+        }
+        &:hover, &-hover-animate {
+            &:before {
+                border-top-color: @borderHoverColor;
+                border-right-color: @borderHoverColor;
+            }
+            .inner-menu {
+                right: 0;
+            }
+        }
     }
 }
 

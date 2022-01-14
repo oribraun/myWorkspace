@@ -245,11 +245,18 @@
             </div>
         </div>
     </form>
-    <!--    <div class="floating-template-button"-->
-    <!--         [ngClass]="{'floating-template-button-vertical': templateType === 2}"-->
-    <!--         (click)="changeTemplateType()">-->
-    <!--        <div class="lds-hourglass"-->
-    <!--             [title]="templateType === 1 ? 'vertical' : 'horizontal'"-->
-    <!--        [ngClass]="{'animate': changeTemplateAnimation}"></div>-->
-    <!--    </div>-->
+<!--    <div class="floating-template-button"-->
+<!--         [ngClass]="{'floating-template-button-vertical': templateType === 2}"-->
+<!--         (click)="changeTemplateType()">-->
+<!--        <div class="lds-hourglass"-->
+<!--             [title]="templateType === 1 ? 'vertical' : 'horizontal'"-->
+<!--        [ngClass]="{'animate': changeTemplateAnimation}"></div>-->
+<!--    </div>-->
+  <div class="menu" [ngClass]="{'menu-hover-animate': animateMenu}">
+    <div class="inner-menu">
+      <i class="d-icon-sync" title="change template" (click)="changeTemplateType()" [ngClass]="{'d-icon-animate': changeTemplateAnimation}"></i>
+<!--      <i class="d-icon-reset" [ngClass]="{'d-icon-animate': false}"></i>-->
+      <i class="d-icon-expend" title="full screen" (click)="expand()" [ngClass]="{'d-icon-animate': false}"><span class="line"></span></i>
+    </div>
+  </div>
 </div>

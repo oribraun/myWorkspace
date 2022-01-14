@@ -26,6 +26,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     public formSubmitted = false;
     public dragStarted = false;
     public resetViewAnimate = false;
+    public animateMenu = false;
+    public animateMenuTimeout;
     public changeTemplateAnimation = false;
     public changeTemplateAnimationTimeout;
     public currentDrag;
@@ -116,6 +118,17 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         maxTop: 100,
         minLeft: 0,
         maxLeft: 100
+    };
+    public expandDetails: any = {
+        expended: false,
+        parent: {},
+        original: {},
+        css: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+        }
     };
     public iframeLoading = false;
     public mainList = [];
@@ -215,6 +228,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
     ngOnInit(): void {
         this.resetDrag();
+        setTimeout(() => {
+            this.firstAnimateMenu()
+        });
     }
 
     ngAfterViewInit(): void {
@@ -609,7 +625,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         this.changeTemplateAnimation = true;
         this.changeTemplateAnimationTimeout = setTimeout(() => {
             this.changeTemplateAnimation = false;
-        }, 1200);
+        }, 1000);
     }
 
     onChangeObj(): void {
@@ -647,6 +663,78 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     getObjKeysLength(listObj): number {
         return Object.keys(listObj).length;
+    }
+
+    firstAnimateMenu() {
+        clearTimeout(this.animateMenuTimeout);
+        this.animateMenu = true;
+        this.animateMenuTimeout = setTimeout(() => {
+            this.animateMenu = false;
+        }, 300 * 4);
+    }
+    expand() {
+        const el = this.dynamicLabelingRoom.nativeElement;
+        const rect = el.getBoundingClientRect();
+        const animation = 500;
+        if (!this.expandDetails.expended) {
+            const parent = el.parentElement;
+            this.expandDetails.parent = parent;
+            this.expandDetails.original = rect;
+            el.style.position = 'fixed';
+            el.style.background = '#fff';
+            el.style.zIndex = '9999';
+            el.style.top = rect.top + 'px';
+            el.style.left = rect.left + 'px';
+            el.style.width = rect.width + 'px';
+            el.style.height = rect.height + 'px';
+            requestAnimationFrame(() => {
+                el.style.transition = 'all ' + animation + 'ms ease-in-out';
+                el.style.top = '0';
+                el.style.left = '0';
+                el.style.width = '100%';
+                el.style.height = '100%';
+                this.expandDetails.expended = true;
+            });
+        } else {
+            requestAnimationFrame(() => {
+                el.style.top = this.expandDetails.original.top + 'px';
+                el.style.left = this.expandDetails.original.left + 'px';
+                el.style.width = this.expandDetails.original.width + 'px';
+                el.style.height = this.expandDetails.original.height + 'px';
+                setTimeout(() => {
+                    el.style.transition = '';
+                    el.style.position = '';
+                    el.style.background = '';
+                    el.style.zIndex = '';
+                    el.style.top = '';
+                    el.style.left = '';
+                    el.style.width = '';
+                    el.style.height = '';
+                    this.expandDetails.expended = false;
+                }, animation);
+            });
+        }
+        // el.animate([
+        //     {top: '0'},
+        //     {left: '0'},
+        //     {width: '100%'},
+        //     {height: '100%'},
+        // ], {
+        //   duration: 1500,
+        //   fill: 'forwards',
+        // });
+        // let transform = 'translateY(-' + rect.top + 'px)';
+        // transform += ' translateX(-' + rect.left + 'px)';
+        // transform += ' translateX(-' + rect.left + 'px)';
+        // el.animate([
+        //   // keyframes
+        //   { transform: 'translateY(-' + rect.top + 'px)' + ' translateX(-' + rect.left + 'px)' }
+        // ], {
+        //   // timing options
+        //   duration: 1000,
+        //   easing: 'ease-in-out',
+        //   fill: 'forwards',
+        // });
     }
 }
 
