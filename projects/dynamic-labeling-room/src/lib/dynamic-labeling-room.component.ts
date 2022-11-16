@@ -180,6 +180,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         // }
     ];
     @Output() onChange: EventEmitter<any> = new EventEmitter<any>();
+    public objErrMessage = '';
     constructor(
         @Inject(DOCUMENT) document?: any
     ) {
@@ -198,8 +199,18 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     initObj(): void {
+        this.resetObjError();
         this.mainList = [];
         this.listCurrentIndex = 0;
+        const mainObj: any = this.handleInitObjIsList();
+        if (!this.obj || !this.obj.length) {
+            this.setObjError('obj have no items - please make sure obj has at least one DsProjectRoomBlock item');
+            return;
+        }
+        if (this.obj.length && !this.obj[0].fields) {
+            this.setObjError('obj have no structure - please make sure obj has at least one DsProjectRoomBlock item');
+            return;
+        }
         for (const i in this.obj) {
             for (const j in this.obj[i].fields) {
                 if (this.obj[i].fields[j].inputType === 'checkbox') {
@@ -222,8 +233,50 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             }
         }
         if (this.data && this.data.isList) {
-            this.listObj = JSON.parse(JSON.stringify(this.obj));
-            this.addToMainList();
+            this.setUpListObj();
+            this.addToMainList(this.listObj);
+            this.cleanListObj();
+            this.addToListInitObj(mainObj);
+        }
+    }
+
+    handleInitObjIsList() {
+        let returnObj = [];
+        const mainObj: any = this.obj;
+        if (mainObj.length && mainObj[0].length) {
+            this.obj = mainObj[0];
+            mainObj.shift();
+            returnObj = mainObj;
+        }
+        return returnObj;
+    }
+
+    addToListInitObj(mainObj: DsProjectRoomBlock[]) {
+        if (mainObj && mainObj.length) {
+            for (const o of mainObj) {
+                this.addToMainList(o);
+            }
+            this.listCurrentIndex = 0;
+            this.obj = this.mainList[this.listCurrentIndex];
+        }
+    }
+
+    setUpListObj() {
+        this.listObj =  JSON.parse(JSON.stringify(this.obj));
+    }
+    cleanListObj() {
+        for (const i in this.listObj) {
+            for (const j in this.listObj[i].fields) {
+                if (this.listObj[i].fields[j].inputType === 'checkbox') {
+                    this.listObj[i].fields[j].value = 0;
+                } else if (this.listObj[i].fields[j].inputType === 'text') {
+                    this.listObj[i].fields[j].value = '';
+                } else if (this.listObj[i].fields[j].inputType === 'text_list') {
+                    this.listObj[i].fields[j].value = [];
+                } else {
+                    this.listObj[i].fields[j].value = '';
+                }
+            }
         }
     }
     ngOnInit(): void {
@@ -261,8 +314,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
 
-    addToMainList(): void {
-        const obj = JSON.parse(JSON.stringify(this.listObj));
+    addToMainList(listObj): void {
+        const obj = JSON.parse(JSON.stringify(listObj));
         this.mainList.push(obj);
         this.listCurrentIndex = this.mainList.length - 1;
         this.obj = this.mainList[this.listCurrentIndex];
@@ -273,7 +326,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     addToMainListIfFormIsValid(): void {
         if (this.form && !(this.formSubmitted && this.form.invalid)) {
             this.formSubmitted = false;
-            this.addToMainList();
+            this.addToMainList(this.listObj);
         } else {
             alert('please fill all required data before adding ' + this.data.listHeader);
         }
@@ -295,14 +348,22 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         this.obj = this.mainList[this.listCurrentIndex];
     }
     getMainObjHeader(index): string {
-        let header =  this.data.listItemDefaultHeader + ' ' + (index + 1);
+        let header =  (this.data.listItemDefaultHeader ? this.data.listItemDefaultHeader + ' ' : 'Item ') + (index + 1);
         try {
             let firstLabelValue = '';
             let secondLabelValue = '';
-            if (this.data.listFirstItemIndex >= 0) {
+            if (this.data.listFirstItemIndex >= 0
+                && this.mainList[index]
+                && this.mainList[index][this.data.listObjIndex]
+                && this.mainList[index][this.data.listObjIndex].fields
+                && this.mainList[index][this.data.listObjIndex].fields[this.data.listFirstItemIndex]) {
                 firstLabelValue = this.mainList[index][this.data.listObjIndex].fields[this.data.listFirstItemIndex].value;
             }
-            if (this.data.listSecondItemIndex >= 0) {
+            if (this.data.listSecondItemIndex >= 0
+                && this.mainList[index]
+                && this.mainList[index][this.data.listObjIndex]
+                && this.mainList[index][this.data.listObjIndex].fields
+                && this.mainList[index][this.data.listObjIndex].fields[this.data.listSecondItemIndex]) {
                 secondLabelValue = this.mainList[index][this.data.listObjIndex].fields[this.data.listSecondItemIndex].value;
             }
             if (firstLabelValue || secondLabelValue) {
@@ -339,6 +400,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         return 0;
     }
     preetyLabel(label): string {
+        if (!label) {
+            return;
+        }
         const str =  label.replace(/_/g, ' ').replace(/-/g, ' ');
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
@@ -633,16 +697,27 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             this.formSubmitted = true;
             this.form.onSubmit(undefined);
             if (this.data && this.data.isList) {
+                const isValid = this.checkValidList();
                 const map = this.mainList.map((o) => this.getFinalObject(o));
-                this.onChange.emit(map);
+                const obj = {
+                    obj: this.mainList,
+                    valid: isValid,
+                    cleanBlocks: map,
+                };
+                this.onChange.emit(obj);
             } else {
-                this.onChange.emit(this.getFinalObject(this.obj));
+                const obj = {
+                    obj: this.obj,
+                    valid: !this.form.invalid,
+                    cleanBlocks: this.getFinalObject(this.obj)
+                };
+                this.onChange.emit(obj);
             }
         }
     }
 
     getFinalObject(currrentObj): any[] {
-        const blocks = [];
+        const cleanBlocks = [];
         for (const block of currrentObj) {
             const obj = {
                 blockName: block.blockName, fields: []
@@ -652,13 +727,31 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                     (field.inputType === 'checkbox' ? 0 :
                             (field.inputType === 'text_list' ? [] : '')
                     ) : field.value;
-                obj.fields.push({
-                    label: field.label, value: field.value
-                });
+                if (field.value.length) {
+                    obj.fields.push({
+                        label: field.label, value: field.value
+                    });
+                }
             }
-            blocks.push(obj);
+            cleanBlocks.push(obj);
         }
-        return blocks;
+        return cleanBlocks;
+    }
+
+    checkValidList(): boolean {
+        const cleanBlocks = [];
+        let valid = true;
+        for (const currentObj of this.mainList) {
+            for (const block of currentObj) {
+                for (const field of block.fields) {
+                    if (!field.value && field.required) {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+        }
+        return valid;
     }
 
     getObjKeysLength(listObj): number {
@@ -736,6 +829,13 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         //   fill: 'forwards',
         // });
     }
+
+    setObjError(err) {
+        this.objErrMessage = err;
+    }
+    resetObjError() {
+        this.objErrMessage = '';
+    }
 }
 
 export class DsProjectRoomBlock {
@@ -797,6 +897,7 @@ export class DsProjectRoomData {
     showInIframe = false;
     isList?: boolean;
     listHeader?: string;
+    listHeaderFixed?: boolean;
     listItemDefaultHeader?: string;
     listObjIndex?: number;
     listFirstItemIndex?: number;

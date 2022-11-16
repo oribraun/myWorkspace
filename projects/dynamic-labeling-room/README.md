@@ -64,11 +64,12 @@ dsProjectRoomData = {
     // url: 'https://www.apple.com/leadership/',
     showInIframe: true,
     isList: true,
-    listHeader: 'People',
-    listItemDefaultHeader: 'Person',
-    listObjIndex: 1,
-    listFirstItemIndex: 1,
-    listSecondItemIndex: 2
+    // only needed when isList is true
+    listHeader: 'People', // this will be the headline for the list
+    listItemDefaultHeader: 'Person', // when isList is true this will be the default name presented for item in list
+    listObjIndex: 1, // this will be the block index from (dsProjectRoomObj) to present as header when filled
+    listFirstItemIndex: 1, // this will be the first field index in listObjIndex(the selected block index) to present as header when filled
+    listSecondItemIndex: 2 // this will be the second field index in listObjIndex(the selected block index) to present as header when filled
 };
 dsProjectRoomObj: any = [
     {
