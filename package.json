@@ -6,8 +6,8 @@
     "start": "ng serve",
     "start-port": "ng serve --port 4001",
     "build": "ng build",
-    "build-project": "ng build --project dynamic-template",
-    "publish-project": "cd dist/dynamic-template & npm publish",
+    "build-project" : "ng build --project dynamic-labeling-room",
+    "publish-project": "cd dist/dynamic-labeling-room & npm publish",
     "test": "ng test",
     "lint": "ng lint"
   },

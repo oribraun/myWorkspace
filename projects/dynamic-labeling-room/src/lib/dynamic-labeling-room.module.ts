@@ -3,7 +3,6 @@ import {FormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DynamicLabelingRoomComponent } from './dynamic-labeling-room.component';
 import {SafePipe} from './safe.pipe';
-import {HttpClientModule} from '@angular/common/http';
 
 
 
@@ -14,8 +13,7 @@ import {HttpClientModule} from '@angular/common/http';
     ],
     imports: [
         CommonModule,
-        FormsModule,
-        HttpClientModule
+        FormsModule
     ],
     exports: [
         DynamicLabelingRoomComponent
