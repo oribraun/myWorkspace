@@ -60,7 +60,7 @@
                     <br>
                     <div class="labeling-header-item no-highlight" *ngFor="let item of mainList; let i = index"
                          (click)="selectMainItem(i)"
-                         [ngClass]="{'labeling-header-item-selected': listCurrentIndex === i}">
+                         [ngClass]="{'labeling-header-item-selected': listCurrentIndex === i, 'labeling-header-item-invalid': mainList[i].isValid !== undefined && !mainList[i].isValid}">
                         {{getMainObjHeader(i)}} <span *ngIf="mainList.length > 1" class="labeling-header-item-minus no-highlight" (click)="removeFromMainList(i)">x</span>
 
                     </div>

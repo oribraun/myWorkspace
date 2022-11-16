@@ -179,7 +179,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         //     ],
         // }
     ];
-    @Output() onChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onChange: EventEmitter<OutputObj> = new EventEmitter<OutputObj>();
     public objErrMessage = '';
     constructor(
         @Inject(DOCUMENT) document?: any
@@ -697,9 +697,12 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             this.formSubmitted = true;
             this.form.onSubmit(undefined);
             if (this.data && this.data.isList) {
+                if (this.mainList[this.listCurrentIndex]) {
+                    this.mainList[this.listCurrentIndex].isValid = !this.form.invalid;
+                }
                 const isValid = this.checkValidList();
                 const map = this.mainList.map((o) => this.getFinalObject(o));
-                const obj = {
+                const obj: OutputObj = {
                     obj: this.mainList,
                     valid: isValid,
                     cleanBlocks: map,
@@ -843,6 +846,7 @@ export class DsProjectRoomBlock {
     blockDesc = '';
     numColumns: 2;
     fields: DsProjectRoomBlockField[] = [];
+    isValid = true;
 
     constructor(obj?) {
         if (obj) {
@@ -912,4 +916,10 @@ export class DsProjectRoomData {
             }
         }
     }
+}
+
+class OutputObj {
+    obj: DsProjectRoomBlock | DsProjectRoomBlock[];
+    cleanBlocks: any | any[];
+    valid: boolean;
 }

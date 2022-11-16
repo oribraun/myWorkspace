@@ -16,10 +16,6 @@
             overflow-y: auto;
             overflow-x: hidden;
             height: 100%;
-            .labeling-header-fixed {
-            }
-            .labeling-block-fixed {
-            }
         }
         &-block {
             position: relative;
@@ -286,6 +282,9 @@
                     }
                 }
             }
+            &-fixed {
+                position: relative;
+            }
         }
         &-header {
             position: relative;
@@ -320,6 +319,12 @@
                 &-selected {
                     box-shadow: 0 0 10px #000000;
                 }
+                &-invalid {
+                    color: #f80000;
+                }
+            }
+            &-fixed {
+                position: relative;
             }
         }
     }
