@@ -93,7 +93,7 @@
                                                 <input *ngIf="item.inputType === 'text' || item.inputType === 'number' || item.inputType === 'email'"
                                                        [type]="item.inputType"
                                                        [ngStyle]="item.css"
-                                                       [name]="item.label"
+                                                       [name]="block.blockName + '_' + item.label"
                                                        [required]="item.required"
                                                        [pattern]="item.pattern"
                                                        [(ngModel)]="item.value"
