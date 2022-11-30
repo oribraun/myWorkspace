@@ -108,7 +108,7 @@
                                                        [disabled]="checkDepend(block.fields, item)">
                                                 <input *ngIf="item.inputType === 'checkbox'"
                                                        [type]="item.inputType"
-                                                       [ngModel]="item.value"
+                                                       [checked]="item.value == 1"
                                                        [ngStyle]="item.css"
                                                        [name]="item.label"
                                                        [required]="item.required"
