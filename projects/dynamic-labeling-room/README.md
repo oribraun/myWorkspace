@@ -66,6 +66,7 @@ dsProjectRoomData = {
     isList: true,
     // only needed when isList is true
     listHeader: 'People', // this will be the headline for the list
+    listHeaderFixed?: boolean; // will set records header to be fixed
     listItemDefaultHeader: 'Person', // when isList is true this will be the default name presented for item in list
     listObjIndex: 1, // this will be the block index from (dsProjectRoomObj) to present as header when filled
     listFirstItemIndex: 1, // this will be the first field index in listObjIndex(the selected block index) to present as header when filled

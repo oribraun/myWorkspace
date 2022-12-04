@@ -21,6 +21,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     @ViewChild('dynamic_labeling_room') dynamicLabelingRoom: any;
     @ViewChild('iframe') iframe: any;
+    @ViewChild('labelingHeader') labelingHeader: any;
+    @ViewChild('labelingBody') labelingBody: any;
     @ViewChild('form') form: NgForm;
     private document: Document;
     public formSubmitted = false;
@@ -240,6 +242,19 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
 
+    setListFixedHeader() {
+        const item = this.labelingHeader.nativeElement;
+        const style = getComputedStyle(item);
+        const headerHeight = this.labelingHeader.nativeElement.clientHeight;
+        const h = headerHeight + parseFloat(style.marginTop) + parseFloat(style.marginBottom);
+        console.log('asf', h)
+        this.labelingBody.nativeElement.style.marginTop = h + 'px';
+    }
+
+    unsetListFixedHeader() {
+        this.labelingBody.nativeElement.style.marginTop = ''
+    }
+
     handleInitObjIsList() {
         let returnObj = [];
         const mainObj: any = this.obj;
@@ -320,6 +335,11 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         this.listCurrentIndex = this.mainList.length - 1;
         this.obj = this.mainList[this.listCurrentIndex];
         this.formSubmitted = false;
+        if (this.data.listHeaderFixed) {
+            setTimeout(() => {
+                this.setListFixedHeader();
+            });
+        }
         // console.log('this.mainList', this.mainList);
     }
 
@@ -341,6 +361,11 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             this.listCurrentIndex = 0;
         }
         this.obj = this.mainList[this.listCurrentIndex];
+        if (this.data.listHeaderFixed) {
+            setTimeout(() => {
+                this.setListFixedHeader();
+            });
+        }
     }
     selectMainItem(index): void {
         this.listCurrentIndex = index;
@@ -651,6 +676,13 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             setTimeout(() => {
                 this.listenToIframeLoad();
             });
+            if (this.data.listHeaderFixed) {
+                setTimeout(() => {
+                    this.setListFixedHeader();
+                });
+            } else {
+                this.unsetListFixedHeader();
+            }
         }
         if (changes.templateType && !changes.templateType.firstChange) {
             this.resetView();

@@ -54,7 +54,7 @@
                  (touchstart)="onMouseDown($event, 'labeling', 'left, right')"></div>
             <div class="labeling-overflow"
                  [style]="formCssObj">
-                <div class="labeling-header" *ngIf="data.isList" [ngClass]="{'labeling-header-fixed': data.isList && data.listHeaderFixed}">
+                <div class="labeling-header" #labelingHeader *ngIf="data.isList" [ngClass]="{'labeling-header-fixed': data.isList && data.listHeaderFixed}">
                     {{data.listHeader}} <span class="labeling-header-plus no-highlight"
                                               (click)="addToMainList(listObj)">+</span>
                     <br>
@@ -65,7 +65,7 @@
 
                     </div>
                 </div>
-                <div [ngClass]="{'labeling-block-fixed': data.isList && data.listHeaderFixed}">
+                <div class="labeling-body" #labelingBody [ngClass]="{'labeling-block-fixed': data.isList && data.listHeaderFixed}">
                     <div class="labeling-block" *ngFor="let block of obj">
                         <div class="labeling-block-row">
                             <div class="labeling-block-row-column">
