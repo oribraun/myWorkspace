@@ -2,7 +2,7 @@
      *ngIf="data && obj"
      [ngStyle]="mainCssObj">
     <div class="view"
-         [ngClass]="{'view-with-url': data.url, 'animated-all': resetViewAnimate}"
+         [ngClass]="{'view-with-url': data.url, 'dynamic-labeling-room-animated-all': resetViewAnimate}"
          [ngStyle]="{
             'height': (currentDrag.view.height !== '' ? currentDrag.view.height + '%' : ''),
             'top': currentDrag.view.top + '%',
@@ -36,7 +36,7 @@
     </div>
     <form #form="ngForm">
         <div class="labeling"
-             [ngClass]="{'animated-all': resetViewAnimate}"
+             [ngClass]="{'dynamic-labeling-room-animated-all': resetViewAnimate}"
              [ngStyle]="{
                 'height': (currentDrag.labeling.height !== '' ? currentDrag.labeling.height + '%' : ''),
                 'top': currentDrag.labeling.top + '%',
@@ -66,183 +66,215 @@
                     </div>
                 </div>
                 <div class="labeling-body" #labelingBody [ngClass]="{'labeling-block-fixed': data.isList && data.listHeaderFixed}">
-                    <div class="labeling-block" *ngFor="let block of obj">
-                        <div class="labeling-block-row">
-                            <div class="labeling-block-row-column">
-                                <div class="labeling-block-row-column-header">
-                                    {{preetyLabel(block.blockName)}}
-                                    <div class="labeling-block-row-column-header-description">
-                                        {{block.blockDesc}}
+                    <ng-container *ngFor="let block of obj">
+                        <div class="labeling-block" [ngClass]="{'labeling-block-inline': block.blockWidth}" [ngStyle]="block.blockWidth && {'width':block.blockWidth + '%'}">
+                            <div class="labeling-block-row">
+                                <div class="labeling-block-row-column">
+                                    <div class="labeling-block-row-column-header">
+                                        {{preetyLabel(block.blockName)}}
+                                        <div class="labeling-block-row-column-header-description">
+                                            {{block.blockDesc}}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="labeling-block-row-column-body">
-                                    <div class="labeling-block-row-column-body-item labeling-block-row-column-body-item-col
+                                    <div class="labeling-block-row-column-body">
+                                        <div class="labeling-block-row-column-body-item labeling-block-row-column-body-item-col
                                 labeling-block-row-column-body-item-{{item.inputType}}"
-                                         *ngFor="let item of block.fields"
-                                         [ngStyle]="{
+                                             *ngFor="let item of block.fields"
+                                             [ngStyle]="{
                                     'flex': '0 0 ' + (10/block.numColumns*10) + '%',
                                     'max-width': (10/block.numColumns*10) + '%'
                                    }"
-                                         [ngClass]="{
+                                             [ngClass]="{
                                  'labeling-block-row-column-body-item-box-break-line': item.breakLine,
                                  'labeling-block-row-column-body-item-box-full-line': item.fullLine,
                                  'labeling-block-row-column-body-item-box-center': item.center
                                  }">
-                                        <div class="labeling-block-row-column-body-item-box">
-                                            <div class="labeling-block-row-column-body-item-box-input">
-                                                <input *ngIf="item.inputType === 'text' || item.inputType === 'number' || item.inputType === 'email'"
-                                                       [type]="item.inputType"
-                                                       [ngStyle]="item.css"
-                                                       [name]="block.blockName + '_' + item.label"
-                                                       [required]="item.required"
-                                                       [pattern]="item.pattern"
-                                                       [(ngModel)]="item.value"
-                                                       (ngModelChange)="onChangeObj()"
-                                                       [attr.value]="item.value"
-                                                       [ngClass]="{
+                                            <div class="labeling-block-row-column-body-item-box">
+                                                <div class="labeling-block-row-column-body-item-box-input">
+                                                    <input *ngIf="item.inputType === 'text' || item.inputType === 'number' || item.inputType === 'email'"
+                                                           [type]="item.inputType"
+                                                           [ngStyle]="item.css"
+                                                           [name]="block.blockName + '_' + item.label"
+                                                           [required]="item.required"
+                                                           [pattern]="item.pattern"
+                                                           [(ngModel)]="item.value"
+                                                           (ngModelChange)="onChangeObj()"
+                                                           [attr.value]="item.value"
+                                                           [ngClass]="{
                                                            'required': formSubmitted &&
                                                            form.controls[item.label] &&
                                                            form.controls[item.label].errors &&
                                                            (form.controls[item.label].errors.required || form.controls[item.label].errors.pattern)
                                                        }"
-                                                       [disabled]="checkDepend(block.fields, item)">
-                                                <input *ngIf="item.inputType === 'checkbox'"
-                                                       [type]="item.inputType"
-                                                       [checked]="item.value == 1"
-                                                       [ngStyle]="item.css"
-                                                       [name]="item.label"
-                                                       [required]="item.required"
-                                                       [ngClass]="{
+                                                           [disabled]="checkDepend(block.fields, item)">
+                                                    <input *ngIf="item.inputType === 'checkbox'"
+                                                           [type]="item.inputType"
+                                                           [checked]="item.value == 1"
+                                                           [ngStyle]="item.css"
+                                                           [name]="item.label"
+                                                           [required]="item.required"
+                                                           [ngClass]="{
                                                            'required': formSubmitted &&
                                                            form.controls[item.label] &&
                                                            form.controls[item.label].errors &&
                                                            (form.controls[item.label].errors.required)
                                                        }"
-                                                       (change)="!item.value ? item.value = 1 : item.value = 0; onChangeObj()">
-                                                <textarea *ngIf="item.inputType === 'textarea'"
-                                                          [ngStyle]="item.css"
-                                                          [name]="item.label"
-                                                          [required]="item.required"
-                                                          [(ngModel)]="item.value"
-                                                          (ngModelChange)="onChangeObj()"
-                                                          [attr.value]="item.value"
-                                                          [ngClass]="{
+                                                           (change)="!item.value ? item.value = 1 : item.value = 0; onChangeObj()">
+                                                    <textarea *ngIf="item.inputType === 'textarea'"
+                                                              [ngStyle]="item.css"
+                                                              [name]="item.label"
+                                                              [required]="item.required"
+                                                              [(ngModel)]="item.value"
+                                                              (ngModelChange)="onChangeObj()"
+                                                              [attr.value]="item.value"
+                                                              [ngClass]="{
                                                               'required': formSubmitted &&
                                                               form.controls[item.label] &&
                                                               form.controls[item.label].errors &&
                                                               (form.controls[item.label].errors.required)
                                                           }"
-                                                          [disabled]="checkDepend(block.fields, item)">
+                                                              [disabled]="checkDepend(block.fields, item)">
                                                 </textarea>
-                                                <select name="" *ngIf="item.inputType === 'select'"
-                                                        [ngStyle]="item.css"
-                                                        [name]="item.label"
-                                                        [required]="item.required"
-                                                        [(ngModel)]="item.value"
-                                                        (ngModelChange)="onChangeObj()"
-                                                        [disabled]="checkDepend(block.fields, item)"
-                                                        [attr.value]="item.value"
-                                                        [ngClass]="{
+                                                    <select name="" *ngIf="item.inputType === 'select'"
+                                                            [ngStyle]="item.css"
+                                                            [name]="item.label"
+                                                            [required]="item.required"
+                                                            [(ngModel)]="item.value"
+                                                            (ngModelChange)="onChangeObj()"
+                                                            [disabled]="checkDepend(block.fields, item)"
+                                                            [attr.value]="item.value"
+                                                            [ngClass]="{
                                                            'required': formSubmitted &&
                                                            form.controls[item.label] &&
                                                            form.controls[item.label].errors &&
                                                            (form.controls[item.label].errors.required)
                                                        }">
-                                                    <option value=""></option>
-                                                    <option *ngFor="let o of item.selectOptions" [value]="o">{{o}}</option>
-                                                </select>
-    <!--                                            <select name="" *ngIf="item.inputType === 'select_multiple'"-->
-    <!--                                                    multiple-->
-    <!--                                                    [ngStyle]="item.css"-->
-    <!--                                                    [name]="item.label"-->
-    <!--                                                    [required]="item.required"-->
-    <!--                                                    [(ngModel)]="item.value"-->
-    <!--                                                    (ngModelChange)="onChangeObj()"-->
-    <!--                                                    [disabled]="checkDepend(block.fields, item)"-->
-    <!--                                                    [attr.value]="item.value"-->
-    <!--                                                    [ngClass]="{-->
-    <!--                                                       'required': formSubmitted &&-->
-    <!--                                                       form.controls[item.label] &&-->
-    <!--                                                       form.controls[item.label].errors &&-->
-    <!--                                                       (form.controls[item.label].errors.required)-->
-    <!--                                                   }">-->
-    <!--                                                <option value=""></option>-->
-    <!--                                                <option *ngFor="let o of item.selectOptions" [value]="o">{{o}}</option>-->
-    <!--                                            </select>-->
-                                                <div class="labeling-block-row-column-body-item-box-input-label"
-                                                     [ngClass]="{'labeling-block-row-column-body-item-box-input-label-hover':
+                                                        <option value=""></option>
+                                                        <option *ngFor="let o of item.options" [value]="o">{{o}}</option>
+                                                    </select>
+                                                    <div class="labeling-block-row-column-body-item-box-input-label"
+                                                         [ngClass]="{'labeling-block-row-column-body-item-box-input-label-hover':
                                                      item.inputType === 'text' ||
                                                      item.inputType === 'number' ||
                                                      item.inputType === 'email' ||
                                                      item.inputType === 'textarea' ||
-                                                     item.inputType === 'select_multiple' ||
-                                                     item.inputType === 'select'}">
-                                                    <div class="labeling-block-row-column-body-item-box-input-label-text">
-                                                        {{preetyLabel(item.label)}}
-                                                        <span *ngIf="item.inputType === 'text_list'" class="labeling-block-row-column-body-item-box-input-label-plus no-highlight"
-                                                              (click)="appendItemToList(item)">+</span>
+                                                     item.inputType === 'select',
+                                                     'labeling-block-row-column-body-item-box-input-label-hover-disappeared': true
+                                                     }">
+                                                        <div class="labeling-block-row-column-body-item-box-input-label-text"
+                                                             *ngIf="item.inputType !== 'radio'">
+                                                            {{preetyLabel(item.label)}}
+                                                            <span *ngIf="item.inputType === 'text_list'" class="labeling-block-row-column-body-item-box-input-label-plus no-highlight"
+                                                                  (click)="appendItemToList(item)">+</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <ng-container *ngIf="item.inputType === 'text_list' && isArray(item.value)">
-                                                    <div class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
-                                                        {{item.description}}
+                                                    <ng-container *ngIf="item.inputType === 'select_multiple'">
+                                                        <select name="" *ngIf="item.inputType === 'select_multiple'"
+                                                                multiple
+                                                                [ngStyle]="item.css"
+                                                                [name]="item.label"
+                                                                [required]="item.required"
+                                                                [(ngModel)]="item.value"
+                                                                (ngModelChange)="onChangeObj()"
+                                                                [disabled]="checkDepend(block.fields, item)"
+                                                                [attr.value]="item.value"
+                                                                [ngClass]="{
+                                                           'required': formSubmitted &&
+                                                           form.controls[item.label] &&
+                                                           form.controls[item.label].errors &&
+                                                           (form.controls[item.label].errors.required)
+                                                       }">
+                                                            <option *ngFor="let o of item.options" [value]="o">{{o}}</option>
+                                                        </select>
+                                                    </ng-container>
+                                                    <div class="radio-buttons"
+                                                         [ngClass]="{'radio-buttons-center': item.center}"
+                                                         *ngIf="item.inputType === 'radio'">
+                                                        <ng-container *ngFor="let o of item.options">
+                                                            <label class="radio-label" [htmlFor]="o">
+                                                                <input
+                                                                    [id]="o"
+                                                                    [type]="item.inputType"
+                                                                    [checked]="item.value == o"
+                                                                    (change)="item.value = o; onChangeObj()"
+                                                                    [ngStyle]="item.css"
+                                                                    [name]="item.label"
+                                                                    [attr.name]="item.label"
+                                                                    [required]="item.required"
+                                                                    [ngClass]="{
+                                                                   'required': formSubmitted &&
+                                                                   form.controls[item.label] &&
+                                                                   form.controls[item.label].errors &&
+                                                                   (form.controls[item.label].errors.required)
+                                                                }">
+                                                                {{o}}</label>
+                                                        </ng-container>
                                                     </div>
-                                                    <div class="labeling-block-row-column-body-item-box-input-list-item" *ngFor="let listItem of item.value; index as i; trackBy: trackByFn">
-                                                        <ng-container *ngIf="!item.listObj">
-                                                            <input [type]="item.inputType"
-                                                                   [name]="item.label + '-' + i"
-                                                                   [required]="item.required"
-                                                                   [(ngModel)]="item.value[i]"
-                                                                   [ngClass]="{
+                                                    <ng-container *ngIf="item.inputType === 'text_list' && isArray(item.value)">
+                                                        <div class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
+                                                            {{item.description}}
+                                                        </div>
+                                                        <div class="labeling-block-row-column-body-item-box-input-list-item" *ngFor="let listItem of item.value; index as i; trackBy: trackByFn">
+                                                            <ng-container *ngIf="!item.listObj">
+                                                                <input [type]="item.inputType"
+                                                                       [name]="item.label + '-' + i"
+                                                                       [required]="item.required"
+                                                                       [pattern]="item.pattern"
+                                                                       [(ngModel)]="item.value[i]"
+                                                                       [ngClass]="{
                                                                        'required': formSubmitted &&
                                                                        form.controls[item.label + '-' + i] &&
                                                                        form.controls[item.label + '-' + i].errors &&
                                                                        (form.controls[item.label + '-' + i].errors.required)
                                                                    }"
-                                                                   (ngModelChange)="onChangeObj()">
-                                                            <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="removeItemToList(item, i); onChangeObj();">-</div>
-                                                        </ng-container>
-                                                        <ng-container *ngIf="item.listObj">
-                                                            <div class="labeling-block-row-column-body-item-box-input-list-item-wrapper"
-                                                                 [ngStyle]="{'width': (10 / getObjKeysLength(item.listObj) * 10 - 2) + '%'}"
-                                                                 *ngFor="let objItem of item.value[i]; index as j;let last = last;">
-                                                                <input [type]="objItem.inputType"
-                                                                       [name]="item.label + '-' + objItem.label + '-' + i + '-' + j"
-                                                                       [required]="objItem.required"
-                                                                       [(ngModel)]="objItem.value"
-                                                                       [attr.value]="objItem.value"
-                                                                       [ngClass]="{
+                                                                       (ngModelChange)="onChangeObj()">
+                                                                <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="removeItemToList(item, i); onChangeObj();">-</div>
+                                                            </ng-container>
+                                                            <ng-container *ngIf="item.listObj">
+                                                                <div class="labeling-block-row-column-body-item-box-input-list-item-wrapper"
+                                                                     [ngStyle]="{'width': (10 / getObjKeysLength(item.listObj) * 10 - 2) + '%'}"
+                                                                     *ngFor="let objItem of item.value[i]; index as j;let last = last;">
+                                                                    <input [type]="objItem.inputType"
+                                                                           [name]="item.label + '-' + objItem.label + '-' + i + '-' + j"
+                                                                           [required]="objItem.required"
+                                                                           [(ngModel)]="objItem.value"
+                                                                           [attr.value]="objItem.value"
+                                                                           [ngClass]="{
                                                                            'required': formSubmitted &&
                                                                            form.controls[item.label + '-' + objItem.label + '-' + i + '-' + j] &&
                                                                            form.controls[item.label + '-' + objItem.label + '-' + i + '-' + j].errors &&
                                                                            (form.controls[item.label + '-' + objItem.label + '-' + i + '-' + j].errors.required)
                                                                        }"
-                                                                       (ngModelChange)="onChangeObj()">
-                                                                <div class="labeling-block-row-column-body-item-box-input-list-item-label"
-                                                                     [ngClass]="{'labeling-block-row-column-body-item-box-input-list-item-label-hover': true}">
-                                                                    <div class="labeling-block-row-column-body-item-box-input-list-item-label-text">
-                                                                        {{preetyLabel(objItem.label)}}
+                                                                           (ngModelChange)="onChangeObj()">
+                                                                    <div class="labeling-block-row-column-body-item-box-input-list-item-label"
+                                                                         [ngClass]="{
+                                                                        'labeling-block-row-column-body-item-box-input-list-item-label-hover': true,
+                                                                        'labeling-block-row-column-body-item-box-input-list-item-label-hover-disappeared': true
+                                                                     }">
+                                                                        <div class="labeling-block-row-column-body-item-box-input-list-item-label-text">
+                                                                            {{preetyLabel(objItem.label)}}
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight"
-                                                                     *ngIf="last"
-                                                                     (click)="removeItemToList(item, i); onChangeObj();">-</div>
+                                                                    <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight"
+                                                                         *ngIf="last"
+                                                                         (click)="removeItemToList(item, i); onChangeObj();">-</div>
 
-                                                            </div>
-                                                        </ng-container>
-                                                    </div>
-                                                </ng-container>
+                                                                </div>
+                                                            </ng-container>
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                                <small class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description && item.inputType !== 'text_list'">
+                                                    {{item.description}}
+                                                </small>
                                             </div>
-                                            <small class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description && item.inputType !== 'text_list'">
-                                                {{item.description}}
-                                            </small>
+                                            <!--                        <div class="labeling-block-row-column-body-item-box-break-line" *ngIf="item.break_line"></div>-->
                                         </div>
-                                        <!--                        <div class="labeling-block-row-column-body-item-box-break-line" *ngIf="item.break_line"></div>-->
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </ng-container>
                     <div class="objErrMessage text-center" *ngIf="objErrMessage">
                         {{objErrMessage}}
                     </div>
@@ -250,18 +282,18 @@
             </div>
         </div>
     </form>
-<!--    <div class="floating-template-button"-->
-<!--         [ngClass]="{'floating-template-button-vertical': templateType === 2}"-->
-<!--         (click)="changeTemplateType()">-->
-<!--        <div class="lds-hourglass"-->
-<!--             [title]="templateType === 1 ? 'vertical' : 'horizontal'"-->
-<!--        [ngClass]="{'animate': changeTemplateAnimation}"></div>-->
-<!--    </div>-->
-  <div class="menu" [ngClass]="{'menu-hover-animate': animateMenu}">
-    <div class="inner-menu">
-      <i class="d-icon-sync" title="change template" (click)="changeTemplateType()" [ngClass]="{'d-icon-animate': changeTemplateAnimation}"></i>
-<!--      <i class="d-icon-reset" [ngClass]="{'d-icon-animate': false}"></i>-->
-      <i class="d-icon-expend" title="full screen" (click)="expand()" [ngClass]="{'d-icon-animate': false}"><span class="line"></span></i>
+    <!--    <div class="floating-template-button"-->
+    <!--         [ngClass]="{'floating-template-button-vertical': templateType === 2}"-->
+    <!--         (click)="changeTemplateType()">-->
+    <!--        <div class="lds-hourglass"-->
+    <!--             [title]="templateType === 1 ? 'vertical' : 'horizontal'"-->
+    <!--        [ngClass]="{'animate': changeTemplateAnimation}"></div>-->
+    <!--    </div>-->
+    <div class="menu" [ngClass]="{'menu-hover-animate': animateMenu}">
+        <div class="inner-menu">
+            <i class="d-icon-sync" title="change template" (click)="changeTemplateType()" [ngClass]="{'d-icon-animate': changeTemplateAnimation}"></i>
+            <!--      <i class="d-icon-reset" [ngClass]="{'d-icon-animate': false}"></i>-->
+            <i class="d-icon-expend" title="full screen" (click)="expand()" [ngClass]="{'d-icon-animate': false}"><span class="line"></span></i>
+        </div>
     </div>
-  </div>
 </div>

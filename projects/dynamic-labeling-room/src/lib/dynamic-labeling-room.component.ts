@@ -1,5 +1,5 @@
 import {
-    AfterViewInit,
+    AfterViewInit, ChangeDetectorRef,
     Component, DoCheck, ElementRef, EventEmitter,
     HostListener,
     Inject, Input,
@@ -184,6 +184,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     @Output() onChange: EventEmitter<OutputObj> = new EventEmitter<OutputObj>();
     public objErrMessage = '';
     constructor(
+        private ref: ChangeDetectorRef,
         @Inject(DOCUMENT) document?: any
     ) {
         this.document = document;
@@ -247,7 +248,6 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         const style = getComputedStyle(item);
         const headerHeight = this.labelingHeader.nativeElement.clientHeight;
         const h = headerHeight + parseFloat(style.marginTop) + parseFloat(style.marginBottom);
-        console.log('asf', h)
         this.labelingBody.nativeElement.style.marginTop = h + 'px';
     }
 
@@ -669,6 +669,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.obj) {
+            this.obj.forEach((o, i) => this.obj[i] = new DsProjectRoomBlock(o));
             this.initObj();
             this.onChangeObj();
         }
@@ -700,9 +701,11 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     resetView(): void {
         this.resetViewAnimate = true;
+        this.changeDetectorRefresh();
         this.resetDrag();
         setTimeout(() => {
             this.resetViewAnimate = false;
+            this.changeDetectorRefresh();
         }, 300);
     }
 
@@ -719,8 +722,10 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     animateChangingTemplate(): void {
         clearTimeout(this.changeTemplateAnimationTimeout);
         this.changeTemplateAnimation = true;
+        this.changeDetectorRefresh();
         this.changeTemplateAnimationTimeout = setTimeout(() => {
             this.changeTemplateAnimation = false;
+            this.changeDetectorRefresh();
         }, 1000);
     }
 
@@ -871,14 +876,20 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     resetObjError() {
         this.objErrMessage = '';
     }
+
+    changeDetectorRefresh() {
+        this.ref.markForCheck();
+        this.ref.detectChanges();
+    }
 }
 
 export class DsProjectRoomBlock {
-    blockName = '';
-    blockDesc = '';
-    numColumns: 2;
-    fields: DsProjectRoomBlockField[] = [];
-    isValid = true;
+    blockName = ''; // the name of the block - will be presented as header in html
+    blockDesc = ''; // the description of the block - will be presented under header in html
+    blockWidth = ''; // width of the block in case we want two blocks to be in one row (must have next blocks complete width to 100%)
+    numColumns: 2; // number of columns we want the fields to spread on
+    fields: DsProjectRoomBlockField[] = []; // fields list inside the block
+    isValid = true; // represent if the block is html valid
 
     constructor(obj?) {
         if (obj) {
@@ -887,6 +898,9 @@ export class DsProjectRoomBlock {
             }
             if (obj.blockDesc) {
                 this.blockDesc = obj.blockDesc;
+            }
+            if (obj.blockWidth) {
+                this.blockWidth = obj.blockWidth;
             }
             if (obj.numColumns) {
                 this.numColumns = obj.numColumns;
@@ -901,43 +915,67 @@ export class DsProjectRoomBlock {
 }
 
 export class DsProjectRoomBlockField {
-    label = '';
-    description = '';
-    value: any = '';
-    inputType = '';
-    required?: boolean;
-    pattern?: string;
-    listObj?: any;
-    depend: string;
-    dependOnValue: any;
-    breakLine: boolean;
-    fullLine: boolean;
-    center: boolean;
-    selectOptions: any[];
-    css: any;
+    label = ''; // will be used for html input name and label text
+    description = ''; // description that will show as text under the field
+    value: any = ''; // value of the field
+    inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj)
+    required?: boolean; // html required
+    pattern?: string; // html pattern
+    listObj?: DsProjectRooomListObj[]; // for text-list type an array of DsProjectRooomListObj spread equal  on 100%
+    depend: string; // determine when field depend on another field based on label name
+    dependOnValue: any; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field
+    breakLine: boolean; // boolean to force break line between fields
+    fullLine: boolean; // boolean to force field to spread on full line
+    center: boolean; // boolean to force field to be center of column
+    options: any[]; // represent string select, select_multiple, radio options
+    css: any; // represent specific style to a string
 
     constructor(obj?) {
         if (obj) {
             for (const key in obj) {
+                if (key === 'listObj') {
+                    for (const i in obj.listObj) {
+                        obj.listObj[i] = new DsProjectRooomListObj(obj.listObj[i]);
+                    }
+                }
                 if (obj[key] !== undefined && obj[key] !== null) {
-                    this[key] = obj[key];
+                    const orig_key = this.convertShortKey(key);
+                    this[orig_key] = obj[key];
                 }
             }
         }
+    }
+
+    convertShortKey(key) {
+        key === 'l' ? key = 'label' : ''; // will be used for html input name and label text
+        key === 'd' ? key = 'description' : ''; // description that will show as text under the field
+        key === 'v' ? key = 'value' : ''; // value of the field
+        key === 'iT' ? key = 'inputType' : ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj)
+        key === 'r' ? key = 'required' : ''; // html required
+        key === 'p' ? key = 'pattern' : ''; // html pattern
+        key === 'lO' ? key = 'listObj' : ''; // for text-list type an array of DsProjectRooomListObj spread equal  on 100%
+        key === 'de' ? key = 'depend' : ''; // determine when field depend on another field based on label name
+        key === 'dOV' ? key = 'dependOnValue' : ''; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field
+        key === 'bL' ? key = 'breakLine' : ''; // boolean to force break line between fields
+        key === 'fL' ? key = 'fullLine' : ''; // boolean to force field to spread on full line
+        key === 'c' ? key = 'center' : ''; // boolean to force field to be center of column
+        key === 'o' ? key = 'options' : ''; // represent string select, select_multiple, radio options
+        key === 'cs' ? key = 'css' : ''; // represent specific style to a string
+        return key;
     }
 }
 
 export class DsProjectRoomData {
-    text = '';
-    url = '';
-    showInIframe = false;
-    isList?: boolean;
-    listHeader?: string;
-    listHeaderFixed?: boolean;
-    listItemDefaultHeader?: string;
-    listObjIndex?: number;
-    listFirstItemIndex?: number;
-    listSecondItemIndex?: number;
+    text = ''; // text we want to label
+    url = ''; // url we want to label
+    showInIframe = false; // boolean to determine if this url can be opened in an iframe - need to check in advance
+    isList?: boolean; // adding and option to label a list of records
+    listHeader?: string; // header for the list
+    listHeaderFixed?: boolean; // mark list header as fixed
+    listItemDefaultHeader?: string; // when isList is true this will be the default name presented for item in list
+    listObjIndex?: number; // this will be the block index from (dsProjectRoomObj) to present as header when filled
+    listFirstItemIndex?: number; // this will be the first field index in listObjIndex(the selected block index) to present as header when filled
+    listSecondItemIndex?: number; // this will be the second field index in listObjIndex(the selected block index) to present as header when filled
 
     constructor(obj?) {
         if (obj) {
@@ -950,8 +988,59 @@ export class DsProjectRoomData {
     }
 }
 
-class OutputObj {
-    obj: DsProjectRoomBlock | DsProjectRoomBlock[];
-    cleanBlocks: any | any[];
-    valid: boolean;
+export class DsProjectRooomListObj {
+    label = ''; // will be used for html input name and label text
+    description = ''; // description that will show as text under the field
+    value: any = ''; // value of the field
+    inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj)
+    required?: boolean; // html required
+    pattern?: string; // html pattern
+
+    constructor(obj?) {
+        if (obj) {
+            for (const key in obj) {
+                if (obj[key] !== undefined && obj[key] !== null) {
+                    this[key] = obj[key];
+                }
+            }
+        }
+    }
 }
+class OutputObj {
+    obj: DsProjectRoomBlock | DsProjectRoomBlock[]; // full output obj to cache if needed
+    cleanBlocks: any | any[]; // clean output obj with only full fields
+    valid: boolean; // represent if the list of items or one item is valid in order to alert the user
+}
+
+export class DsProjectRoomBlockShortField {
+    l = ''; // will be used for html input name and label text
+    d = ''; // description that will show as text under the field
+    v: any = ''; // value of the field
+    iT = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj)
+    r?: boolean; // html required
+    p?: string; // html pattern
+    lO?: DsProjectRooomListObj[]; // for text-list type an array of DsProjectRooomListObj spread equal  on 100%
+    de: string; // determine when field depend on another field based on label name
+    dOV: any; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field
+    bL: boolean; // boolean to force break line between fields
+    fL: boolean; // boolean to force field to spread on full line
+    c: boolean; // boolean to force field to be center of column
+    o: any[]; // represent string select, select_multiple, radio options
+    cs: any; // represent specific style to a string
+
+    constructor(obj?) {
+        if (obj) {
+            for (const key in obj) {
+                if (key === 'lO') {
+                    for (const i in obj.lO) {
+                        obj.lO[i] = new DsProjectRooomListObj(obj.lO[i]);
+                    }
+                }
+                if (obj[key] !== undefined && obj[key] !== null) {
+                    this[key] = obj[key];
+                }
+            }
+        }
+    }
+}
+

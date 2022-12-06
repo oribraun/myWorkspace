@@ -2,51 +2,57 @@
 
 * structure of input obj
 ```angular2html
-export class Block {
-    blockName = '';
-    blockDesc = '';
-    numColumns: 2;
-    fields: BlockField[] = [];
+export class DsProjectRoomBlock {
+    blockName = ''; // the name of the block - will be presented as header in html
+    blockDesc = ''; // the description of the block - will be presented under header in html
+    blockWidth = ''; // width of the block in case we want two blocks to be in one row (must have next blocks complete width to 100%)
+    numColumns: 2; // number of columns we want the fields to spread on
+    fields: DsProjectRoomBlockField[] = []; // fields list inside the block
+    isValid = true; // represent if the block is html valid
 }
 
-export class BlockField {
-    label = '';
-    description = '';
-    value: any = '';
-    inputType = '';
-    depend = '';
-    dependOnValue: any = '';
-    breakLine = false;
-    fullLine = false;
-    center = false;
-    selectOptions = [];
-    css = {};
-
-    constructor(obj) {
-        if (obj) {
-            for (const key in obj) {
-                if (obj[key]) {
-                    this[key] = obj[key];
-                }
-            }
-        }
-    }
+export class DsProjectRoomBlockField {
+    label = ''; // will be used for html input name and label text - short key l
+    description = ''; // description that will show as text under the field - short key d
+    value: any = ''; // value of the field - short key v
+    inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj) - short key iT
+    required?: boolean; // html required - short key r
+    pattern?: string; // html pattern - short key p
+    listObj?: DsProjectRooomListObj[]; // for text-list type an array of DsProjectRooomListObj spread equal  on 100% - short key lO
+    depend: string; // determine when field depend on another field based on label name - short key d
+    dependOnValue: any; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field - short key dOV
+    breakLine: boolean; // boolean to force break line between fields - short key bL
+    fullLine: boolean; // boolean to force field to spread on full line - short key fL
+    center: boolean; // boolean to force field to be center of column - short key c
+    options: any[]; // represent string select, select_multiple, radio options - short key o
+    css: any; // represent specific style to a string - short key c
 }
 
-export class Data {
-    text = '';
-    url = '';
-    showInIframe = false;
+export class DsProjectRoomData {
+    text = ''; // text we want to label
+    url = ''; // url we want to label
+    showInIframe = false; // boolean to determine if this url can be opened in an iframe - need to check in advance
+    isList?: boolean; // adding and option to label a list of records
+    listHeader?: string; // header for the list
+    listHeaderFixed?: boolean; // mark list header as fixed
+    listItemDefaultHeader?: string; // when isList is true this will be the default name presented for item in list
+    listObjIndex?: number; // this will be the block index from (dsProjectRoomObj) to present as header when filled
+    listFirstItemIndex?: number; // this will be the first field index in listObjIndex(the selected block index) to present as header when filled
+    listSecondItemIndex?: number; // this will be the second field index in listObjIndex(the selected block index) to present as header when filled
+}
 
-    constructor(obj) {
-        if (obj) {
-            for (const key in obj) {
-                if (obj[key]) {
-                    this[key] = obj[key];
-                }
-            }
-        }
-    }
+export class DsProjectRooomListObj {
+    label = ''; // will be used for html input name and label text
+    description = ''; // description that will show as text under the field
+    value: any = ''; // value of the field
+    inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj)
+    required?: boolean; // html required
+    pattern?: string; // html pattern
+}
+class OutputObj {
+    obj: DsProjectRoomBlock | DsProjectRoomBlock[]; // full output obj to cache if needed
+    cleanBlocks: any | any[]; // clean output obj with only full fields
+    valid: boolean; // represent if the list of items or one item is valid in order to alert the user
 }
 ```
 
