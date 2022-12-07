@@ -808,7 +808,23 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                     (field.inputType === 'checkbox' ? 0 :
                             (field.inputType === 'text_list' ? [] : '')
                     ) : field.value;
-                if (field.value.length) {
+                if ((typeof field.value === 'number' && field.value > 0)
+                    || (typeof field.value !== 'number' && field.value.toString().length)
+                ) {
+                    if (Array.isArray(field.value) && field.value.length) {
+                        const map = field.value.map((o) => {
+                            if (typeof o === 'object') {
+                                return o.map((o2) => {
+                                    return {
+                                        label: o2.label, value: o2.value
+                                    };
+                                });
+                            } else {
+                                return o;
+                            }
+                        });
+                        field.value = map;
+                    }
                     obj.fields.push({
                         label: field.label, value: field.value
                     });
