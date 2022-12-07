@@ -2,7 +2,7 @@
 
 * structure of input obj
 ```angular2html
-export class DsProjectRoomBlock {
+class DsProjectRoomBlock {
     blockName = ''; // the name of the block - will be presented as header in html
     blockDesc = ''; // the description of the block - will be presented under header in html
     blockWidth = ''; // width of the block in case we want two blocks to be in one row (must have next blocks complete width to 100%)
@@ -11,7 +11,7 @@ export class DsProjectRoomBlock {
     isValid = true; // represent if the block is html valid
 }
 
-export class DsProjectRoomBlockField {
+class DsProjectRoomBlockField {
     label = ''; // will be used for html input name and label text - short key l
     description = ''; // description that will show as text under the field - short key d
     value: any = ''; // value of the field - short key v
@@ -28,7 +28,7 @@ export class DsProjectRoomBlockField {
     css: any; // represent specific style to a string - short key c
 }
 
-export class DsProjectRoomData {
+class DsProjectRoomData {
     text = ''; // text we want to label
     url = ''; // url we want to label
     showInIframe = false; // boolean to determine if this url can be opened in an iframe - need to check in advance
@@ -41,7 +41,7 @@ export class DsProjectRoomData {
     listSecondItemIndex?: number; // this will be the second field index in listObjIndex(the selected block index) to present as header when filled
 }
 
-export class DsProjectRooomListObj {
+class DsProjectRooomListObj {
     label = ''; // will be used for html input name and label text
     description = ''; // description that will show as text under the field
     value: any = ''; // value of the field
@@ -110,7 +110,8 @@ dsProjectRoomObj: any = [
         ],
     }
 ];
-templateType = 1;
+templateType = 1; // 1 for horizontal view, 2 for vertical view
+initDragBasedOnViewTextSize = false // this will check the view text size and auto drag to minimize screen view
 mainCssObj = {};
 viewCssObj = {padding: '10px'};
 formCssObj = {padding: '0 10px'};
@@ -124,6 +125,7 @@ onDsProjectRoomChange(e) {
         [data]="dsProjectRoomData"
         [obj]="dsProjectRoomObj"
         [templateType]="templateType"
+        [initDragBasedOnViewTextSize]="initDragBasedOnViewTextSize"
         [mainCssObj]="mainCssObj"
         [viewCssObj]="viewCssObj"
         [formCssObj]="formCssObj"

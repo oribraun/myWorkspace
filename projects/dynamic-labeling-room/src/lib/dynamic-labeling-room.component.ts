@@ -23,6 +23,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     @ViewChild('iframe') iframe: any;
     @ViewChild('labelingHeader') labelingHeader: any;
     @ViewChild('labelingBody') labelingBody: any;
+    @ViewChild('viewText') viewText: any;
     @ViewChild('form') form: NgForm;
     private document: Document;
     public formSubmitted = false;
@@ -136,10 +137,12 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     public mainList = [];
     public listCurrentIndex = 0;
     public listObj: any;
+    public templateTypes = {horizontal: 1, vertical: 2};
     @Input() mainCssObj;
     @Input() viewCssObj;
     @Input() formCssObj;
-    @Input() templateType = 1;
+    @Input() templateType = this.templateTypes.horizontal;
+    @Input() initDragBasedOnViewTextSize = false;
     @Input() data: DsProjectRoomData = {
         // text: 'signature',
         // url: 'https://polkadotmama.org/board-of-directors/',
@@ -240,6 +243,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             this.addToMainList(this.listObj);
             this.cleanListObj();
             this.addToListInitObj(mainObj);
+        }
+        if (this.initDragBasedOnViewTextSize) {
+            this.autoDragBasedOnViewSize();
         }
     }
 
@@ -692,11 +698,46 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     resetDrag(): void {
-        if (this.templateType === 1) {
+        if (this.templateType ===  this.templateTypes.horizontal) {
             this.currentDrag = JSON.parse(JSON.stringify(this.verticalDrag));
         } else {
             this.currentDrag = JSON.parse(JSON.stringify(this.horizontalDrag));
         }
+    }
+
+    autoDragBasedOnViewSize() {
+        setTimeout(() => {
+            const el = this.viewText.nativeElement;
+            const parent = el.parentNode;
+            if (el) {
+                if (this.templateType === this.templateTypes.horizontal) {
+                    const height = el.offsetHeight;
+                    const style = getComputedStyle(parent);
+                    const parentHeight = parent.offsetHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+                    const moveY = parentHeight - height;
+                    if (moveY > 0) {
+                        const moveYPercent = -moveY / this.dynamicLabelingRoom.nativeElement.clientHeight * 100;
+                        const type = 'view';
+                        // this.resetView(); // for animation
+                        this.currentDrag[type].type = 'top,bottom';
+                        this.onMoveVersion1(type, 0, moveYPercent);
+                    }
+                } else {
+                    const width = el.offsetWidth;
+                    const style = getComputedStyle(parent);
+                    const parentWidth = parent.offsetWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+                    const moveX = parentWidth - width;
+                    if (moveX > 0) {
+                        const moveXPercent = moveX / this.dynamicLabelingRoom.nativeElement.clientWidth * 100;
+                        const type = 'view';
+                        // this.resetView(); // for animation
+                        this.currentDrag[type].type = 'left,right';
+                        this.onMoveVersion1(type, moveXPercent, 0);
+                    }
+                    console.log('moveX', moveX)
+                }
+            }
+        })
     }
 
     resetView(): void {
@@ -710,10 +751,10 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     changeTemplateType(): void {
-        if (this.templateType === 1) {
-            this.templateType = 2;
+        if (this.templateType === this.templateTypes.horizontal) {
+            this.templateType = this.templateTypes.vertical;
         } else {
-            this.templateType = 1;
+            this.templateType = this.templateTypes.horizontal;
         }
         this.resetView();
         this.animateChangingTemplate();
