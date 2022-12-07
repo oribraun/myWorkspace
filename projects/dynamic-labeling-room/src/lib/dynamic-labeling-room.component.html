@@ -67,7 +67,9 @@
                 </div>
                 <div class="labeling-body" #labelingBody [ngClass]="{'labeling-block-fixed': data.isList && data.listHeaderFixed}">
                     <ng-container *ngFor="let block of obj">
-                        <div class="labeling-block" [ngClass]="{'labeling-block-inline': block.blockWidth}" [ngStyle]="block.blockWidth && {'width':block.blockWidth + '%'}">
+                        <div class="labeling-block" [ngClass]="{
+                        'labeling-block-inline': block.blockWidth
+                        }" [ngStyle]="block.blockWidth && {'width':block.blockWidth + '%'}">
                             <div class="labeling-block-row">
                                 <div class="labeling-block-row-column">
                                     <div class="labeling-block-row-column-header">
