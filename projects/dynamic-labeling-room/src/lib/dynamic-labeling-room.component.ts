@@ -950,7 +950,7 @@ export class DsProjectRoomBlock {
     blockName = ''; // the name of the block - will be presented as header in html
     blockDesc = ''; // the description of the block - will be presented under header in html
     blockWidth = ''; // width of the block in case we want two blocks to be in one row (must have next blocks complete width to 100%)
-    numColumns: 2; // number of columns we want the fields to spread on
+    numColumns: number; // number of columns we want the fields to spread on
     fields: DsProjectRoomBlockField[] = []; // fields list inside the block
     isValid = true; // represent if the block is html valid
 
