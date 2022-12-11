@@ -36,9 +36,10 @@ class DsProjectRoomData {
     listHeader?: string; // header for the list
     listHeaderFixed?: boolean; // mark list header as fixed
     listItemDefaultHeader?: string; // when isList is true this will be the default name presented for item in list
-    listObjIndex?: number; // this will be the block index from (dsProjectRoomObj) to present as header when filled
-    listFirstItemIndex?: number; // this will be the first field index in listObjIndex(the selected block index) to present as header when filled
-    listSecondItemIndex?: number; // this will be the second field index in listObjIndex(the selected block index) to present as header when filled
+    listBlockIndex?: number; // this will be the block index from (dsProjectRoomObj) to present as header when filled
+    listBlockFieldFirstIndex?: number; // this will be the first field index in listBlockIndex(the selected block index) to present as header when filled
+    listBlockFieldSecondIndex?: number; // this will be the second field index in listBlockIndex(the selected block index) to present as header when filled
+
 }
 
 class DsProjectRooomListObj {

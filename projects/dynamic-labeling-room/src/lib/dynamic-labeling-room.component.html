@@ -1,5 +1,5 @@
 <div class="dynamic-labeling-room" #dynamic_labeling_room
-     *ngIf="data && obj"
+     *ngIf="data && blocks"
      [ngStyle]="mainCssObj">
     <div class="view"
          [ngClass]="{'view-with-url': data.url, 'dynamic-labeling-room-animated-all': resetViewAnimate}"
@@ -22,7 +22,7 @@
                 <iframe [ngClass]="{'dragging': dragStarted}" #iframe [src]="data.url | safe"></iframe>
             </ng-container>
             <ng-container *ngIf="!data.showInIframe">
-                <a [href]="data.url" target="_blank">{{data.url}}</a>
+                <a #urlText [href]="data.url" target="_blank">{{data.url}}</a>
             </ng-container>
         </div>
         <div class="horizontal-drag horizontal-drag-bottom"
@@ -56,7 +56,7 @@
                  [style]="formCssObj">
                 <div class="labeling-header" #labelingHeader *ngIf="data.isList" [ngClass]="{'labeling-header-fixed': data.isList && data.listHeaderFixed}">
                     {{data.listHeader}} <span class="labeling-header-plus no-highlight"
-                                              (click)="addToMainList(listObj)">+</span>
+                                              (click)="addToMainList(listBlocks)">+</span>
                     <br>
                     <div class="labeling-header-item no-highlight" *ngFor="let item of mainList; let i = index"
                          (click)="selectMainItem(i)"
@@ -66,7 +66,7 @@
                     </div>
                 </div>
                 <div class="labeling-body" #labelingBody [ngClass]="{'labeling-block-fixed': data.isList && data.listHeaderFixed}">
-                    <ng-container *ngFor="let block of obj">
+                    <ng-container *ngFor="let block of blocks">
                         <div class="labeling-block" [ngClass]="{
                         'labeling-block-inline': block.blockWidth
                         }" [ngStyle]="block.blockWidth && {'width':block.blockWidth + '%'}">
@@ -100,7 +100,7 @@
                                                            [required]="item.required"
                                                            [pattern]="item.pattern"
                                                            [(ngModel)]="item.value"
-                                                           (ngModelChange)="onChangeObj()"
+                                                           (ngModelChange)="onChangeBlocks()"
                                                            [attr.value]="item.value"
                                                            [ngClass]="{
                                                            'required': formSubmitted &&
@@ -121,13 +121,13 @@
                                                            form.controls[item.label].errors &&
                                                            (form.controls[item.label].errors.required)
                                                        }"
-                                                           (change)="!item.value ? item.value = 1 : item.value = 0; onChangeObj()">
+                                                           (change)="!item.value ? item.value = 1 : item.value = 0; onChangeBlocks()">
                                                     <textarea *ngIf="item.inputType === 'textarea'"
                                                               [ngStyle]="item.css"
                                                               [name]="item.label"
                                                               [required]="item.required"
                                                               [(ngModel)]="item.value"
-                                                              (ngModelChange)="onChangeObj()"
+                                                              (ngModelChange)="onChangeBlocks()"
                                                               [attr.value]="item.value"
                                                               [ngClass]="{
                                                               'required': formSubmitted &&
@@ -142,7 +142,7 @@
                                                             [name]="item.label"
                                                             [required]="item.required"
                                                             [(ngModel)]="item.value"
-                                                            (ngModelChange)="onChangeObj()"
+                                                            (ngModelChange)="onChangeBlocks()"
                                                             [disabled]="checkDepend(block.fields, item)"
                                                             [attr.value]="item.value"
                                                             [ngClass]="{
@@ -177,7 +177,7 @@
                                                                 [name]="item.label"
                                                                 [required]="item.required"
                                                                 [(ngModel)]="item.value"
-                                                                (ngModelChange)="onChangeObj()"
+                                                                (ngModelChange)="onChangeBlocks()"
                                                                 [disabled]="checkDepend(block.fields, item)"
                                                                 [attr.value]="item.value"
                                                                 [ngClass]="{
@@ -198,7 +198,7 @@
                                                                     [id]="o"
                                                                     [type]="item.inputType"
                                                                     [checked]="item.value == o"
-                                                                    (change)="item.value = o; onChangeObj()"
+                                                                    (change)="item.value = o; onChangeBlocks()"
                                                                     [ngStyle]="item.css"
                                                                     [name]="item.label"
                                                                     [attr.name]="item.label"
@@ -217,7 +217,7 @@
                                                             {{item.description}}
                                                         </div>
                                                         <div class="labeling-block-row-column-body-item-box-input-list-item" *ngFor="let listItem of item.value; index as i; trackBy: trackByFn">
-                                                            <ng-container *ngIf="!item.listObj">
+                                                            <ng-container *ngIf="!item.listBlocks">
                                                                 <input [type]="item.inputType"
                                                                        [name]="item.label + '-' + i"
                                                                        [required]="item.required"
@@ -229,12 +229,12 @@
                                                                        form.controls[item.label + '-' + i].errors &&
                                                                        (form.controls[item.label + '-' + i].errors.required)
                                                                    }"
-                                                                       (ngModelChange)="onChangeObj()">
-                                                                <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="removeItemToList(item, i); onChangeObj();">-</div>
+                                                                       (ngModelChange)="onChangeBlocks()">
+                                                                <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="removeItemToList(item, i); onChangeBlocks();">-</div>
                                                             </ng-container>
-                                                            <ng-container *ngIf="item.listObj">
+                                                            <ng-container *ngIf="item.listBlocks">
                                                                 <div class="labeling-block-row-column-body-item-box-input-list-item-wrapper"
-                                                                     [ngStyle]="{'width': (10 / getObjKeysLength(item.listObj) * 10 - 2) + '%'}"
+                                                                     [ngStyle]="{'width': (10 / getObjKeysLength(item.listBlocks) * 10 - 2) + '%'}"
                                                                      *ngFor="let objItem of item.value[i]; index as j;let last = last;">
                                                                     <input [type]="objItem.inputType"
                                                                            [name]="item.label + '-' + objItem.label + '-' + i + '-' + j"
@@ -247,7 +247,7 @@
                                                                            form.controls[item.label + '-' + objItem.label + '-' + i + '-' + j].errors &&
                                                                            (form.controls[item.label + '-' + objItem.label + '-' + i + '-' + j].errors.required)
                                                                        }"
-                                                                           (ngModelChange)="onChangeObj()">
+                                                                           (ngModelChange)="onChangeBlocks()">
                                                                     <div class="labeling-block-row-column-body-item-box-input-list-item-label"
                                                                          [ngClass]="{
                                                                         'labeling-block-row-column-body-item-box-input-list-item-label-hover': true,
@@ -259,7 +259,7 @@
                                                                     </div>
                                                                     <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight"
                                                                          *ngIf="last"
-                                                                         (click)="removeItemToList(item, i); onChangeObj();">-</div>
+                                                                         (click)="removeItemToList(item, i); onChangeBlocks();">-</div>
 
                                                                 </div>
                                                             </ng-container>
@@ -277,8 +277,8 @@
                             </div>
                         </div>
                     </ng-container>
-                    <div class="objErrMessage text-center" *ngIf="objErrMessage">
-                        {{objErrMessage}}
+                    <div class="blocksErrMessage text-center" *ngIf="blocksErrMessage">
+                        {{blocksErrMessage}}
                     </div>
                 </div>
             </div>

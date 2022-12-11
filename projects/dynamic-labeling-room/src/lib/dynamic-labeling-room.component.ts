@@ -24,6 +24,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     @ViewChild('labelingHeader') labelingHeader: any;
     @ViewChild('labelingBody') labelingBody: any;
     @ViewChild('viewText') viewText: any;
+    @ViewChild('urlText') urlText: any;
     @ViewChild('form') form: NgForm;
     private document: Document;
     public formSubmitted = false;
@@ -136,7 +137,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     public iframeLoading = false;
     public mainList = [];
     public listCurrentIndex = 0;
-    public listObj: any;
+    public listBlocks: any;
     public templateTypes = {horizontal: 1, vertical: 2};
     @Input() mainCssObj;
     @Input() viewCssObj;
@@ -152,7 +153,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         url: '',
         showInIframe: false
     };
-    @Input() obj: DsProjectRoomBlock[] = [
+    @Input() blocks: DsProjectRoomBlock[] = [
         // {
         //     blockName: '',
         //     numColumns: 2,
@@ -185,7 +186,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         // }
     ];
     @Output() onChange: EventEmitter<OutputObj> = new EventEmitter<OutputObj>();
-    public objErrMessage = '';
+    public blocksErrMessage = '';
     constructor(
         private ref: ChangeDetectorRef,
         @Inject(DOCUMENT) document?: any
@@ -205,43 +206,43 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     initObj(): void {
-        this.resetObjError();
+        this.resetBlocksError();
         this.mainList = [];
         this.listCurrentIndex = 0;
         const mainObj: any = this.handleInitObjIsList();
-        if (!this.obj || !this.obj.length) {
-            this.setObjError('obj have no items - please make sure obj has at least one DsProjectRoomBlock item');
+        if (!this.blocks || !this.blocks.length) {
+            this.setBlocksError('blocks have no items - please make sure blocks has at least one DsProjectRoomBlock item');
             return;
         }
-        if (this.obj.length && !this.obj[0].fields) {
-            this.setObjError('obj have no structure - please make sure obj has at least one DsProjectRoomBlock item');
+        if (this.blocks.length && !this.blocks[0].fields) {
+            this.setBlocksError('blocks have no structure - please make sure blocks has at least one DsProjectRoomBlock item');
             return;
         }
-        for (const i in this.obj) {
-            for (const j in this.obj[i].fields) {
-                if (this.obj[i].fields[j].inputType === 'checkbox') {
-                    if (!this.obj[i].fields[j].value) {
-                        this.obj[i].fields[j].value = 0;
+        for (const i in this.blocks) {
+            for (const j in this.blocks[i].fields) {
+                if (this.blocks[i].fields[j].inputType === 'checkbox') {
+                    if (!this.blocks[i].fields[j].value) {
+                        this.blocks[i].fields[j].value = 0;
                     }
-                } else if (this.obj[i].fields[j].inputType === 'text') {
-                    if (!this.obj[i].fields[j].value) {
-                        this.obj[i].fields[j].value = '';
+                } else if (this.blocks[i].fields[j].inputType === 'text') {
+                    if (!this.blocks[i].fields[j].value) {
+                        this.blocks[i].fields[j].value = '';
                     }
-                } else if (this.obj[i].fields[j].inputType === 'text_list') {
-                    if (!this.obj[i].fields[j].value) {
-                        this.obj[i].fields[j].value = [];
+                } else if (this.blocks[i].fields[j].inputType === 'text_list') {
+                    if (!this.blocks[i].fields[j].value) {
+                        this.blocks[i].fields[j].value = [];
                     }
                 } else {
-                    if (!this.obj[i].fields[j].value) {
-                        this.obj[i].fields[j].value = '';
+                    if (!this.blocks[i].fields[j].value) {
+                        this.blocks[i].fields[j].value = '';
                     }
                 }
             }
         }
         if (this.data && this.data.isList) {
             this.setUpListObj();
-            this.addToMainList(this.listObj);
-            this.cleanListObj();
+            this.addToMainList(this.listBlocks);
+            this.cleanListBlocks();
             this.addToListInitObj(mainObj);
         }
         if (this.initDragBasedOnViewTextSize) {
@@ -258,14 +259,14 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     unsetListFixedHeader() {
-        this.labelingBody.nativeElement.style.marginTop = ''
+        this.labelingBody.nativeElement.style.marginTop = '';
     }
 
     handleInitObjIsList() {
         let returnObj = [];
-        const mainObj: any = this.obj;
-        if (mainObj.length && mainObj[0]) {
-            this.obj = mainObj[0];
+        const mainObj: any = this.blocks;
+        if (mainObj && Array.isArray(mainObj[0]) && mainObj[0][0] && mainObj[0][0].fields && mainObj[0][0].fields.length) {
+            this.blocks = mainObj[0];
             mainObj.shift();
             returnObj = mainObj;
         }
@@ -278,24 +279,24 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 this.addToMainList(o);
             }
             this.listCurrentIndex = 0;
-            this.obj = this.mainList[this.listCurrentIndex];
+            this.blocks = this.mainList[this.listCurrentIndex];
         }
     }
 
     setUpListObj() {
-        this.listObj =  JSON.parse(JSON.stringify(this.obj));
+        this.listBlocks =  JSON.parse(JSON.stringify(this.blocks));
     }
-    cleanListObj() {
-        for (const i in this.listObj) {
-            for (const j in this.listObj[i].fields) {
-                if (this.listObj[i].fields[j].inputType === 'checkbox') {
-                    this.listObj[i].fields[j].value = 0;
-                } else if (this.listObj[i].fields[j].inputType === 'text') {
-                    this.listObj[i].fields[j].value = '';
-                } else if (this.listObj[i].fields[j].inputType === 'text_list') {
-                    this.listObj[i].fields[j].value = [];
+    cleanListBlocks() {
+        for (const i in this.listBlocks) {
+            for (const j in this.listBlocks[i].fields) {
+                if (this.listBlocks[i].fields[j].inputType === 'checkbox') {
+                    this.listBlocks[i].fields[j].value = 0;
+                } else if (this.listBlocks[i].fields[j].inputType === 'text') {
+                    this.listBlocks[i].fields[j].value = '';
+                } else if (this.listBlocks[i].fields[j].inputType === 'text_list') {
+                    this.listBlocks[i].fields[j].value = [];
                 } else {
-                    this.listObj[i].fields[j].value = '';
+                    this.listBlocks[i].fields[j].value = '';
                 }
             }
         }
@@ -335,11 +336,11 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
 
-    addToMainList(listObj): void {
-        const obj = JSON.parse(JSON.stringify(listObj));
-        this.mainList.push(obj);
+    addToMainList(listBlocks): void {
+        const blocks = JSON.parse(JSON.stringify(listBlocks));
+        this.mainList.push(blocks);
         this.listCurrentIndex = this.mainList.length - 1;
-        this.obj = this.mainList[this.listCurrentIndex];
+        this.blocks = this.mainList[this.listCurrentIndex];
         this.formSubmitted = false;
         if (this.data.listHeaderFixed) {
             setTimeout(() => {
@@ -352,7 +353,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     addToMainListIfFormIsValid(): void {
         if (this.form && !(this.formSubmitted && this.form.invalid)) {
             this.formSubmitted = false;
-            this.addToMainList(this.listObj);
+            this.addToMainList(this.listBlocks);
         } else {
             alert('please fill all required data before adding ' + this.data.listHeader);
         }
@@ -366,7 +367,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         } else {
             this.listCurrentIndex = 0;
         }
-        this.obj = this.mainList[this.listCurrentIndex];
+        this.blocks = this.mainList[this.listCurrentIndex];
         if (this.data.listHeaderFixed) {
             setTimeout(() => {
                 this.setListFixedHeader();
@@ -376,26 +377,26 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     selectMainItem(index): void {
         this.listCurrentIndex = index;
         console.log('this.mainList[this.listCurrentIndex]', this.mainList[this.listCurrentIndex]);
-        this.obj = this.mainList[this.listCurrentIndex];
+        this.blocks = this.mainList[this.listCurrentIndex];
     }
     getMainObjHeader(index): string {
         let header =  (this.data.listItemDefaultHeader ? this.data.listItemDefaultHeader + ' ' : 'Item ') + (index + 1);
         try {
             let firstLabelValue = '';
             let secondLabelValue = '';
-            if (this.data.listFirstItemIndex >= 0
+            if (this.data.listBlockFieldFirstIndex >= 0
                 && this.mainList[index]
-                && this.mainList[index][this.data.listObjIndex]
-                && this.mainList[index][this.data.listObjIndex].fields
-                && this.mainList[index][this.data.listObjIndex].fields[this.data.listFirstItemIndex]) {
-                firstLabelValue = this.mainList[index][this.data.listObjIndex].fields[this.data.listFirstItemIndex].value;
+                && this.mainList[index][this.data.listBlockIndex]
+                && this.mainList[index][this.data.listBlockIndex].fields
+                && this.mainList[index][this.data.listBlockIndex].fields[this.data.listBlockFieldFirstIndex]) {
+                firstLabelValue = this.mainList[index][this.data.listBlockIndex].fields[this.data.listBlockFieldFirstIndex].value;
             }
-            if (this.data.listSecondItemIndex >= 0
+            if (this.data.listBlockFieldSecondIndex >= 0
                 && this.mainList[index]
-                && this.mainList[index][this.data.listObjIndex]
-                && this.mainList[index][this.data.listObjIndex].fields
-                && this.mainList[index][this.data.listObjIndex].fields[this.data.listSecondItemIndex]) {
-                secondLabelValue = this.mainList[index][this.data.listObjIndex].fields[this.data.listSecondItemIndex].value;
+                && this.mainList[index][this.data.listBlockIndex]
+                && this.mainList[index][this.data.listBlockIndex].fields
+                && this.mainList[index][this.data.listBlockIndex].fields[this.data.listBlockFieldSecondIndex]) {
+                secondLabelValue = this.mainList[index][this.data.listBlockIndex].fields[this.data.listBlockFieldSecondIndex].value;
             }
             if (firstLabelValue || secondLabelValue) {
                 if (secondLabelValue) {
@@ -410,16 +411,16 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
     appendItemToList(item): void {
         let val = '';
-        if (item.listObj) {
-            val = this.cloneObject(item.listObj);
+        if (item.listBlocks) {
+            val = this.cloneObject(item.listBlocks);
         }
         item.value.push(val);
     }
     removeItemToList(item, index): void {
         item.value.splice(index, 1);
     }
-    cloneObject(obj): any {
-        return JSON.parse(JSON.stringify(obj));
+    cloneObject(blocks): any {
+        return JSON.parse(JSON.stringify(blocks));
     }
     isArray(arr): boolean {
         return Array.isArray(arr);
@@ -672,18 +673,20 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             }
         }
     }
-
+    validateBlocks() {
+        this.blocks.forEach((o, i) => {
+            if (Array.isArray(o)){
+                o.forEach((o2, i2) => this.blocks[i][i2] = new DsProjectRoomBlock(o2));
+            } else {
+                this.blocks[i] = new DsProjectRoomBlock(o);
+            }
+        });
+    }
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.obj) {
-            this.obj.forEach((o, i) => {
-                if (Array.isArray(o)){
-                    o.forEach((o2, i2) => this.obj[i][i2] = new DsProjectRoomBlock(o2))
-                } else {
-                    this.obj[i] = new DsProjectRoomBlock(o);
-                }
-            });
+        if (changes.blocks) {
+            this.validateBlocks();
             this.initObj();
-            this.onChangeObj();
+            this.onChangeBlocks();
         }
         if (changes.data && !changes.data.firstChange) {
             setTimeout(() => {
@@ -695,6 +698,13 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 });
             } else {
                 this.unsetListFixedHeader();
+            }
+            if (changes.data.previousValue.isList !==  changes.data.currentValue.isList) {
+                this.initObj();
+            }
+            if (this.initDragBasedOnViewTextSize &&
+                (changes.data.previousValue.text !==  changes.data.currentValue.text || changes.data.previousValue.url !==  changes.data.currentValue.url)) {
+                this.autoDragBasedOnViewSize();
             }
         }
         if (changes.templateType && !changes.templateType.firstChange) {
@@ -713,37 +723,46 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     autoDragBasedOnViewSize() {
         setTimeout(() => {
-            const el = this.viewText.nativeElement;
-            const parent = el.parentNode;
+            let el;
+            if (this.viewText) {
+                el = this.viewText.nativeElement;
+            }
+            if (this.urlText) {
+                el = this.urlText.nativeElement;
+            }
             if (el) {
-                if (this.templateType === this.templateTypes.horizontal) {
-                    const height = el.offsetHeight;
-                    const style = getComputedStyle(parent);
-                    const parentHeight = parent.offsetHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
-                    const moveY = parentHeight - height;
-                    if (moveY > 0) {
-                        const moveYPercent = -moveY / this.dynamicLabelingRoom.nativeElement.clientHeight * 100;
-                        const type = 'view';
-                        // this.resetView(); // for animation
-                        this.currentDrag[type].type = 'top,bottom';
-                        this.onMoveVersion1(type, 0, moveYPercent);
+                const parent = el.parentNode;
+                if (el) {
+                    if (this.templateType === this.templateTypes.horizontal) {
+                        const height = el.offsetHeight;
+                        const style = getComputedStyle(parent);
+                        const parentHeight = parent.offsetHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+                        const extraSpace = 5; // 5 pixels
+                        const moveY = parentHeight - height - extraSpace;
+                        if (moveY > 0) {
+                            const moveYPercent = -moveY / this.dynamicLabelingRoom.nativeElement.clientHeight * 100;
+                            const type = 'view';
+                            // this.resetView(); // for animation
+                            this.currentDrag[type].type = 'top,bottom';
+                            this.onMoveVersion1(type, 0, moveYPercent);
+                        }
+                    } else {
+                        const width = el.offsetWidth;
+                        const style = getComputedStyle(parent);
+                        const parentWidth = parent.offsetWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+                        const moveX = parentWidth - width;
+                        if (moveX > 0) {
+                            const moveXPercent = moveX / this.dynamicLabelingRoom.nativeElement.clientWidth * 100;
+                            const type = 'view';
+                            // this.resetView(); // for animation
+                            this.currentDrag[type].type = 'left,right';
+                            this.onMoveVersion1(type, moveXPercent, 0);
+                        }
+                        console.log('moveX', moveX)
                     }
-                } else {
-                    const width = el.offsetWidth;
-                    const style = getComputedStyle(parent);
-                    const parentWidth = parent.offsetWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-                    const moveX = parentWidth - width;
-                    if (moveX > 0) {
-                        const moveXPercent = moveX / this.dynamicLabelingRoom.nativeElement.clientWidth * 100;
-                        const type = 'view';
-                        // this.resetView(); // for animation
-                        this.currentDrag[type].type = 'left,right';
-                        this.onMoveVersion1(type, moveXPercent, 0);
-                    }
-                    console.log('moveX', moveX)
                 }
             }
-        })
+        });
     }
 
     resetView(): void {
@@ -776,7 +795,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }, 1000);
     }
 
-    onChangeObj(): void {
+    onChangeBlocks(): void {
         if (this.form) {
             this.formSubmitted = true;
             this.form.onSubmit(undefined);
@@ -787,25 +806,25 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 const isValid = this.checkValidList();
                 const map = this.mainList.map((o) => this.getFinalObject(o));
                 const obj: OutputObj = {
-                    obj: this.mainList,
+                    blocks: this.mainList,
                     valid: isValid,
                     cleanBlocks: map,
                 };
                 this.onChange.emit(obj);
             } else {
                 const obj = {
-                    obj: this.obj,
+                    blocks: this.blocks,
                     valid: !this.form.invalid,
-                    cleanBlocks: this.getFinalObject(this.obj)
+                    cleanBlocks: this.getFinalObject(this.blocks)
                 };
                 this.onChange.emit(obj);
             }
         }
     }
 
-    getFinalObject(currrentObj): any[] {
+    getFinalObject(currrentBlocks): any[] {
         const cleanBlocks = [];
-        for (const block of currrentObj) {
+        for (const block of currrentBlocks) {
             const obj = {
                 blockName: block.blockName, fields: []
             };
@@ -857,8 +876,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         return valid;
     }
 
-    getObjKeysLength(listObj): number {
-        return Object.keys(listObj).length;
+    getObjKeysLength(listBlocks): number {
+        return Object.keys(listBlocks).length;
     }
 
     firstAnimateMenu() {
@@ -933,11 +952,11 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         // });
     }
 
-    setObjError(err) {
-        this.objErrMessage = err;
+    setBlocksError(err) {
+        this.blocksErrMessage = err;
     }
-    resetObjError() {
-        this.objErrMessage = '';
+    resetBlocksError() {
+        this.blocksErrMessage = '';
     }
 
     changeDetectorRefresh() {
@@ -981,10 +1000,10 @@ export class DsProjectRoomBlockField {
     label = ''; // will be used for html input name and label text
     description = ''; // description that will show as text under the field
     value: any = ''; // value of the field
-    inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj)
+    inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listBlocks)
     required?: boolean; // html required
     pattern?: string; // html pattern
-    listObj?: DsProjectRooomListObj[]; // for text-list type an array of DsProjectRooomListObj spread equal  on 100%
+    listBlocks?: DsProjectRooomListBlocks[]; // for text-list type an array of DsProjectRooomListObj spread equal  on 100%
     depend: string; // determine when field depend on another field based on label name
     dependOnValue: any; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field
     breakLine: boolean; // boolean to force break line between fields
@@ -996,14 +1015,14 @@ export class DsProjectRoomBlockField {
     constructor(obj?) {
         if (obj) {
             for (const key in obj) {
-                if (key === 'listObj') {
-                    for (const i in obj.listObj) {
-                        obj.listObj[i] = new DsProjectRooomListObj(obj.listObj[i]);
+                if (key === 'listBlocks') {
+                    for (const i in obj.listBlocks) {
+                        obj.listBlocks[i] = new DsProjectRooomListBlocks(obj.listBlocks[i]);
                     }
                 }
                 if (obj[key] !== undefined && obj[key] !== null) {
-                    const orig_key = this.convertShortKey(key);
-                    this[orig_key] = obj[key];
+                    const origKey = this.convertShortKey(key);
+                    this[origKey] = obj[key];
                 }
             }
         }
@@ -1013,10 +1032,10 @@ export class DsProjectRoomBlockField {
         key === 'l' ? key = 'label' : ''; // will be used for html input name and label text
         key === 'd' ? key = 'description' : ''; // description that will show as text under the field
         key === 'v' ? key = 'value' : ''; // value of the field
-        key === 'iT' ? key = 'inputType' : ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj)
+        key === 'iT' ? key = 'inputType' : ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listBlocks)
         key === 'r' ? key = 'required' : ''; // html required
         key === 'p' ? key = 'pattern' : ''; // html pattern
-        key === 'lO' ? key = 'listObj' : ''; // for text-list type an array of DsProjectRooomListObj spread equal  on 100%
+        key === 'lB' ? key = 'listBlocks' : ''; // for text-list type an array of DsProjectRooomListBlocks spread equal  on 100%
         key === 'de' ? key = 'depend' : ''; // determine when field depend on another field based on label name
         key === 'dOV' ? key = 'dependOnValue' : ''; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field
         key === 'bL' ? key = 'breakLine' : ''; // boolean to force break line between fields
@@ -1036,9 +1055,9 @@ export class DsProjectRoomData {
     listHeader?: string; // header for the list
     listHeaderFixed?: boolean; // mark list header as fixed
     listItemDefaultHeader?: string; // when isList is true this will be the default name presented for item in list
-    listObjIndex?: number; // this will be the block index from (dsProjectRoomObj) to present as header when filled
-    listFirstItemIndex?: number; // this will be the first field index in listObjIndex(the selected block index) to present as header when filled
-    listSecondItemIndex?: number; // this will be the second field index in listObjIndex(the selected block index) to present as header when filled
+    listBlockIndex?: number; // this will be the block index from (dsProjectRoomObj) to present as header when filled
+    listBlockFieldFirstIndex?: number; // this will be the first field index in listBlockIndex(the selected block index) to present as header when filled
+    listBlockFieldSecondIndex?: number; // this will be the second field index in listBlockIndex(the selected block index) to present as header when filled
 
     constructor(obj?) {
         if (obj) {
@@ -1051,11 +1070,11 @@ export class DsProjectRoomData {
     }
 }
 
-export class DsProjectRooomListObj {
+export class DsProjectRooomListBlocks {
     label = ''; // will be used for html input name and label text
     description = ''; // description that will show as text under the field
     value: any = ''; // value of the field
-    inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj)
+    inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listBlocks)
     required?: boolean; // html required
     pattern?: string; // html pattern
 
@@ -1070,8 +1089,8 @@ export class DsProjectRooomListObj {
     }
 }
 class OutputObj {
-    obj: DsProjectRoomBlock | DsProjectRoomBlock[]; // full output obj to cache if needed
-    cleanBlocks: any | any[]; // clean output obj with only full fields
+    blocks: DsProjectRoomBlock | DsProjectRoomBlock[]; // full output blocks to cache if needed
+    cleanBlocks: any | any[]; // clean output blocks with only full fields
     valid: boolean; // represent if the list of items or one item is valid in order to alert the user
 }
 
@@ -1079,10 +1098,10 @@ export class DsProjectRoomBlockShortField {
     l = ''; // will be used for html input name and label text
     d = ''; // description that will show as text under the field
     v: any = ''; // value of the field
-    iT = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj)
+    iT = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listBlocks)
     r?: boolean; // html required
     p?: string; // html pattern
-    lO?: DsProjectRooomListObj[]; // for text-list type an array of DsProjectRooomListObj spread equal  on 100%
+    lB?: DsProjectRooomListBlocks[]; // for text-list type an array of DsProjectRooomListBlocks spread equal  on 100%
     de: string; // determine when field depend on another field based on label name
     dOV: any; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field
     bL: boolean; // boolean to force break line between fields
@@ -1096,7 +1115,7 @@ export class DsProjectRoomBlockShortField {
             for (const key in obj) {
                 if (key === 'lO') {
                     for (const i in obj.lO) {
-                        obj.lO[i] = new DsProjectRooomListObj(obj.lO[i]);
+                        obj.lO[i] = new DsProjectRooomListBlocks(obj.lO[i]);
                     }
                 }
                 if (obj[key] !== undefined && obj[key] !== null) {
