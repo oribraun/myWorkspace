@@ -264,7 +264,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     handleInitObjIsList() {
         let returnObj = [];
         const mainObj: any = this.obj;
-        if (mainObj.length && mainObj[0].length) {
+        if (mainObj.length && mainObj[0]) {
             this.obj = mainObj[0];
             mainObj.shift();
             returnObj = mainObj;
@@ -675,7 +675,13 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.obj) {
-            this.obj.forEach((o, i) => this.obj[i] = new DsProjectRoomBlock(o));
+            this.obj.forEach((o, i) => {
+                if (Array.isArray(o)){
+                    o.forEach((o2, i2) => this.obj[i][i2] = new DsProjectRoomBlock(o2))
+                } else {
+                    this.obj[i] = new DsProjectRoomBlock(o);
+                }
+            });
             this.initObj();
             this.onChangeObj();
         }
