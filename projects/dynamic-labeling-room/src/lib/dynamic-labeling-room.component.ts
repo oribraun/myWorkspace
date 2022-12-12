@@ -327,11 +327,6 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         if (index > -1 && condition) {
             return false;
         } else {
-            if (item.value) {
-                setTimeout(() => {
-                    item.value = '';
-                });
-            }
             return true;
         }
     }
@@ -838,7 +833,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 ) {
                     if (Array.isArray(field.value) && field.value.length) {
                         const map = field.value.map((o) => {
-                            if (typeof o === 'object') {
+                            if (Array.isArray(o)) {
                                 return o.map((o2) => {
                                     return {
                                         label: o2.label, value: o2.value

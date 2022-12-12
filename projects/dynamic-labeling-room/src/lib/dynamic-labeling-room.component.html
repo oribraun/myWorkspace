@@ -137,12 +137,11 @@
                                                           }"
                                                               [disabled]="checkDepend(block.fields, item)">
                                                 </textarea>
-                                                    <select name="" *ngIf="item.inputType === 'select'"
+                                                    <select name="" [attr.test]="item.value" *ngIf="item.inputType === 'select'"
                                                             [ngStyle]="item.css"
                                                             [name]="item.label"
                                                             [required]="item.required"
-                                                            [(ngModel)]="item.value"
-                                                            (ngModelChange)="onChangeBlocks()"
+                                                            (change)="item.value = $event.target.value; onChangeBlocks()"
                                                             [disabled]="checkDepend(block.fields, item)"
                                                             [attr.value]="item.value"
                                                             [ngClass]="{
@@ -151,8 +150,8 @@
                                                            form.controls[item.label].errors &&
                                                            (form.controls[item.label].errors.required)
                                                        }">
-                                                        <option value=""></option>
-                                                        <option *ngFor="let o of item.options" [value]="o">{{o}}</option>
+                                                        <option value="" [selected]="!item.value"></option>
+                                                        <option *ngFor="let o of item.options" [selected]="item.value == o" [value]="o">{{o}}</option>
                                                     </select>
                                                     <div class="labeling-block-row-column-body-item-box-input-label"
                                                          [ngClass]="{'labeling-block-row-column-body-item-box-input-label-hover':
