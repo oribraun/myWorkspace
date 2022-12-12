@@ -186,7 +186,7 @@
                                                            form.controls[item.label].errors &&
                                                            (form.controls[item.label].errors.required)
                                                        }">
-                                                            <option *ngFor="let o of item.options" [value]="o">{{o}}</option>
+                                                            <option *ngFor="let o of item.options" [selected]="item.value == o" [value]="o">{{o}}</option>
                                                         </select>
                                                     </ng-container>
                                                     <div class="radio-buttons"

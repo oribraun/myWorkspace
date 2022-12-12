@@ -79,7 +79,7 @@ dsProjectRoomData = {
     listFirstItemIndex: 1, // this will be the first field index in listObjIndex(the selected block index) to present as header when filled
     listSecondItemIndex: 2 // this will be the second field index in listObjIndex(the selected block index) to present as header when filled
 };
-dsProjectRoomObj: any = [
+dsProjectRoomBlocks: any = [
     {
         blockName: '',
         numColumns: 2,
@@ -107,7 +107,28 @@ dsProjectRoomObj: any = [
             {label: 'faxes', inputType: 'text_list'},
             {label: 'comments', inputType: 'textarea'},
             {label: 'other', inputType: 'checkbox', value: 0},
-            {label: 'type', inputType: 'select', selectOptions: ['one', 'two', 'three'], depend: 'other'}
+            {label: 'type', inputType: 'select', options: ['one', 'two', 'three'], depend: 'other'},
+            {label: 'type', inputType: 'select_multiple', options: ['one', 'two', 'three'], value: 'one'},
+            {
+                label: 'to',
+                inputType: 'text_list',
+                listBlocks: [
+                    {label: 'name', required: true, inputType: 'text'},
+                    {label: 'email', required: true, inputType: 'text'}
+                ],
+                value: [
+                    [
+                        {
+                            "label": "name",
+                            "value": "a"
+                        },
+                        {
+                            "label": "email",
+                            "value": "b"
+                        }
+                    ]
+                ]
+            }
         ],
     }
 ];
@@ -124,7 +145,7 @@ onDsProjectRoomChange(e) {
 <div class="home">
     <lib-dynamic-labeling-room
         [data]="dsProjectRoomData"
-        [obj]="dsProjectRoomObj"
+        [blocks]="dsProjectRoomBlocks"
         [templateType]="templateType"
         [initDragBasedOnViewTextSize]="initDragBasedOnViewTextSize"
         [mainCssObj]="mainCssObj"
