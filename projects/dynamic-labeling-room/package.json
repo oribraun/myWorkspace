@@ -1,6 +1,6 @@
 {
   "name": "dynamic-labeling-room",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "peerDependencies": {
     "@angular/common": "^13.1.1",
     "@angular/core": "^13.1.1"
