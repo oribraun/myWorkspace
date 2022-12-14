@@ -1,6 +1,7 @@
-# Dynamic Labeling Room
+# **Dynamic Labeling Room**
 
-* structure of input obj
+## this library gives the ability to dynamically build html forms
+* Structure of blocks input
 ```angular2html
 class DsProjectRoomBlock {
     blockName = ''; // the name of the block - will be presented as header in html
@@ -12,22 +13,43 @@ class DsProjectRoomBlock {
 }
 
 class DsProjectRoomBlockField {
-    label = ''; // will be used for html input name and label text - short key l
-    description = ''; // description that will show as text under the field - short key d
-    value: any = ''; // value of the field - short key v
-    inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listObj) - short key iT
-    required?: boolean; // html required - short key r
-    pattern?: string; // html pattern - short key p
-    listObj?: DsProjectRooomListObj[]; // for text-list type an array of DsProjectRooomListObj spread equal  on 100% - short key lO
-    depend: string; // determine when field depend on another field based on label name - short key d
-    dependOnValue: any; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field - short key dOV
-    breakLine: boolean; // boolean to force break line between fields - short key bL
-    fullLine: boolean; // boolean to force field to spread on full line - short key fL
-    center: boolean; // boolean to force field to be center of column - short key c
-    options: any[]; // represent string select, select_multiple, radio options - short key o
-    css: any; // represent specific style to a string - short key c
+    label = ''; // will be used for html input name and label text
+    description = ''; // description that will show as text under the field
+    value: any = ''; // value of the field
+    inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listBlocks)
+    required?: boolean; // html required
+    pattern?: string; // html pattern
+    listBlocks?: DsProjectRooomListBlocks[]; // for text-list type an array of DsProjectRooomListBlocks spread equal  on 100%
+    depend: string; // determine when field depend on another field based on label name
+    dependOnValue: any; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field
+    breakLine: boolean; // boolean to force break line between fields
+    fullLine: boolean; // boolean to force field to spread on full line
+    center: boolean; // boolean to force field to be center of column
+    options: any[]; // represent string select, select_multiple, radio options
+    rows: number; // will be use only to set rows for textarea
+    css: any; // represent specific style to a string
 }
 
+export class DsProjectRoomBlockShortField {
+    l = ''; // will be used for html input name and label text
+    d = ''; // description that will show as text under the field
+    v: any = ''; // value of the field
+    iT = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listBlocks)
+    r?: boolean; // html required
+    p?: string; // html pattern
+    lB?: DsProjectRooomListBlocks[]; // for text-list type an array of DsProjectRooomListBlocks spread equal  on 100%
+    de: string; // determine when field depend on another field based on label name
+    dOV: any; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field
+    bL: boolean; // boolean to force break line between fields
+    fL: boolean; // boolean to force field to spread on full line
+    c: boolean; // boolean to force field to be center of column
+    o: any[]; // represent string select, select_multiple, radio options
+    ro: number; // will be use only to set rows for textarea
+    cs: any; // represent specific style to a string
+}
+```
+* Structure of data input
+```angular2html
 class DsProjectRoomData {
     text = ''; // text we want to label
     url = ''; // url we want to label
@@ -41,8 +63,10 @@ class DsProjectRoomData {
     listBlockFieldSecondIndex?: number; // this will be the second field index in listBlockIndex(the selected block index) to present as header when filled
 
 }
-
-class DsProjectRooomListObj {
+```
+* Structure of listBlocks input
+```angular2html
+class DsProjectRooomListBlocks {
     label = ''; // will be used for html input name and label text
     description = ''; // description that will show as text under the field
     value: any = ''; // value of the field
@@ -50,13 +74,20 @@ class DsProjectRooomListObj {
     required?: boolean; // html required
     pattern?: string; // html pattern
 }
+```
+* Structure of output
+```angular2html
 class OutputObj {
     obj: DsProjectRoomBlock | DsProjectRoomBlock[]; // full output obj to cache if needed
     cleanBlocks: any | any[]; // clean output obj with only full fields
     valid: boolean; // represent if the list of items or one item is valid in order to alert the user
 }
 ```
+* Field types examples
+```angular2html
 
+```
+```
 * example use
 ```angular2html
 <style>

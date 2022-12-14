@@ -320,6 +320,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
         const map = fields.map((o) => o.label);
         const index = map.indexOf(item.depend);
+        if (!fields[index]) {
+            return false;
+        }
         let condition = fields[index].value;
         if (item.dependOnValue) {
             condition = fields[index].value === item.dependOnValue;
@@ -681,7 +684,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         if (changes.blocks) {
             this.validateBlocks();
             this.initObj();
-            this.onChangeBlocks();
+            if (!changes.blocks.firstChange) {
+                this.onChangeBlocks();
+            }
         }
         if (changes.data && !changes.data.firstChange) {
             setTimeout(() => {
@@ -817,9 +822,10 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
 
-    getFinalObject(currrentBlocks): any[] {
+    getFinalObject(currentBlocks): any[] {
+        const copyCurrentBlocks = JSON.parse(JSON.stringify(currentBlocks));
         const cleanBlocks = [];
-        for (const block of currrentBlocks) {
+        for (const block of copyCurrentBlocks) {
             const obj = {
                 blockName: block.blockName, fields: []
             };
@@ -856,14 +862,57 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     checkValidList(): boolean {
-        const cleanBlocks = [];
         let valid = true;
+
+        mainLoop:
         for (const currentObj of this.mainList) {
             for (const block of currentObj) {
                 for (const field of block.fields) {
                     if (!field.value && field.required) {
                         valid = false;
-                        break;
+                        break mainLoop;
+                    }
+                    if (field.value && field.required && field.pattern) {
+                        const pettern = new RegExp(field.pattern);
+                        valid = pettern.test(field.value);
+                        if (!valid) {
+                            break mainLoop;
+                        }
+                    }
+                    if (field.inputType === 'text_list' && field.listBlocks) {
+                        const labelsToCheck = {}
+                        for (let i in field.listBlocks) {
+                            if (field.listBlocks[i].required) {
+                                labelsToCheck[field.listBlocks[i].label] = {required: true, i: i};
+                                if (field.listBlocks[i].pattern) {
+                                    labelsToCheck[field.listBlocks[i].label] = {required: true, pattern: field.listBlocks[i].pattern, i: i};
+                                }
+                            }
+                            // console.log('field.value', field.listBlocks[i])
+                        }
+                        if (Array.isArray(field.value)) {
+                            for (let i in field.value) {
+                                for (let j in field.value[i]) {
+                                    const currLabel = field.value[i][j].label;
+                                    const currValue = field.value[i][j].value;
+                                    if (labelsToCheck[currLabel].i === j) {
+                                        if (labelsToCheck[currLabel] && labelsToCheck[currLabel].required && field.value[labelsToCheck[currLabel].i]) {
+                                            if (!currValue) {
+                                                valid = false;
+                                                break mainLoop;
+                                            }
+                                            if (currValue && labelsToCheck[currLabel].pattern) {
+                                                const pettern = new RegExp(labelsToCheck[currLabel].pattern);
+                                                valid = pettern.test(currValue);
+                                                if (!valid) {
+                                                    break mainLoop;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -998,13 +1047,14 @@ export class DsProjectRoomBlockField {
     inputType = ''; // html input type (text,number,email,checkbox,textarea,select,select_multiple,radio,text_list(must come with listBlocks)
     required?: boolean; // html required
     pattern?: string; // html pattern
-    listBlocks?: DsProjectRooomListBlocks[]; // for text-list type an array of DsProjectRooomListObj spread equal  on 100%
+    listBlocks?: DsProjectRooomListBlocks[]; // for text-list type an array of DsProjectRooomListBlocks spread equal  on 100%
     depend: string; // determine when field depend on another field based on label name
     dependOnValue: any; // determine the true value (number, boolean, string, any compare using ===) when a field depend on another field
     breakLine: boolean; // boolean to force break line between fields
     fullLine: boolean; // boolean to force field to spread on full line
     center: boolean; // boolean to force field to be center of column
     options: any[]; // represent string select, select_multiple, radio options
+    rows: number; // will be use only to set rows for textarea
     css: any; // represent specific style to a string
 
     constructor(obj?) {
@@ -1037,6 +1087,7 @@ export class DsProjectRoomBlockField {
         key === 'fL' ? key = 'fullLine' : ''; // boolean to force field to spread on full line
         key === 'c' ? key = 'center' : ''; // boolean to force field to be center of column
         key === 'o' ? key = 'options' : ''; // represent string select, select_multiple, radio options
+        key === 'ro' ? key = 'rows' : ''; // will be use only to set rows for textarea
         key === 'cs' ? key = 'css' : ''; // represent specific style to a string
         return key;
     }
@@ -1103,6 +1154,7 @@ export class DsProjectRoomBlockShortField {
     fL: boolean; // boolean to force field to spread on full line
     c: boolean; // boolean to force field to be center of column
     o: any[]; // represent string select, select_multiple, radio options
+    ro: number; // will be use only to set rows for textarea
     cs: any; // represent specific style to a string
 
     constructor(obj?) {
