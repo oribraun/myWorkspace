@@ -186,6 +186,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         // }
     ];
     @Output() onChange: EventEmitter<OutputObj> = new EventEmitter<OutputObj>();
+    public mainBlocks: DsProjectRoomBlock[] = [];
     public blocksErrMessage = '';
     constructor(
         private ref: ChangeDetectorRef,
@@ -205,36 +206,40 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
 
+    setUpMainBlocks() {
+        this.mainBlocks = JSON.parse(JSON.stringify(this.blocks));
+    }
+
     initObj(): void {
         this.resetBlocksError();
         this.mainList = [];
         this.listCurrentIndex = 0;
         const mainObj: any = this.handleInitObjIsList();
-        if (!this.blocks || !this.blocks.length) {
+        if (!this.mainBlocks || !this.mainBlocks.length) {
             this.setBlocksError('blocks have no items - please make sure blocks has at least one DsProjectRoomBlock item');
             return;
         }
-        if (this.blocks.length && !this.blocks[0].fields) {
+        if (this.mainBlocks.length && !this.mainBlocks[0].fields) {
             this.setBlocksError('blocks have no structure - please make sure blocks has at least one DsProjectRoomBlock item');
             return;
         }
-        for (const i in this.blocks) {
-            for (const j in this.blocks[i].fields) {
-                if (this.blocks[i].fields[j].inputType === 'checkbox') {
-                    if (!this.blocks[i].fields[j].value) {
-                        this.blocks[i].fields[j].value = 0;
+        for (const i in this.mainBlocks) {
+            for (const j in this.mainBlocks[i].fields) {
+                if (this.mainBlocks[i].fields[j].inputType === 'checkbox') {
+                    if (!this.mainBlocks[i].fields[j].value) {
+                        this.mainBlocks[i].fields[j].value = 0;
                     }
-                } else if (this.blocks[i].fields[j].inputType === 'text') {
-                    if (!this.blocks[i].fields[j].value) {
-                        this.blocks[i].fields[j].value = '';
+                } else if (this.mainBlocks[i].fields[j].inputType === 'text') {
+                    if (!this.mainBlocks[i].fields[j].value) {
+                        this.mainBlocks[i].fields[j].value = '';
                     }
-                } else if (this.blocks[i].fields[j].inputType === 'text_list') {
-                    if (!this.blocks[i].fields[j].value) {
-                        this.blocks[i].fields[j].value = [];
+                } else if (this.mainBlocks[i].fields[j].inputType === 'text_list') {
+                    if (!this.mainBlocks[i].fields[j].value) {
+                        this.mainBlocks[i].fields[j].value = [];
                     }
                 } else {
-                    if (!this.blocks[i].fields[j].value) {
-                        this.blocks[i].fields[j].value = '';
+                    if (!this.mainBlocks[i].fields[j].value) {
+                        this.mainBlocks[i].fields[j].value = '';
                     }
                 }
             }
@@ -264,9 +269,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     handleInitObjIsList() {
         let returnObj = [];
-        const mainObj: any = this.blocks;
+        const mainObj: any = this.mainBlocks;
         if (mainObj && Array.isArray(mainObj[0]) && mainObj[0][0] && mainObj[0][0].fields && mainObj[0][0].fields.length) {
-            this.blocks = mainObj[0];
+            this.mainBlocks = mainObj[0];
             mainObj.shift();
             returnObj = mainObj;
         }
@@ -279,12 +284,12 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 this.addToMainList(o);
             }
             this.listCurrentIndex = 0;
-            this.blocks = this.mainList[this.listCurrentIndex];
+            this.mainBlocks = this.mainList[this.listCurrentIndex];
         }
     }
 
     setUpListObj() {
-        this.listBlocks =  JSON.parse(JSON.stringify(this.blocks));
+        this.listBlocks =  JSON.parse(JSON.stringify(this.mainBlocks));
     }
     cleanListBlocks() {
         for (const i in this.listBlocks) {
@@ -338,7 +343,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         const blocks = JSON.parse(JSON.stringify(listBlocks));
         this.mainList.push(blocks);
         this.listCurrentIndex = this.mainList.length - 1;
-        this.blocks = this.mainList[this.listCurrentIndex];
+        this.mainBlocks = this.mainList[this.listCurrentIndex];
         this.formSubmitted = false;
         if (this.data.listHeaderFixed) {
             setTimeout(() => {
@@ -365,7 +370,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         } else {
             this.listCurrentIndex = 0;
         }
-        this.blocks = this.mainList[this.listCurrentIndex];
+        this.mainBlocks = this.mainList[this.listCurrentIndex];
         if (this.data.listHeaderFixed) {
             setTimeout(() => {
                 this.setListFixedHeader();
@@ -375,7 +380,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     selectMainItem(index): void {
         this.listCurrentIndex = index;
         console.log('this.mainList[this.listCurrentIndex]', this.mainList[this.listCurrentIndex]);
-        this.blocks = this.mainList[this.listCurrentIndex];
+        this.mainBlocks = this.mainList[this.listCurrentIndex];
     }
     getMainObjHeader(index): string {
         let header =  (this.data.listItemDefaultHeader ? this.data.listItemDefaultHeader + ' ' : 'Item ') + (index + 1);
@@ -672,16 +677,17 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
     validateBlocks() {
-        this.blocks.forEach((o, i) => {
+        this.mainBlocks.forEach((o, i) => {
             if (Array.isArray(o)){
-                o.forEach((o2, i2) => this.blocks[i][i2] = new DsProjectRoomBlock(o2));
+                o.forEach((o2, i2) => this.mainBlocks[i][i2] = new DsProjectRoomBlock(o2));
             } else {
-                this.blocks[i] = new DsProjectRoomBlock(o);
+                this.mainBlocks[i] = new DsProjectRoomBlock(o);
             }
         });
     }
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.blocks) {
+            this.setUpMainBlocks();
             this.validateBlocks();
             this.initObj();
             if (!changes.blocks.firstChange) {
@@ -700,7 +706,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 this.unsetListFixedHeader();
             }
             if (changes.data.previousValue.isList !==  changes.data.currentValue.isList) {
-                this.initObj();
+                setTimeout(() => {
+                    this.initObj();
+                });
             }
             if (this.initDragBasedOnViewTextSize &&
                 (changes.data.previousValue.text !==  changes.data.currentValue.text || changes.data.previousValue.url !==  changes.data.currentValue.url)) {
@@ -813,9 +821,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 this.onChange.emit(obj);
             } else {
                 const obj = {
-                    blocks: this.blocks,
+                    blocks: this.mainBlocks,
                     valid: !this.form.invalid,
-                    cleanBlocks: this.getFinalObject(this.blocks)
+                    cleanBlocks: this.getFinalObject(this.mainBlocks)
                 };
                 this.onChange.emit(obj);
             }
@@ -895,8 +903,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                                 for (let j in field.value[i]) {
                                     const currLabel = field.value[i][j].label;
                                     const currValue = field.value[i][j].value;
-                                    if (labelsToCheck[currLabel].i === j) {
-                                        if (labelsToCheck[currLabel] && labelsToCheck[currLabel].required && field.value[labelsToCheck[currLabel].i]) {
+                                    if (labelsToCheck[currLabel] && labelsToCheck[currLabel].i === j) {
+                                        if (labelsToCheck[currLabel].required && field.value[labelsToCheck[currLabel].i]) {
                                             if (!currValue) {
                                                 valid = false;
                                                 break mainLoop;

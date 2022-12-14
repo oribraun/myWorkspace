@@ -1,5 +1,5 @@
 <div class="dynamic-labeling-room" #dynamic_labeling_room
-     *ngIf="data && blocks"
+     *ngIf="data && mainBlocks"
      [ngStyle]="mainCssObj">
     <div class="view"
          [ngClass]="{'view-with-url': data.url, 'dynamic-labeling-room-animated-all': resetViewAnimate}"
@@ -66,7 +66,7 @@
                     </div>
                 </div>
                 <div class="labeling-body" #labelingBody [ngClass]="{'labeling-block-fixed': data.isList && data.listHeaderFixed}">
-                    <ng-container *ngFor="let block of blocks">
+                    <ng-container *ngFor="let block of mainBlocks">
                         <div class="labeling-block" [ngClass]="{
                         'labeling-block-inline': block.blockWidth
                         }" [ngStyle]="block.blockWidth && {'width':block.blockWidth + '%'}">
