@@ -85,8 +85,75 @@ class OutputObj {
 ```
 * Field types examples
 ```angular2html
+    {label: 'text', inputType: 'text', description: '*description', value: 'text'},
+    {label: 'number', inputType: 'number', description: '*description1', value: 2},
+    {label: 'email', inputType: 'email', description: '*description2', required: true, pattern: '[^@\\s]+@[^@\\s]+\\.[^@\\s]+', value: 'email@email.com'},
+    {label: 'checkbox', inputType: 'checkbox', description: '*description3', value: 1},
+    {label: 'comments', inputType: 'textarea', value: 'some text', rows: 4},
+    {label: 'select', inputType: 'select', options: ['one', 'two', 'three'], depend: 'other', value: 'two'},
+    {label: 'select_multiple', inputType: 'select_multiple', options: ['one', 'two', 'three'], value: 'three'},
+    {label: 'radio', inputType: 'radio', options: ['one', 'two', 'three'], value: 'two'},
+    {label: 'to', inputType: 'text_list', listBlocks: [
+            {label: 'name', required: true, inputType: 'text'},
+            {label: 'email', required: true, inputType: 'email', pattern: '[^@\\s]+@[^@\\s]+\\.[^@\\s]+'}
+        ],
+        value: [
+            [
+                {label: 'name', value: 'name1'},
+                {label: 'email', value: 'email1'},
+                {label: 'email', value: 'email1'},
+            ],
+            [
+                {label: 'name', value: 'name1'},
+                {label: 'email', value: 'email2'}
+            ]
+        ]
+    },
 
+
+    // short key field example
+    {l: 'radio2', iT: 'radio', o: ['one', 'two', 'three'], v: 'three'},
+
+    // depend on value examples
+    {label: 'other', inputType: 'checkbox', value: 0},
+    {label: 'type', inputType: 'select', options: ['one', 'two', 'three'], depend: 'other', value: 'one'},
+
+    {label: 'name', inputType: 'text'},
+    {label: 'comments', inputType: 'textarea', value: 'some text', rows: 4, depend: 'name', dependValue: 'enable'},
+
+    // break line example
+    {label: 'first_name', inputType: 'text', breakLine: true, center: true},
+
+    // full line example
+    {label: 'last_name', inputType: 'text', fullLine: true},
+
+    // css example and center
+    {label: 'prefix', inputType: 'text', center: true, css: {width: '50%'}},
 ```
+* block width example
+```angular2html
+{
+    blockName: 'name',
+    blockDesc: '*Please ignore punctuations and cases (lower or upper)- as long as the name is correct. Please pay attention to possible mixups between first, middle and last names',
+    blockWidth: 50,
+    numColumns: 2,
+    fields: [
+        {label: 'prefix', inputType: 'text', required: true},
+        {label: 'first', inputType: 'text'},
+        {label: 'middle', inputType: 'text'},
+        // {label: 'email', inputType: 'email', required: true, pattern: '[^@\\s]+@[^@\\s]+\\.[^@\\s]+'},
+    ],
+},
+{
+    blockName: 'Radio',
+    blockDesc: 'Desc',
+    blockWidth: 50,
+    numColumns: 1,
+    fields: [
+        {label: 'radio1', inputType: 'radio', options: ['one', 'two', 'three'], value: 'two'},
+        {l: 'radio2', iT: 'radio', o: ['one', 'two', 'three'], v: 'two'},
+    ],
+}
 ```
 * example use
 ```angular2html
