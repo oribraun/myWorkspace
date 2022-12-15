@@ -9,11 +9,11 @@
             'bottom': currentDrag.view.bottom + '%',
             'left': currentDrag.view.left + '%',
             'right': currentDrag.view.right + '%'
-            }">
-        <div class="view-text"
+         }"
+    >
+        <div class="view-text view-text-template-{{templateType}}"
              [style]="!data.url ? viewCssObj : ''"
              *ngIf="!data.url && data.text"><span #viewText>{{data.text}}</span></div>
-        <!--        <div *ngIf="show.url"><a [href]="show.url" target="_blank">{{show.url}}</a></div>-->
         <div class="iframe-wrapper" *ngIf="data.url">
             <ng-container *ngIf="data.showInIframe">
                 <div class="iframe-loader-wrapper" *ngIf="iframeLoading">
@@ -36,14 +36,17 @@
     </div>
     <form #form="ngForm">
         <div class="labeling"
-             [ngClass]="{'dynamic-labeling-room-animated-all': resetViewAnimate}"
+             [ngClass]="{
+                'dynamic-labeling-room-animated-all': resetViewAnimate
+             }"
              [ngStyle]="{
                 'height': (currentDrag.labeling.height !== '' ? currentDrag.labeling.height + '%' : ''),
                 'top': currentDrag.labeling.top + '%',
                 'bottom': currentDrag.labeling.bottom + '%',
                 'left': currentDrag.labeling.left + '%',
                 'right': currentDrag.labeling.right + '%'
-                }">
+             }"
+        >
             <div class="horizontal-drag horizontal-drag-top"
                  *ngIf="currentDrag.labeling.onMove.top"
                  (mousedown)="onMouseDown($event, 'labeling', 'top, bottom')"
@@ -60,16 +63,22 @@
                     <br>
                     <div class="labeling-header-item no-highlight" *ngFor="let item of mainList; let i = index"
                          (click)="selectMainItem(i)"
-                         [ngClass]="{'labeling-header-item-selected': listCurrentIndex === i, 'labeling-header-item-invalid': mainList[i].isValid !== undefined && !mainList[i].isValid}">
-                        {{getMainObjHeader(i)}} <span *ngIf="mainList.length > 1" class="labeling-header-item-minus no-highlight" (click)="removeFromMainList(i)">x</span>
-
+                         [ngClass]="{
+                             'labeling-header-item-selected': listCurrentIndex === i,
+                             'labeling-header-item-invalid': listCurrentIndex !== i && mainList[i].isValid !== undefined && !mainList[i].isValid,
+                             'labeling-header-item-invalid-selected': listCurrentIndex === i && mainList[i].isValid !== undefined && !mainList[i].isValid
+                         }">
+                        {{getMainObjHeader(i)}} <span *ngIf="mainList.length > 1" class="labeling-header-item-minus no-highlight" (click)="removeFromMainList(i);onChangeBlocks();">x</span>
                     </div>
                 </div>
                 <div class="labeling-body" #labelingBody [ngClass]="{'labeling-block-fixed': data.isList && data.listHeaderFixed}">
                     <ng-container *ngFor="let block of mainBlocks">
-                        <div class="labeling-block" [ngClass]="{
-                        'labeling-block-inline': block.blockWidth
-                        }" [ngStyle]="block.blockWidth && {'width':block.blockWidth + '%'}">
+                        <div class="labeling-block"
+                             [ngClass]="{
+                                'labeling-block-inline': block.blockWidth && (!block.blockWidthToPixel || block.blockWidthToPixel < currentWindowWidth)
+                             }"
+                             [ngStyle]="block.blockWidth && (!block.blockWidthToPixel || block.blockWidthToPixel < currentWindowWidth) && {'width':block.blockWidth + '%'}"
+                        >
                             <div class="labeling-block-row">
                                 <div class="labeling-block-row-column">
                                     <div class="labeling-block-row-column-header">
@@ -80,203 +89,72 @@
                                     </div>
                                     <div class="labeling-block-row-column-body">
                                         <div class="labeling-block-row-column-body-item labeling-block-row-column-body-item-col
-                                labeling-block-row-column-body-item-{{item.inputType}}"
+                                             labeling-block-row-column-body-item-{{item.inputType}}"
                                              *ngFor="let item of block.fields"
                                              [ngStyle]="{
-                                    'flex': '0 0 ' + (10/block.numColumns*10) + '%',
-                                    'max-width': (10/block.numColumns*10) + '%'
-                                   }"
+                                                'flex': '0 0 ' + (10/block.numColumns*10) + '%',
+                                                'max-width': (10/block.numColumns*10) + '%'
+                                             }"
                                              [ngClass]="{
-                                 'labeling-block-row-column-body-item-box-break-line': item.breakLine,
-                                 'labeling-block-row-column-body-item-box-full-line': item.fullLine,
-                                 'labeling-block-row-column-body-item-box-center': item.center
-                                 }">
+                                                 'labeling-block-row-column-body-item-box-break-line': item.breakLine,
+                                                 'labeling-block-row-column-body-item-box-full-line': item.fullLine,
+                                                 'labeling-block-row-column-body-item-box-center': item.center
+                                             }">
                                             <div class="labeling-block-row-column-body-item-box">
                                                 <div class="labeling-block-row-column-body-item-box-input">
-                                                    <input *ngIf="item.inputType === 'text' || item.inputType === 'number' || item.inputType === 'email'"
-                                                           [type]="item.inputType"
-                                                           [ngStyle]="item.css"
-                                                           [name]="block.blockName + '_' + item.label"
-                                                           [required]="item.required"
-                                                           [pattern]="item.pattern"
-                                                           [(ngModel)]="item.value"
-                                                           (ngModelChange)="onChangeBlocks()"
-                                                           [attr.value]="item.value"
-                                                           [ngClass]="{
-                                                           'required': formSubmitted &&
-                                                           form.controls[block.blockName + '_' + item.label] &&
-                                                           form.controls[block.blockName + '_' + item.label].errors &&
-                                                           (form.controls[block.blockName + '_' + item.label].errors.required || form.controls[block.blockName + '_' + item.label].errors.pattern)
-                                                       }"
-                                                           [disabled]="checkDepend(block.fields, item)">
-                                                    <input *ngIf="item.inputType === 'checkbox'"
-                                                           [type]="item.inputType"
-                                                           [checked]="item.value == 1"
-                                                           [ngStyle]="item.css"
-                                                           [name]="block.blockName + '_' + item.label"
-                                                           [required]="item.required"
-                                                           [ngClass]="{
-                                                           'required': formSubmitted &&
-                                                           form.controls[block.blockName + '_' + item.label] &&
-                                                           form.controls[block.blockName + '_' + item.label].errors &&
-                                                           (form.controls[block.blockName + '_' + item.label].errors.required)
-                                                       }"
-                                                           (change)="!item.value ? item.value = 1 : item.value = 0; onChangeBlocks()">
-                                                    <textarea *ngIf="item.inputType === 'textarea'"
-                                                              [ngStyle]="item.css"
-                                                              [name]="block.blockName + '_' + item.label"
-                                                              [required]="item.required"
-                                                              [(ngModel)]="item.value"
-                                                              (ngModelChange)="onChangeBlocks()"
-                                                              [attr.value]="item.value"
-                                                              [attr.cols]="item.cols"
-                                                              [attr.rows]="item.rows"
-                                                              [ngClass]="{
-                                                              'required': formSubmitted &&
-                                                              form.controls[block.blockName + '_' + item.label] &&
-                                                              form.controls[block.blockName + '_' + item.label].errors &&
-                                                              (form.controls[block.blockName + '_' + item.label].errors.required)
-                                                          }"
-                                                              [disabled]="checkDepend(block.fields, item)">
-                                                </textarea>
-                                                    <select name="" [attr.test]="item.value" *ngIf="item.inputType === 'select'"
-                                                            [ngStyle]="item.css"
-                                                            [name]="block.blockName + '_' + item.label"
-                                                            [required]="item.required"
-                                                            (change)="item.value = $event.target.value; onChangeBlocks()"
-                                                            [disabled]="checkDepend(block.fields, item)"
-                                                            [attr.value]="item.value"
-                                                            [ngClass]="{
-                                                               'required': formSubmitted &&
-                                                               form.controls[block.blockName + '_' + item.label] &&
-                                                               form.controls[block.blockName + '_' + item.label].errors &&
-                                                               (form.controls[block.blockName + '_' + item.label].errors.required)
-                                                            }"
-                                                    >
-                                                        <option value="" [selected]="!item.value"></option>
-                                                        <option *ngFor="let o of item.options" [selected]="item.value == o" [value]="o">{{o}}</option>
-                                                    </select>
-                                                    <div class="labeling-block-row-column-body-item-box-input-label"
-                                                         [ngClass]="{'labeling-block-row-column-body-item-box-input-label-hover':
-                                                     item.inputType === 'text' ||
-                                                     item.inputType === 'number' ||
-                                                     item.inputType === 'email' ||
-                                                     item.inputType === 'textarea' ||
-                                                     item.inputType === 'select',
-                                                     'labeling-block-row-column-body-item-box-input-label-hover-disappeared': true
-                                                     }">
-                                                        <div class="labeling-block-row-column-body-item-box-input-label-text"
-                                                             *ngIf="item.inputType !== 'radio'">
-                                                            {{preetyLabel(item.label)}}
-                                                            <span *ngIf="item.inputType === 'text_list'" class="labeling-block-row-column-body-item-box-input-label-plus no-highlight"
-                                                                  (click)="appendItemToList(item)">+</span>
-                                                        </div>
-                                                    </div>
-                                                    <ng-container *ngIf="item.inputType === 'select_multiple'">
-                                                        <select name="" *ngIf="item.inputType === 'select_multiple'"
-                                                                multiple
-                                                                [ngStyle]="item.css"
-                                                                [name]="block.blockName + '_' + item.label"
-                                                                [required]="item.required"
-                                                                [(ngModel)]="item.value"
-                                                                (ngModelChange)="onChangeBlocks()"
-                                                                [disabled]="checkDepend(block.fields, item)"
-                                                                [attr.value]="item.value"
-                                                                [ngClass]="{
-                                                                   'required': formSubmitted &&
-                                                                   form.controls[block.blockName + '_' + item.label] &&
-                                                                   form.controls[block.blockName + '_' + item.label].errors &&
-                                                                   (form.controls[block.blockName + '_' + item.label].errors.required)
-                                                                }"
-                                                        >
-                                                            <option *ngFor="let o of item.options" [selected]="item.value == o" [value]="o">{{o}}</option>
-                                                        </select>
-                                                    </ng-container>
-                                                    <div class="radio-buttons"
-                                                         [ngClass]="{'radio-buttons-center': item.center}"
-                                                         *ngIf="item.inputType === 'radio'">
-                                                        <ng-container *ngFor="let o of item.options">
-                                                            <label class="radio-label" [htmlFor]="o">
-                                                                <input
-                                                                    [id]="o"
-                                                                    [type]="item.inputType"
-                                                                    [checked]="item.value == o"
-                                                                    (change)="item.value = o; onChangeBlocks()"
-                                                                    [ngStyle]="item.css"
-                                                                    [name]="block.blockName + '_' + item.label"
-                                                                    [attr.name]="item.label"
-                                                                    [required]="item.required"
-                                                                    [ngClass]="{
-                                                                   'required': formSubmitted &&
-                                                                   form.controls[block.blockName + '_' + item.label] &&
-                                                                   form.controls[block.blockName + '_' + item.label].errors &&
-                                                                   (form.controls[block.blockName + '_' + item.label].errors.required)
-                                                                }">
-                                                                {{o}}</label>
-                                                        </ng-container>
-                                                    </div>
-                                                    <ng-container *ngIf="item.inputType === 'text_list' && isArray(item.value)">
-                                                        <div class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
-                                                            {{item.description}}
-                                                        </div>
-                                                        <div class="labeling-block-row-column-body-item-box-input-list-item" *ngFor="let listItem of item.value; index as i; trackBy: trackByFn">
-                                                            <ng-container *ngIf="!item.listBlocks">
-                                                                <input [type]="item.inputType"
-                                                                       [name]="block.blockName + '_' + item.label + '-' + i"
-                                                                       [required]="item.required"
-                                                                       [pattern]="item.pattern"
-                                                                       [(ngModel)]="item.value[i]"
-                                                                       [ngClass]="{
-                                                                       'required': formSubmitted &&
-                                                                       form.controls[block.blockName + '_' + item.label + '-' + i] &&
-                                                                       form.controls[block.blockName + '_' + item.label + '-' + i].errors &&
-                                                                       (form.controls[block.blockName + '_' + item.label + '-' + i].errors.required || form.controls[block.blockName + '_' + item.label + '-' + i].errors.pattern)
-                                                                   }"
-                                                                       (ngModelChange)="onChangeBlocks()">
-                                                                <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="removeItemToList(item, i); onChangeBlocks();">-</div>
-                                                            </ng-container>
-                                                            <ng-container *ngIf="item.listBlocks">
-                                                                <ng-container *ngFor="let objItem of item.value[i]; index as j;let last = last;">
-                                                                    <div class="labeling-block-row-column-body-item-box-input-list-item-wrapper"
-                                                                         [ngStyle]="{'width': (10 / getObjKeysLength(item.listBlocks) * 10 - 2) + '%'}"
-                                                                         *ngIf="item.listBlocks[j]">
-                                                                        <input [type]="item.listBlocks[j].inputType"
-                                                                               [name]="block.blockName + '_' + item.label + '-' + objItem.label + '-' + i + '-' + j"
-                                                                               [required]="item.listBlocks[j].required"
-                                                                               [(ngModel)]="objItem.value"
-                                                                               [pattern]="item.listBlocks[j].pattern"
-                                                                               [attr.value]="objItem.value"
-                                                                               [ngClass]="{
-                                                                                   'required': formSubmitted &&
-                                                                                   form.controls[block.blockName + '_' + item.label + '-' + objItem.label + '-' + i + '-' + j] &&
-                                                                                   form.controls[block.blockName + '_' + item.label + '-' + objItem.label + '-' + i + '-' + j].errors &&
-                                                                                   (form.controls[block.blockName + '_' + item.label + '-' + objItem.label + '-' + i + '-' + j].errors.required || form.controls[block.blockName + '_' + item.label + '-' + objItem.label + '-' + i + '-' + j].errors.pattern)
-                                                                               }"
-                                                                               (ngModelChange)="onChangeBlocks()">
-                                                                        <div class="labeling-block-row-column-body-item-box-input-list-item-label"
-                                                                             [ngClass]="{
-                                                                            'labeling-block-row-column-body-item-box-input-list-item-label-hover': true,
-                                                                            'labeling-block-row-column-body-item-box-input-list-item-label-hover-disappeared': true
-                                                                         }">
-                                                                            <div class="labeling-block-row-column-body-item-box-input-list-item-label-text">
-                                                                                {{preetyLabel(objItem.label)}}
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight"
-                                                                             *ngIf="last"
-                                                                             (click)="removeItemToList(item, i); onChangeBlocks();">-</div>
-
-                                                                    </div>
-                                                                </ng-container>
-                                                            </ng-container>
-                                                        </div>
-                                                    </ng-container>
+                                                    <lib-general
+                                                        [labelHover]="'disappeared'"
+                                                        [item]="item"
+                                                        [block]="block"
+                                                        [formSubmitted]="formSubmitted"
+                                                        (ngModelChange)="onChangeBlocks()"
+                                                    ></lib-general>
+                                                    <lib-checkbox
+                                                        [labelHover]="'disappeared'"
+                                                        [item]="item"
+                                                        [block]="block"
+                                                        [formSubmitted]="formSubmitted"
+                                                        (ngModelChange)="onChangeBlocks()"
+                                                    ></lib-checkbox>
+                                                    <lib-textarea
+                                                        [labelHover]="'disappeared'"
+                                                        [item]="item"
+                                                        [block]="block"
+                                                        [formSubmitted]="formSubmitted"
+                                                        (ngModelChange)="onChangeBlocks()"
+                                                    ></lib-textarea>
+                                                    <lib-select
+                                                        [labelHover]="'disappeared'"
+                                                        [item]="item"
+                                                        [block]="block"
+                                                        [formSubmitted]="formSubmitted"
+                                                        (ngModelChange)="onChangeBlocks()"
+                                                    ></lib-select>
+                                                    <lib-select-multiple
+                                                        [labelHover]="'disappeared'"
+                                                        [item]="item"
+                                                        [block]="block"
+                                                        [formSubmitted]="formSubmitted"
+                                                        (ngModelChange)="onChangeBlocks()"
+                                                    ></lib-select-multiple>
+                                                    <lib-radio
+                                                        [labelHover]="'disappeared'"
+                                                        [item]="item"
+                                                        [block]="block"
+                                                        [formSubmitted]="formSubmitted"
+                                                        (ngModelChange)="onChangeBlocks()"
+                                                    ></lib-radio>
+                                                    <lib-text-list
+                                                        [labelHover]="'disappeared'"
+                                                        [item]="item"
+                                                        [block]="block"
+                                                        [formSubmitted]="formSubmitted"
+                                                        (ngModelChange)="onChangeBlocks()"
+                                                        (removeItem)="removeItemToListAsObject($event)"
+                                                        (addItem)="appendItemToList($event)"
+                                                    ></lib-text-list>
                                                 </div>
-                                                <small class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description && item.inputType !== 'text_list'">
-                                                    {{item.description}}
-                                                </small>
                                             </div>
-                                            <!--                        <div class="labeling-block-row-column-body-item-box-break-line" *ngIf="item.break_line"></div>-->
                                         </div>
                                     </div>
                                 </div>
@@ -290,18 +168,12 @@
             </div>
         </div>
     </form>
-    <!--    <div class="floating-template-button"-->
-    <!--         [ngClass]="{'floating-template-button-vertical': templateType === 2}"-->
-    <!--         (click)="changeTemplateType()">-->
-    <!--        <div class="lds-hourglass"-->
-    <!--             [title]="templateType === 1 ? 'vertical' : 'horizontal'"-->
-    <!--        [ngClass]="{'animate': changeTemplateAnimation}"></div>-->
-    <!--    </div>-->
     <div class="menu" [ngClass]="{'menu-hover-animate': animateMenu}">
         <div class="inner-menu">
             <i class="d-icon-sync" title="change template" (click)="changeTemplateType()" [ngClass]="{'d-icon-animate': changeTemplateAnimation}"></i>
             <!--      <i class="d-icon-reset" [ngClass]="{'d-icon-animate': false}"></i>-->
             <i class="d-icon-expend" title="full screen" (click)="expand()" [ngClass]="{'d-icon-animate': false}"><span class="line"></span></i>
+            <i class="d-icon-shrink d-icon-shrink-template-{{templateType}}" title="full screen" (click)="autoDragBasedOnViewSize(true)" [ngClass]="{'d-icon-animate': false}"><span class="line"></span></i>
         </div>
     </div>
 </div>

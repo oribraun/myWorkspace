@@ -1,0 +1,58 @@
+<ng-container *ngIf="item.inputType === 'text_list'">
+    <div class="labeling-block-row-column-body-item-box-input-label">
+        <div class="labeling-block-row-column-body-item-box-input-label-text">
+            {{item.label | prettyLabel}}
+            <span *ngIf="item.inputType === 'text_list'" class="labeling-block-row-column-body-item-box-input-label-plus no-highlight"
+                  (click)="onAddItemToList(item)">+</span>
+        </div>
+    </div>
+    <div class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
+        {{item.description}}
+    </div>
+    <div class="labeling-block-row-column-body-item-box-input-list-item" *ngFor="let listItem of item.value; index as i; trackBy: trackByFn">
+        <ng-container *ngIf="!item.listBlocks">
+            <input [type]="item.inputType"
+                   [name]="block.blockName + '_' + item.label + '-' + i"
+                   [required]="item.required"
+                   [pattern]="item.pattern"
+                   [(ngModel)]="item.value[i]"
+                   [ngClass]="{
+                         'required': formSubmitted && item.required && !item.value[i]
+                   }"
+                   (ngModelChange)="onNgModelChange()">
+            <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight" (click)="onRemoveItemFromList(item, i)">-</div>
+        </ng-container>
+        <ng-container *ngIf="item.listBlocks">
+            <ng-container *ngFor="let objItem of item.value[i]; index as j;let last = last;">
+                <div class="labeling-block-row-column-body-item-box-input-list-item-wrapper"
+                     [ngStyle]="{'width': (10 / getObjKeysLength(item.listBlocks) * 10 - 2) + '%'}"
+                     *ngIf="item.listBlocks[j]">
+                    <input [type]="item.listBlocks[j].inputType"
+                           [name]="block.blockName + '_' + item.label + '-' + objItem.label + '-' + i + '-' + j"
+                           [required]="item.listBlocks[j].required"
+                           [(ngModel)]="objItem.value"
+                           [pattern]="item.listBlocks[j].pattern"
+                           [attr.value]="objItem.value"
+                           [ngClass]="{
+                            'required': formSubmitted && item.listBlocks[j].required && (!objItem.value || !patternPipe.transform(objItem.value, item.listBlocks[j].pattern))
+                           }"
+                           (ngModelChange)="onNgModelChange()">
+                    <div class="labeling-block-row-column-body-item-box-input-list-item-label"
+                         [ngClass]="{
+                            'labeling-block-row-column-body-item-box-input-list-item-label-hover': labelHover,
+                            'labeling-block-row-column-body-item-box-input-list-item-label-hover-disappeared': labelHover === 'disappeared',
+                            'labeling-block-row-column-body-item-box-input-list-item-label-hover-small': labelHover === 'small'
+                         }">
+                        <div class="labeling-block-row-column-body-item-box-input-list-item-label-text">
+                            {{objItem.label | prettyLabel}}
+                        </div>
+                    </div>
+                    <div class="labeling-block-row-column-body-item-box-input-list-item-minus no-highlight"
+                         *ngIf="last"
+                         (click)="onRemoveItemFromList(item, i); onNgModelChange();">-</div>
+
+                </div>
+            </ng-container>
+        </ng-container>
+    </div>
+</ng-container>

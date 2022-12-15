@@ -7,6 +7,7 @@ class DsProjectRoomBlock {
     blockName = ''; // the name of the block - will be presented as header in html
     blockDesc = ''; // the description of the block - will be presented under header in html
     blockWidth = ''; // width of the block in case we want two blocks to be in one row (must have next blocks complete width to 100%)
+    blockWidthToPixel = ''; // responsive width of the block will stop when window is lower then pixels
     numColumns: 2; // number of columns we want the fields to spread on
     fields: DsProjectRoomBlockField[] = []; // fields list inside the block
     isValid = true; // represent if the block is html valid
@@ -130,12 +131,13 @@ class OutputObj {
     // css example and center
     {label: 'prefix', inputType: 'text', center: true, css: {width: '50%'}},
 ```
-* block width example
+* Blocks width example
 ```angular2html
 {
     blockName: 'name',
     blockDesc: '*Please ignore punctuations and cases (lower or upper)- as long as the name is correct. Please pay attention to possible mixups between first, middle and last names',
     blockWidth: 50,
+    blockWidthToPixel: 990,
     numColumns: 2,
     fields: [
         {label: 'prefix', inputType: 'text', required: true},
@@ -148,6 +150,7 @@ class OutputObj {
     blockName: 'Radio',
     blockDesc: 'Desc',
     blockWidth: 50,
+    blockWidthToPixel: 990,
     numColumns: 1,
     fields: [
         {label: 'radio1', inputType: 'radio', options: ['one', 'two', 'three'], value: 'two'},
@@ -155,7 +158,34 @@ class OutputObj {
     ],
 }
 ```
-* example use
+* Blocks responsive example
+```angular2html
+{
+    blockName: 'First',
+    numColumns: 2,
+    blockWidth: 50,
+    blockWidthToPixel: 990,
+    fields: [
+        {label: 'text', inputType: 'text', description: '*description', required: true},
+        {label: 'number', inputType: 'number', description: '*description1', required: true},
+        {label: 'comments', inputType: 'textarea', rows: 4, required: true, depend: 'checkbox', description: 'description4'},
+        {label: 'select', inputType: 'select', options: ['one', 'two', 'three'], depend: 'other', description: 'description5', required: true},
+    ],
+},
+{
+    blockName: 'Second',
+    numColumns: 2,
+    blockWidth: 50,
+    blockWidthToPixel: 990,
+    fields: [
+        {label: 'email', inputType: 'email', description: '*description2', required: true, pattern: '[^@\\s]+@[^@\\s]+\\.[^@\\s]+'},
+        {label: 'checkbox', inputType: 'checkbox', description: '*description3', required: true},
+        {label: 'select_multiple', inputType: 'select_multiple', options: ['one', 'two', 'three'], description: 'description6', required: true},
+        {label: 'radio', inputType: 'radio', options: ['one', 'two', 'three'], description: 'description7', required: true},
+    ],
+}
+```
+* Example use
 ```angular2html
 <style>
     .home {

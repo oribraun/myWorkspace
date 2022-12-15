@@ -34,6 +34,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     public animateMenuTimeout;
     public changeTemplateAnimation = false;
     public changeTemplateAnimationTimeout;
+    public autoDragBasedOnViewSizeTimeout;
     public currentDrag;
     public verticalDrag: any = {
         version: 1,
@@ -139,6 +140,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     public listCurrentIndex = 0;
     public listBlocks: any;
     public templateTypes = {horizontal: 1, vertical: 2};
+    public currentWindowWidth: number;
     @Input() mainCssObj;
     @Input() viewCssObj;
     @Input() formCssObj;
@@ -188,11 +190,13 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     @Output() onChange: EventEmitter<OutputObj> = new EventEmitter<OutputObj>();
     public mainBlocks: DsProjectRoomBlock[] = [];
     public blocksErrMessage = '';
+    public history = [];
     constructor(
         private ref: ChangeDetectorRef,
         @Inject(DOCUMENT) document?: any
     ) {
         this.document = document;
+        this.getWindowWidth();
     }
 
 
@@ -210,7 +214,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         this.mainBlocks = JSON.parse(JSON.stringify(this.blocks));
     }
 
-    initObj(): void {
+    initObj(doNotAutoDrag = false): void {
         this.resetBlocksError();
         this.mainList = [];
         this.listCurrentIndex = 0;
@@ -250,7 +254,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             this.cleanListBlocks();
             this.addToListInitObj(mainObj);
         }
-        if (this.initDragBasedOnViewTextSize) {
+        if (this.initDragBasedOnViewTextSize && !doNotAutoDrag) {
             this.autoDragBasedOnViewSize();
         }
     }
@@ -307,9 +311,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
     ngOnInit(): void {
-        this.resetDrag();
+        this.setDragDirection();
         setTimeout(() => {
-            this.firstAnimateMenu()
+            this.firstAnimateMenu();
         });
     }
 
@@ -344,7 +348,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         this.mainList.push(blocks);
         this.listCurrentIndex = this.mainList.length - 1;
         this.mainBlocks = this.mainList[this.listCurrentIndex];
-        this.formSubmitted = false;
+        this.resetFormSubmitted();
         if (this.data.listHeaderFixed) {
             setTimeout(() => {
                 this.setListFixedHeader();
@@ -355,7 +359,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     addToMainListIfFormIsValid(): void {
         if (this.form && !(this.formSubmitted && this.form.invalid)) {
-            this.formSubmitted = false;
+            this.resetFormSubmitted();
             this.addToMainList(this.listBlocks);
         } else {
             alert('please fill all required data before adding ' + this.data.listHeader);
@@ -379,7 +383,6 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
     selectMainItem(index): void {
         this.listCurrentIndex = index;
-        console.log('this.mainList[this.listCurrentIndex]', this.mainList[this.listCurrentIndex]);
         this.mainBlocks = this.mainList[this.listCurrentIndex];
     }
     getMainObjHeader(index): string {
@@ -421,6 +424,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
     removeItemToList(item, index): void {
         item.value.splice(index, 1);
+    }
+    removeItemToListAsObject(obj): void {
+        obj.item.value.splice(obj.index, 1);
     }
     cloneObject(blocks): any {
         return JSON.parse(JSON.stringify(blocks));
@@ -685,6 +691,10 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             }
         });
     }
+
+    resetFormSubmitted() {
+        this.formSubmitted = false;
+    }
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.blocks) {
             this.setUpMainBlocks();
@@ -692,9 +702,11 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             this.initObj();
             if (!changes.blocks.firstChange) {
                 this.onChangeBlocks();
+                this.resetFormSubmitted();
             }
         }
         if (changes.data && !changes.data.firstChange) {
+            const textOrUrlChanged = (changes.data.previousValue.text !==  changes.data.currentValue.text || changes.data.previousValue.url !==  changes.data.currentValue.url);
             setTimeout(() => {
                 this.listenToIframeLoad();
             });
@@ -705,23 +717,40 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             } else {
                 this.unsetListFixedHeader();
             }
-            if (changes.data.previousValue.isList !==  changes.data.currentValue.isList) {
-                setTimeout(() => {
-                    this.initObj();
-                });
+            if (this.initDragBasedOnViewTextSize && textOrUrlChanged) {
+                if (!changes.templateType) {
+                    this.resetView();
+                    clearTimeout(this.autoDragBasedOnViewSizeTimeout);
+                    if (this.initDragBasedOnViewTextSize) {
+                        this.autoDragBasedOnViewSizeTimeout = setTimeout(() => {
+                            this.autoDragBasedOnViewSize(true);
+                        }, 300);
+                    }
+                }
             }
-            if (this.initDragBasedOnViewTextSize &&
-                (changes.data.previousValue.text !==  changes.data.currentValue.text || changes.data.previousValue.url !==  changes.data.currentValue.url)) {
-                this.autoDragBasedOnViewSize();
+            if (changes.data.previousValue.isList !==  changes.data.currentValue.isList) {
+                let doNotAutoDrag = false;
+                if (textOrUrlChanged || changes.templateType) {
+                    doNotAutoDrag = true;
+                }
+                setTimeout(() => {
+                    this.initObj(doNotAutoDrag);
+                });
             }
         }
         if (changes.templateType && !changes.templateType.firstChange) {
             this.resetView();
             this.animateChangingTemplate();
+            if (this.initDragBasedOnViewTextSize) {
+                clearTimeout(this.autoDragBasedOnViewSizeTimeout);
+                this.autoDragBasedOnViewSizeTimeout = setTimeout(() => {
+                    this.autoDragBasedOnViewSize(true);
+                }, 300);
+            }
         }
     }
 
-    resetDrag(): void {
+    setDragDirection(): void {
         if (this.templateType ===  this.templateTypes.horizontal) {
             this.currentDrag = JSON.parse(JSON.stringify(this.verticalDrag));
         } else {
@@ -729,7 +758,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
 
-    autoDragBasedOnViewSize() {
+    autoDragBasedOnViewSize(animate = false) {
         setTimeout(() => {
             let el;
             if (this.viewText) {
@@ -747,36 +776,42 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                         const parentHeight = parent.offsetHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
                         const extraSpace = 5; // 5 pixels
                         const moveY = parentHeight - height - extraSpace;
-                        if (moveY > 0) {
-                            const moveYPercent = -moveY / this.dynamicLabelingRoom.nativeElement.clientHeight * 100;
-                            const type = 'view';
-                            // this.resetView(); // for animation
-                            this.currentDrag[type].type = 'top,bottom';
-                            this.onMoveVersion1(type, 0, moveYPercent);
+                        // if (moveY > 0) {
+                        const moveYPercent = -moveY / this.dynamicLabelingRoom.nativeElement.clientHeight * 100;
+                        const type = 'view';
+                        if (animate) {
+                            this.resetView(false);
                         }
+                        this.currentDrag[type].type = 'top,bottom';
+                        this.onMoveVersion1(type, 0, moveYPercent);
+                        // }
                     } else {
                         const width = el.offsetWidth;
                         const style = getComputedStyle(parent);
                         const parentWidth = parent.offsetWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
                         const moveX = parentWidth - width;
-                        if (moveX > 0) {
-                            const moveXPercent = moveX / this.dynamicLabelingRoom.nativeElement.clientWidth * 100;
-                            const type = 'view';
-                            // this.resetView(); // for animation
-                            this.currentDrag[type].type = 'left,right';
-                            this.onMoveVersion1(type, moveXPercent, 0);
+                        // if (moveX > 0) {
+                        const moveXPercent = moveX / this.dynamicLabelingRoom.nativeElement.clientWidth * 100;
+                        const type = 'view';
+                        if (animate) {
+                            this.resetView(false);
                         }
-                        console.log('moveX', moveX)
+                        this.currentDrag[type].type = 'left,right';
+                        this.onMoveVersion1(type, moveXPercent, 0);
+                        // }
+                        // console.log('moveX', moveX)
                     }
                 }
             }
         });
     }
 
-    resetView(): void {
+    resetView(setDragDirection = true): void {
         this.resetViewAnimate = true;
         this.changeDetectorRefresh();
-        this.resetDrag();
+        if (setDragDirection) {
+            this.setDragDirection();
+        }
         setTimeout(() => {
             this.resetViewAnimate = false;
             this.changeDetectorRefresh();
@@ -811,7 +846,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 if (this.mainList[this.listCurrentIndex]) {
                     this.mainList[this.listCurrentIndex].isValid = !this.form.invalid;
                 }
-                const isValid = this.checkValidList();
+                // this.checkValidBlock(this.mainList[this.listCurrentIndex]);
+                const isValid = this.checkValidList(this.listCurrentIndex);
                 const map = this.mainList.map((o) => this.getFinalObject(o));
                 const obj: OutputObj = {
                     blocks: this.mainList,
@@ -869,52 +905,54 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         return cleanBlocks;
     }
 
-    checkValidList(): boolean {
+    checkValidBlock(currentObj) {
         let valid = true;
-
+        currentObj.isValid = valid;
         mainLoop:
-        for (const currentObj of this.mainList) {
-            for (const block of currentObj) {
-                for (const field of block.fields) {
-                    if (!field.value && field.required) {
-                        valid = false;
+        for (const block of currentObj) {
+            for (const field of block.fields) {
+                if (!field.value && field.required) {
+                    valid = false;
+                    currentObj.isValid = valid;
+                    break mainLoop;
+                }
+                if (field.value && field.required && field.pattern) {
+                    const pettern = new RegExp(field.pattern);
+                    valid = pettern.test(field.value);
+                    if (!valid) {
+                        currentObj.isValid = valid;
                         break mainLoop;
                     }
-                    if (field.value && field.required && field.pattern) {
-                        const pettern = new RegExp(field.pattern);
-                        valid = pettern.test(field.value);
-                        if (!valid) {
-                            break mainLoop;
-                        }
-                    }
-                    if (field.inputType === 'text_list' && field.listBlocks) {
-                        const labelsToCheck = {}
-                        for (let i in field.listBlocks) {
-                            if (field.listBlocks[i].required) {
-                                labelsToCheck[field.listBlocks[i].label] = {required: true, i: i};
-                                if (field.listBlocks[i].pattern) {
-                                    labelsToCheck[field.listBlocks[i].label] = {required: true, pattern: field.listBlocks[i].pattern, i: i};
-                                }
+                }
+                if (field.inputType === 'text_list' && field.listBlocks) {
+                    const labelsToCheck = {}
+                    for (let i in field.listBlocks) {
+                        if (field.listBlocks[i].required) {
+                            labelsToCheck[field.listBlocks[i].label] = {required: true, i: i};
+                            if (field.listBlocks[i].pattern) {
+                                labelsToCheck[field.listBlocks[i].label] = {required: true, pattern: field.listBlocks[i].pattern, i: i};
                             }
-                            // console.log('field.value', field.listBlocks[i])
                         }
-                        if (Array.isArray(field.value)) {
-                            for (let i in field.value) {
-                                for (let j in field.value[i]) {
-                                    const currLabel = field.value[i][j].label;
-                                    const currValue = field.value[i][j].value;
-                                    if (labelsToCheck[currLabel] && labelsToCheck[currLabel].i === j) {
-                                        if (labelsToCheck[currLabel].required && field.value[labelsToCheck[currLabel].i]) {
-                                            if (!currValue) {
-                                                valid = false;
+                        // console.log('field.value', field.listBlocks[i])
+                    }
+                    if (Array.isArray(field.value)) {
+                        for (let i in field.value) {
+                            for (let j in field.value[i]) {
+                                const currLabel = field.value[i][j].label;
+                                const currValue = field.value[i][j].value;
+                                if (labelsToCheck[currLabel] && labelsToCheck[currLabel].i === j) {
+                                    if (labelsToCheck[currLabel].required && field.value[labelsToCheck[currLabel].i]) {
+                                        if (!currValue) {
+                                            valid = false;
+                                            currentObj.isValid = valid;
+                                            break mainLoop;
+                                        }
+                                        if (currValue && labelsToCheck[currLabel].pattern) {
+                                            const pettern = new RegExp(labelsToCheck[currLabel].pattern);
+                                            valid = pettern.test(currValue);
+                                            if (!valid) {
+                                                currentObj.isValid = valid;
                                                 break mainLoop;
-                                            }
-                                            if (currValue && labelsToCheck[currLabel].pattern) {
-                                                const pettern = new RegExp(labelsToCheck[currLabel].pattern);
-                                                valid = pettern.test(currValue);
-                                                if (!valid) {
-                                                    break mainLoop;
-                                                }
                                             }
                                         }
                                     }
@@ -925,6 +963,24 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 }
             }
         }
+        return valid;
+    }
+    checkValidList(currIndex): boolean {
+        let valid = true;
+        for (const currentObj of this.mainList) {
+            valid = this.checkValidBlock(currentObj);
+            // if (valid === false) {
+            //     break;
+            // }
+        }
+        // for (let i = currIndex; i >= 0; i--) {
+        //     const currentObj = this.mainList[i];
+        //     console.log('currentObj', currentObj)
+        //     valid = this.checkValidBlock(currentObj);
+        //     if (valid === false) {
+        //         // break;
+        //     }
+        // }
         return valid;
     }
 
@@ -1015,12 +1071,43 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         this.ref.markForCheck();
         this.ref.detectChanges();
     }
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event) {
+        this.getWindowWidth()
+    }
+
+    getWindowWidth() {
+        this.currentWindowWidth = window.innerWidth;
+        console.log('this.currentWindowWidth', this.currentWindowWidth)
+    }
+
+    addToHistory(type, action, object, backAction, forwardAction) {
+        // if (this.history && this.history.length) {
+        //     this.history[this.history.length - 1].forwardAction = forwardAction;
+        // }
+        const obj = {
+            type: type,
+            action: action,
+            object: object,
+            backAction: backAction,
+            // forwardAction: null,
+        };
+        this.history.push(obj);
+    }
+
+    ctrlZHistoryAction() {
+        if (this.history && this.history.length) {
+            const lastHistory = this.history.shift();
+        }
+    }
 }
 
 export class DsProjectRoomBlock {
     blockName = ''; // the name of the block - will be presented as header in html
     blockDesc = ''; // the description of the block - will be presented under header in html
     blockWidth = ''; // width of the block in case we want two blocks to be in one row (must have next blocks complete width to 100%)
+    blockWidthToPixel = ''; // responsive width of the block will stop when window is lower then pixels
     numColumns: number; // number of columns we want the fields to spread on
     fields: DsProjectRoomBlockField[] = []; // fields list inside the block
     isValid = true; // represent if the block is html valid
@@ -1035,6 +1122,9 @@ export class DsProjectRoomBlock {
             }
             if (obj.blockWidth) {
                 this.blockWidth = obj.blockWidth;
+            }
+            if (obj.blockWidthToPixel) {
+                this.blockWidthToPixel = obj.blockWidthToPixel;
             }
             if (obj.numColumns) {
                 this.numColumns = obj.numColumns;

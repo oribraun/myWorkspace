@@ -105,6 +105,7 @@
                                         border-radius: 2px;
                                         outline: none;
                                         transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+                                        margin-bottom: 2px;
                                         //&:not([disabled]):focus ~ .labeling-block-row-column-body-item-box-input-label-hover-disappeared,
                                         //&:not([disabled]):hover ~ .labeling-block-row-column-body-item-box-input-label-hover-disappeared,
                                         //&:not([disabled])[value]:not([value=""]) ~ .labeling-block-row-column-body-item-box-input-label-hover-disappeared {
@@ -124,7 +125,45 @@
                                             border: 1.5px solid #2271bf;
                                         }
                                         &.required {
-                                            border: 1.5px solid #f80000;
+                                            -webkit-box-shadow: 0 2px 2px -2px #f80000;
+                                            -moz-box-shadow: 0 2px 2px -2px #f80000;
+                                            box-shadow:0 2px 2px -2px #f80000;
+                                            //border: 1.5px solid #f80000;
+                                        }
+                                        //&.ng-invalid {
+                                        //    border: 1.5px solid #f80000;
+                                        //}
+                                    }
+                                    input[type=checkbox] {
+                                        &.required {
+                                            -webkit-box-shadow: 0 0px 5px -1px #f80000;
+                                            -moz-box-shadow: 0 0px 5px -1px #f80000;
+                                            box-shadow:0 0px 5px -1px #f80000;
+                                        }
+                                    }
+                                    input[type=radio] {
+                                        -webkit-appearance: none;
+                                        width: 13px;
+                                        height: 13px;
+                                        border-radius: 50%;
+                                        outline: none;
+                                        border: 1px solid #bfbfbf;
+                                        //box-shadow:0 0 5px 0px gray inset;
+                                        &:before {
+                                            content:'';
+                                            display:block;
+                                            width:60%;
+                                            height:60%;
+                                            margin: 20% auto;
+                                            border-radius:50%;
+                                        }
+                                        &:checked:before {
+                                            background: #0075ff;
+                                        }
+                                        &.required {
+                                            -webkit-box-shadow: 0 0px 5px -1px #f80000;
+                                            -moz-box-shadow: 0 0px 5px -1px #f80000;
+                                            box-shadow:0 0px 5px -1px #f80000;
                                         }
                                     }
                                     textarea {
@@ -160,6 +199,9 @@
                                         &-text {
                                             overflow: hidden;
                                         }
+                                        &-checkbox-text {
+                                            margin-top: 0.15em;
+                                        }
 
                                         &-plus {
                                             position: relative;
@@ -182,13 +224,15 @@
                                         &-minus {
                                             position: absolute;
                                             top: 6.5px;
-                                            right: 3px;
-                                            width: 0.7rem;
+                                            right: 1px;
                                             cursor: pointer;
                                             color: red;
                                             font-size: 1.3em;
                                             vertical-align: middle;
                                             line-height: 1;
+                                            padding: 0 5px 0 3px;
+                                            background: #fff;
+                                            z-index: 1;
                                         }
                                         &-wrapper {
                                             position: relative;
@@ -236,6 +280,9 @@
                                             }
                                             &-text {
                                                 overflow: hidden;
+                                            }
+                                            &-checkbox-text {
+                                                margin-top: 0.15em;
                                             }
                                         }
                                     }
@@ -354,7 +401,10 @@
                     box-shadow: 0 0 10px #000000;
                 }
                 &-invalid {
-                    color: #f80000;
+                    box-shadow: 0 0 5px #f80000;
+                }
+                &-invalid-selected {
+                    box-shadow: 0 0 10px #f80000;
                 }
             }
             &-fixed {
@@ -387,6 +437,10 @@
             overflow-y: auto;
             overflow-x: hidden;
             white-space: pre;
+            text-align: center;
+        }
+        .view-text-template-2 {
+            //transform: translateY(50%);
         }
         .iframe-wrapper {
             width: 100%;
@@ -702,6 +756,54 @@
                     left: -7px;
                     bottom: -7px;
                 }
+            }
+            .d-icon-shrink {
+                width: unit(@iconWidth, px);
+                height: unit(@iconWidth, px);
+                border: transparent solid 4px;
+                border-right-color: transparent;
+                box-sizing: border-box;
+                .line {
+                    position: absolute;
+                    top: -3px;
+                    bottom: -3px;
+                    right: 5px;
+                    background: unit(@iconBorder, px);
+                    border-width: 0.5px;
+                    border-style: solid;
+                }
+                &:before {
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    border-width: 4px;
+                    border-style: solid;
+                    border-top-color: transparent;
+                    border-left-color: transparent;
+                    border-right-color: transparent;
+                    transform: rotate(90deg);
+                    right: -7px;
+                    top: 2px;
+                }
+                &:after {
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    border-width: 4px;
+                    border-style: solid;
+                    border-bottom-color: transparent;
+                    border-left-color: transparent;
+                    border-right-color: transparent;
+                    transform: rotate(90deg);
+                    left: -7px;
+                    top: 2px;
+                }
+            }
+            .d-icon-shrink-template-1 {
+                transform: rotate(90deg);
+            }
+            .d-icon-shrink-template-2 {
+                //transform: rotate(90deg);
             }
             .d-icon-reset {
                 width: unit(@iconWidth, px);

@@ -1,0 +1,32 @@
+<ng-container *ngIf="item.inputType === 'radio'">
+    <div class="labeling-block-row-column-body-item-box-input-label">
+        <div class="labeling-block-row-column-body-item-box-input-label-text">
+            {{item.label | prettyLabel}}
+        </div>
+    </div>
+    <div class="radio-buttons"
+         [ngClass]="{'radio-buttons-center': item.center}"
+         *ngIf="item.inputType === 'radio'">
+        <ng-container *ngFor="let o of item.options">
+            <label class="radio-label" [htmlFor]="o">
+                <input
+                    [id]="o"
+                    [type]="item.inputType"
+                    [checked]="item.value == o"
+                    (change)="item.value = o; onNgModelChange()"
+                    [ngStyle]="item.css"
+                    [name]="block.blockName + '_' + item.label"
+                    [attr.name]="item.label"
+                    [required]="item.required"
+                    [ngClass]="{
+                        'required': formSubmitted && item.required && !item.value
+                    }"
+                >
+                {{o}}
+            </label>
+        </ng-container>
+    </div>
+    <small class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
+        {{item.description}}
+    </small>
+</ng-container>

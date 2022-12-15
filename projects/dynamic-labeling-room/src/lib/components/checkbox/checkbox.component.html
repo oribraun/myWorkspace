@@ -1,0 +1,27 @@
+<ng-container *ngIf="item.inputType === 'checkbox'">
+    <input *ngIf="item.inputType === 'checkbox'"
+           [type]="item.inputType"
+           [checked]="item.value == 1"
+           [ngStyle]="item.css"
+           [name]="block.blockName + '_' + item.label"
+           [required]="item.required"
+           [ngClass]="{
+                'required': formSubmitted && item.required && !item.value
+           }"
+           [disabled]="checkDependPipe.checkDepend(block.fields, item)"
+           (change)="!item.value ? item.value = 1 : item.value = 0; onNgModelChange()"
+    >
+    <div class="labeling-block-row-column-body-item-box-input-label"
+         [ngClass]="{
+            'labeling-block-row-column-body-item-box-input-label-hover-disappeared': labelHover === 'disappeared',
+            'labeling-block-row-column-body-item-box-input-label-hover-small': labelHover === 'small'
+        }">
+        <div class="labeling-block-row-column-body-item-box-input-label-text labeling-block-row-column-body-item-box-input-label-checkbox-text">
+            {{item.label | prettyLabel}}
+        </div>
+    </div>
+    <br/>
+    <small class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
+        {{item.description}}
+    </small>
+</ng-container>

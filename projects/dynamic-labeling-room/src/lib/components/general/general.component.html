@@ -1,0 +1,29 @@
+<ng-container *ngIf="item.inputType === 'text' || item.inputType === 'number' || item.inputType === 'email'">
+    <input *ngIf="item.inputType === 'text' || item.inputType === 'number' || item.inputType === 'email'"
+           [type]="item.inputType"
+           [ngStyle]="item.css"
+           [name]="block.blockName + '_' + item.label"
+           [required]="item.required"
+           [pattern]="item.pattern"
+           [(ngModel)]="item.value"
+           (ngModelChange)="onNgModelChange()"
+           [attr.value]="item.value"
+           [ngClass]="{
+                'required': formSubmitted && item.required && (!item.value || !patternPipe.transform(item.value, item.pattern))
+           }"
+           [disabled]="checkDepend(block.fields, item)"
+    >
+    <div class="labeling-block-row-column-body-item-box-input-label"
+         [ngClass]="{
+            'labeling-block-row-column-body-item-box-input-label-hover': labelHover,
+            'labeling-block-row-column-body-item-box-input-label-hover-disappeared': labelHover === 'disappeared',
+            'labeling-block-row-column-body-item-box-input-label-hover-small': labelHover === 'small'
+        }">
+        <div class="labeling-block-row-column-body-item-box-input-label-text">
+            {{item.label | prettyLabel}}
+        </div>
+    </div>
+    <small class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
+        {{item.description}}
+    </small>
+</ng-container>

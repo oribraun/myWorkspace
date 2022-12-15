@@ -1,0 +1,29 @@
+<ng-container *ngIf="item.inputType === 'select'">
+    <select name="" *ngIf="item.inputType === 'select'"
+            [ngStyle]="item.css"
+            [name]="block.blockName + '_' + item.label"
+            [required]="item.required"
+            (change)="item.value = $event.target.value; onNgModelChange()"
+            [disabled]="checkDepend(block.fields, item)"
+            [attr.value]="item.value"
+            [ngClass]="{
+                'required': formSubmitted && item.required && !item.value
+            }"
+    >
+        <option value="" [selected]="!item.value"></option>
+        <option *ngFor="let o of item.options" [selected]="item.value == o" [value]="o">{{o}}</option>
+    </select>
+    <div class="labeling-block-row-column-body-item-box-input-label"
+         [ngClass]="{
+            'labeling-block-row-column-body-item-box-input-label-hover': labelHover,
+            'labeling-block-row-column-body-item-box-input-label-hover-disappeared': labelHover === 'disappeared',
+            'labeling-block-row-column-body-item-box-input-label-hover-small': labelHover === 'small'
+        }">
+        <div class="labeling-block-row-column-body-item-box-input-label-text">
+            {{item.label | prettyLabel}}
+        </div>
+    </div>
+    <small class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
+        {{item.description}}
+    </small>
+</ng-container>

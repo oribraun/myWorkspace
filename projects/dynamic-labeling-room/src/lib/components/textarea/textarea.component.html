@@ -1,0 +1,31 @@
+<ng-container *ngIf="item.inputType === 'textarea'">
+    <textarea
+        *ngIf="item.inputType === 'textarea'"
+        [ngStyle]="item.css"
+        [name]="block.blockName + '_' + item.label"
+        [required]="item.required"
+        [(ngModel)]="item.value"
+        (ngModelChange)="onNgModelChange()"
+        [attr.value]="item.value"
+        [attr.cols]="item.cols"
+        [attr.rows]="item.rows"
+        [ngClass]="{
+            'required': formSubmitted && item.required && !item.value
+        }"
+        [disabled]="checkDependPipe.checkDepend(block.fields, item)"
+    >
+    </textarea>
+    <div class="labeling-block-row-column-body-item-box-input-label"
+        [ngClass]="{
+            'labeling-block-row-column-body-item-box-input-label-hover': labelHover,
+            'labeling-block-row-column-body-item-box-input-label-hover-disappeared': labelHover === 'disappeared',
+            'labeling-block-row-column-body-item-box-input-label-hover-small': labelHover === 'small'
+        }">
+        <div class="labeling-block-row-column-body-item-box-input-label-text">
+            {{item.label | prettyLabel}}
+        </div>
+    </div>
+    <small class="labeling-block-row-column-body-item-box-input-description" *ngIf="item.description">
+        {{item.description}}
+    </small>
+</ng-container>
