@@ -1079,7 +1079,6 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     getWindowWidth() {
         this.currentWindowWidth = window.innerWidth;
-        console.log('this.currentWindowWidth', this.currentWindowWidth)
     }
 
     addToHistory(type, action, object, backAction, forwardAction) {
