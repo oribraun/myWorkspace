@@ -8,6 +8,7 @@
     "build": "ng build",
     "build-project" : "ng build --project dynamic-labeling-room",
     "publish-project": "cd dist/dynamic-labeling-room & npm publish",
+    "unpublish-project": "npm unpublish dynamic-labeling-room@1.0.1",
     "test": "ng test",
     "lint": "ng lint"
   },

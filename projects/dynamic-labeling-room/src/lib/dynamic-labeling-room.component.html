@@ -57,8 +57,6 @@
                  (touchstart)="onMouseDown($event, 'labeling', 'left, right')"></div>
             <div class="labeling-overflow"
                  [style]="formCssObj">
-                <button (click)="ctrlZHistoryAction()">Ctrl Z</button>
-                <button (click)="ctrlYHistoryAction()">Ctrl Y</button>
                 <div class="labeling-header" #labelingHeader *ngIf="data.isList" [ngClass]="{'labeling-header-fixed': data.isList && data.listHeaderFixed}">
                     {{data.listHeader}} <span class="labeling-header-plus no-highlight"
                                               (click)="addToMainList(listBlocks, true)">+</span>
