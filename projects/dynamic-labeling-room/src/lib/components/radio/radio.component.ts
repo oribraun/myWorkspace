@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {CheckDependPipe} from '../../pipes/check-depend.pipe';
 
@@ -10,11 +10,13 @@ import {CheckDependPipe} from '../../pipes/check-depend.pipe';
 })
 export class RadioComponent implements OnInit {
 
+    private lastValue: string;
     @Input() item: any;
     @Input() block: any;
     @Input() formSubmitted: boolean;
     @Input() labelHover: string;
     @Output() ngModelChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onClick: EventEmitter<any> = new EventEmitter<any>();
 
     labelDisappearedOptions = ['disappeared', 'small'];
 
@@ -35,6 +37,21 @@ export class RadioComponent implements OnInit {
 
     checkDepend(fields, item): boolean {
         return this.checkDependPipe.checkDepend(fields, item);
+    }
+
+    @HostListener('click', ['$event'])
+    click($event) {
+        this.lastValue = this.item.value;
+    }
+
+    @HostListener('ngModelChange', ['$event'])
+    modelChange($event) {
+        if (!this.lastValue) {
+            this.lastValue = '';
+        }
+        if (this.lastValue !== this.item.value) {
+            this.onClick.emit({item: this.item, lastValue: this.lastValue});
+        }
     }
 
 }

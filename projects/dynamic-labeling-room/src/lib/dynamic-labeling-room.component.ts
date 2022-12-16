@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import {DOCUMENT, KeyValue} from '@angular/common';
 import {NgForm} from '@angular/forms';
+import {last} from "rxjs/operators";
 
 @Component({
     selector: 'lib-dynamic-labeling-room',
@@ -146,6 +147,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     @Input() formCssObj;
     @Input() templateType = this.templateTypes.horizontal;
     @Input() initDragBasedOnViewTextSize = false;
+    @Input() enableHistory = false;
+    private historyLimit = 100;
     @Input() data: DsProjectRoomData = {
         // text: 'signature',
         // url: 'https://polkadotmama.org/board-of-directors/',
@@ -257,6 +260,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         if (this.initDragBasedOnViewTextSize && !doNotAutoDrag) {
             this.autoDragBasedOnViewSize();
         }
+        if (this.enableHistory) {
+            this.resetHistory();
+        }
     }
 
     setListFixedHeader() {
@@ -343,7 +349,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
 
-    addToMainList(listBlocks): void {
+    addToMainList(listBlocks, history = false): void {
         const blocks = JSON.parse(JSON.stringify(listBlocks));
         this.mainList.push(blocks);
         this.listCurrentIndex = this.mainList.length - 1;
@@ -354,7 +360,23 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 this.setListFixedHeader();
             });
         }
+        if (history) {
+            this.addToHistory('addToMainList', this.listCurrentIndex, 'removeFromMainList');
+        }
         // console.log('this.mainList', this.mainList);
+    }
+
+    addToMainListForHistoryOnly(obj): void {
+        const blocks = JSON.parse(JSON.stringify(obj.listBlocks));
+        this.mainList.splice(obj.index, 0, blocks);
+        this.listCurrentIndex = obj.index;
+        this.mainBlocks = this.mainList[this.listCurrentIndex];
+        this.resetFormSubmitted();
+        if (this.data.listHeaderFixed) {
+            setTimeout(() => {
+                this.setListFixedHeader();
+            });
+        }
     }
 
     addToMainListIfFormIsValid(): void {
@@ -366,6 +388,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
     removeFromMainList(index): void {
+        this.addToHistory('removeFromMainList', {listBlocks: this.mainList[index], index}, 'addToMainListForHistoryOnly');
         this.mainList.splice(index, 1);
         // console.log('this.listCurrentIndex', this.listCurrentIndex)
         // console.log('index', index)
@@ -421,11 +444,23 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             val = this.cloneObject(item.listBlocks);
         }
         item.value.push(val);
+        this.addToHistory('appendItemToList', {item, index: item.value.length - 1}, 'removeItemToListAsObjectForHistoryObly');
     }
+    appendItemToListForHistoryOnly(obj): void {
+        const item = obj.item;
+        const val = obj.val;
+        const index = obj.index;
+        item.value.splice(index, 0, val);
+    }
+    // not in use
     removeItemToList(item, index): void {
         item.value.splice(index, 1);
     }
     removeItemToListAsObject(obj): void {
+        this.addToHistory('removeItemToListAsObject', {item: obj.item, val: obj.item.value[obj.index], index: obj.index}, 'appendItemToListForHistoryOnly');
+        obj.item.value.splice(obj.index, 1);
+    }
+    removeItemToListAsObjectForHistoryObly(obj): void {
         obj.item.value.splice(obj.index, 1);
     }
     cloneObject(blocks): any {
@@ -1077,27 +1112,75 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         this.getWindowWidth()
     }
 
+    @HostListener('window:keydown', ['$event'])
+    onKeyPress($event: KeyboardEvent) {
+        // if(($event.ctrlKey || $event.metaKey) && $event.keyCode == 86)
+        //     console.log('CTRL +  V');
+        if (this.enableHistory) {
+            if (($event.ctrlKey || $event.metaKey) && $event.keyCode == 90) {
+                console.log('CTRL +  Z');
+                $event.preventDefault();
+                this.ctrlZHistoryAction();
+            }
+        }
+    }
+
     getWindowWidth() {
         this.currentWindowWidth = window.innerWidth;
     }
 
-    addToHistory(type, action, object, backAction, forwardAction) {
-        // if (this.history && this.history.length) {
-        //     this.history[this.history.length - 1].forwardAction = forwardAction;
-        // }
-        const obj = {
-            type: type,
-            action: action,
-            object: object,
-            backAction: backAction,
-            // forwardAction: null,
-        };
-        this.history.push(obj);
+    resetHistory() {
+        this.history = [];
+    }
+
+    addToHistory(action, object, ctrlZAction, ctrlYAction = null) {
+        if (this.enableHistory) {
+            // if (this.history && this.history.length) {
+            //     this.history[this.history.length - 1].forwardAction = forwardAction;
+            // }
+            if (this.history.length >= this.historyLimit) {
+                this.history.shift();
+            }
+            const obj = {
+                action,
+                object,
+                ctrlZAction,
+                ctrlYAction,
+                // forwardAction: null,
+            };
+            if (this.history.length) {}
+            this.history.push(obj);
+        }
     }
 
     ctrlZHistoryAction() {
-        if (this.history && this.history.length) {
-            const lastHistory = this.history.shift();
+        if (this.enableHistory) {
+            if (this.history && this.history.length) {
+                const lastHistory = this.history.pop();
+                this[lastHistory.ctrlZAction](lastHistory.object);
+                setTimeout(() => {
+                    this.onChangeBlocks();
+                });
+            }
+        }
+    }
+    ctrlYHistoryAction() {
+        // console.log('this.history', this.history);
+    }
+
+    onKeyDown(obj) {
+        this.addToHistory('keydown', obj, 'revertInputValue');
+    }
+
+    onClick(obj) {
+        this.addToHistory('click', obj, 'revertInputValue');
+    }
+
+    revertInputValue(obj) {
+        if (obj.i !== null && obj.i !== undefined) {
+            obj.item.value[obj.i] = obj.lastValue;
+        } else {
+            obj.item.value = obj.lastValue;
         }
     }
 }

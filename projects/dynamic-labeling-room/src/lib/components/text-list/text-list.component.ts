@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {CheckDependPipe} from '../../pipes/check-depend.pipe';
 import {PatternPipe} from '../../pipes/pattern.pipe';
 import {ControlContainer, NgForm} from '@angular/forms';
@@ -11,6 +11,7 @@ import {ControlContainer, NgForm} from '@angular/forms';
 })
 export class TextListComponent implements OnInit {
 
+    private lastValue: string[] = [];
     @Input() item: any;
     @Input() block: any;
     @Input() formSubmitted: boolean;
@@ -19,6 +20,7 @@ export class TextListComponent implements OnInit {
     @Output() ngModelChange: EventEmitter<any> = new EventEmitter<any>();
     @Output() removeItem: EventEmitter<any> = new EventEmitter<any>();
     @Output() addItem: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onKeyDown: EventEmitter<any> = new EventEmitter<any>();
 
     labelDisappearedOptions = ['disappeared', 'small'];
 
@@ -51,7 +53,7 @@ export class TextListComponent implements OnInit {
     }
 
     onRemoveItemFromList(item, i) {
-        this.removeItem.emit({item, i});
+        this.removeItem.emit({item, index: i});
         setTimeout(() => {
             this.onNgModelChange();
         });
@@ -62,6 +64,17 @@ export class TextListComponent implements OnInit {
         setTimeout(() => {
             this.onNgModelChange();
         });
+    }
+
+    keyDown($event, item, i = null) {
+        this.lastValue = item.value[i];
+    }
+
+    modelChange($event, item, i = null) {
+        if (!this.lastValue) {
+            this.lastValue = [];
+        }
+        this.onKeyDown.emit({item, lastValue: this.lastValue, i});
     }
 
 }

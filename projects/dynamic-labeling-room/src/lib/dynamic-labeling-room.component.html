@@ -57,9 +57,11 @@
                  (touchstart)="onMouseDown($event, 'labeling', 'left, right')"></div>
             <div class="labeling-overflow"
                  [style]="formCssObj">
+                <button (click)="ctrlZHistoryAction()">Ctrl Z</button>
+                <button (click)="ctrlYHistoryAction()">Ctrl Y</button>
                 <div class="labeling-header" #labelingHeader *ngIf="data.isList" [ngClass]="{'labeling-header-fixed': data.isList && data.listHeaderFixed}">
                     {{data.listHeader}} <span class="labeling-header-plus no-highlight"
-                                              (click)="addToMainList(listBlocks)">+</span>
+                                              (click)="addToMainList(listBlocks, true)">+</span>
                     <br>
                     <div class="labeling-header-item no-highlight" *ngFor="let item of mainList; let i = index"
                          (click)="selectMainItem(i)"
@@ -108,6 +110,7 @@
                                                         [block]="block"
                                                         [formSubmitted]="formSubmitted"
                                                         (ngModelChange)="onChangeBlocks()"
+                                                        (onKeyDown)="onKeyDown($event)"
                                                     ></lib-general>
                                                     <lib-checkbox
                                                         [labelHover]="'disappeared'"
@@ -115,6 +118,7 @@
                                                         [block]="block"
                                                         [formSubmitted]="formSubmitted"
                                                         (ngModelChange)="onChangeBlocks()"
+                                                        (onClick)="onClick($event)"
                                                     ></lib-checkbox>
                                                     <lib-textarea
                                                         [labelHover]="'disappeared'"
@@ -122,6 +126,7 @@
                                                         [block]="block"
                                                         [formSubmitted]="formSubmitted"
                                                         (ngModelChange)="onChangeBlocks()"
+                                                        (onKeyDown)="onKeyDown($event)"
                                                     ></lib-textarea>
                                                     <lib-select
                                                         [labelHover]="'disappeared'"
@@ -129,6 +134,7 @@
                                                         [block]="block"
                                                         [formSubmitted]="formSubmitted"
                                                         (ngModelChange)="onChangeBlocks()"
+                                                        (onChange)="onClick($event)"
                                                     ></lib-select>
                                                     <lib-select-multiple
                                                         [labelHover]="'disappeared'"
@@ -136,6 +142,7 @@
                                                         [block]="block"
                                                         [formSubmitted]="formSubmitted"
                                                         (ngModelChange)="onChangeBlocks()"
+                                                        (onChange)="onClick($event)"
                                                     ></lib-select-multiple>
                                                     <lib-radio
                                                         [labelHover]="'disappeared'"
@@ -143,6 +150,7 @@
                                                         [block]="block"
                                                         [formSubmitted]="formSubmitted"
                                                         (ngModelChange)="onChangeBlocks()"
+                                                        (onClick)="onClick($event)"
                                                     ></lib-radio>
                                                     <lib-text-list
                                                         [labelHover]="'disappeared'"
@@ -152,6 +160,7 @@
                                                         (ngModelChange)="onChangeBlocks()"
                                                         (removeItem)="removeItemToListAsObject($event)"
                                                         (addItem)="appendItemToList($event)"
+                                                        (onKeyDown)="onKeyDown($event)"
                                                     ></lib-text-list>
                                                 </div>
                                             </div>

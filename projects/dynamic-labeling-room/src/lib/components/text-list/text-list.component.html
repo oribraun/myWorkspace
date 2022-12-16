@@ -15,7 +15,9 @@
                    [name]="block.blockName + '_' + item.label + '-' + i"
                    [required]="item.required"
                    [pattern]="item.pattern"
+                   (keydown)="keyDown($event, item, i)"
                    [(ngModel)]="item.value[i]"
+                   (ngModelChange)="modelChange($event, item, i)"
                    [ngClass]="{
                          'required': formSubmitted && item.required && !item.value[i]
                    }"
@@ -31,7 +33,9 @@
                            [name]="block.blockName + '_' + item.label + '-' + objItem.label + '-' + i + '-' + j"
                            [required]="item.listBlocks[j].required"
                            [(ngModel)]="objItem.value"
+                           (ngModelChange)="modelChange($event, objItem)"
                            [pattern]="item.listBlocks[j].pattern"
+                           (keydown)="keyDown($event, objItem)"
                            [attr.value]="objItem.value"
                            [ngClass]="{
                             'required': formSubmitted && item.listBlocks[j].required && (!objItem.value || !patternPipe.transform(objItem.value, item.listBlocks[j].pattern))

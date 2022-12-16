@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {CheckDependPipe} from '../../pipes/check-depend.pipe';
 import {PatternPipe} from '../../pipes/pattern.pipe';
 import {ControlContainer, NgForm} from '@angular/forms';
@@ -11,11 +11,13 @@ import {ControlContainer, NgForm} from '@angular/forms';
 })
 export class GeneralComponent implements OnInit {
 
+    private lastValue: string = '';
     @Input() item: any;
     @Input() block: any;
     @Input() formSubmitted: boolean;
     @Input() labelHover: string;
     @Output() ngModelChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onKeyDown: EventEmitter<any> = new EventEmitter<any>();
 
     labelDisappearedOptions = ['disappeared', 'small'];
 
@@ -37,6 +39,19 @@ export class GeneralComponent implements OnInit {
 
     checkDepend(fields, item): boolean {
         return this.checkDependPipe.checkDepend(fields, item);
+    }
+
+    @HostListener('keydown', ['$event'])
+    keyDown($event) {
+        this.lastValue = this.item.value;
+    }
+
+    @HostListener('ngModelChange', ['$event'])
+    modelChange($event) {
+        if (!this.lastValue) {
+            this.lastValue = '';
+        }
+        this.onKeyDown.emit({item: this.item, lastValue: this.lastValue});
     }
 
 }

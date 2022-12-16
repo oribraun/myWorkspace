@@ -262,6 +262,7 @@ dsProjectRoomBlocks: any = [
 ];
 templateType = 1; // 1 for horizontal view, 2 for vertical view
 initDragBasedOnViewTextSize = false // this will check the view text size and auto drag to minimize screen view
+enableHistory = false; // history will remember your last 100 steps so you will be able to revert using Ctrl Z
 mainCssObj = {};
 viewCssObj = {padding: '10px'};
 formCssObj = {padding: '0 10px'};
@@ -276,6 +277,7 @@ onDsProjectRoomChange(e) {
         [blocks]="dsProjectRoomBlocks"
         [templateType]="templateType"
         [initDragBasedOnViewTextSize]="initDragBasedOnViewTextSize"
+        [enableHistory]="enableHistory"
         [mainCssObj]="mainCssObj"
         [viewCssObj]="viewCssObj"
         [formCssObj]="formCssObj"
