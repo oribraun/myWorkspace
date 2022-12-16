@@ -68,7 +68,7 @@
                              'labeling-header-item-invalid': listCurrentIndex !== i && mainList[i].isValid !== undefined && !mainList[i].isValid,
                              'labeling-header-item-invalid-selected': listCurrentIndex === i && mainList[i].isValid !== undefined && !mainList[i].isValid
                          }">
-                        {{getMainObjHeader(i)}} <span *ngIf="mainList.length > 1" class="labeling-header-item-minus no-highlight" (click)="removeFromMainList(i);onChangeBlocks();">x</span>
+                        {{getMainObjHeader(i)}} <span *ngIf="mainList.length > 1" class="labeling-header-item-minus no-highlight" (click)="removeFromMainList(i, true);onChangeBlocks();">x</span>
                     </div>
                 </div>
                 <div class="labeling-body" #labelingBody [ngClass]="{'labeling-block-fixed': data.isList && data.listHeaderFixed}">

@@ -149,6 +149,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     @Input() initDragBasedOnViewTextSize = false;
     @Input() enableHistory = false;
     private historyLimit = 100;
+    private historyEnableCtrlY = false;
     @Input() data: DsProjectRoomData = {
         // text: 'signature',
         // url: 'https://polkadotmama.org/board-of-directors/',
@@ -194,6 +195,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     public mainBlocks: DsProjectRoomBlock[] = [];
     public blocksErrMessage = '';
     public history = [];
+    public historyIndex = 0;
     constructor(
         private ref: ChangeDetectorRef,
         @Inject(DOCUMENT) document?: any
@@ -361,7 +363,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             });
         }
         if (history) {
-            this.addToHistory('addToMainList', this.listCurrentIndex, 'removeFromMainList');
+            this.addToHistory('addToMainList', this.listCurrentIndex, 'removeFromMainList', {listBlocks: this.mainList[this.listCurrentIndex], index: this.listCurrentIndex}, 'addToMainListForHistoryOnly');
         }
         // console.log('this.mainList', this.mainList);
     }
@@ -387,8 +389,10 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             alert('please fill all required data before adding ' + this.data.listHeader);
         }
     }
-    removeFromMainList(index): void {
-        this.addToHistory('removeFromMainList', {listBlocks: this.mainList[index], index}, 'addToMainListForHistoryOnly');
+    removeFromMainList(index, history = false): void {
+        if (history) {
+            this.addToHistory('removeFromMainList', {listBlocks: this.mainList[index], index}, 'addToMainListForHistoryOnly', index, 'removeFromMainList');
+        }
         this.mainList.splice(index, 1);
         // console.log('this.listCurrentIndex', this.listCurrentIndex)
         // console.log('index', index)
@@ -1117,10 +1121,17 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         // if(($event.ctrlKey || $event.metaKey) && $event.keyCode == 86)
         //     console.log('CTRL +  V');
         if (this.enableHistory) {
-            if (($event.ctrlKey || $event.metaKey) && $event.keyCode == 90) {
-                console.log('CTRL +  Z');
+            if (($event.ctrlKey || $event.metaKey) && $event.keyCode === 90) {
+                // console.log('CTRL +  Z');
                 $event.preventDefault();
                 this.ctrlZHistoryAction();
+            }
+            if (this.historyEnableCtrlY) {
+                if (($event.ctrlKey || $event.metaKey) && $event.keyCode === 89) {
+                    // console.log('CTRL +  Y');
+                    $event.preventDefault();
+                    this.ctrlYHistoryAction();
+                }
             }
         }
     }
@@ -1131,13 +1142,20 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     resetHistory() {
         this.history = [];
+        this.historyIndex = 0;
     }
 
-    addToHistory(action, object, ctrlZAction, ctrlYAction = null) {
+    addToHistory(action, object, ctrlZAction, objectY = null, ctrlYAction = null) {
         if (this.enableHistory) {
-            // if (this.history && this.history.length) {
-            //     this.history[this.history.length - 1].forwardAction = forwardAction;
-            // }
+            if (this.historyEnableCtrlY) {
+                if (this.history && this.history.length) {
+                    this.history[this.history.length - 1].ctrlYAction = ctrlYAction;
+                    this.history[this.history.length - 1].objectY = objectY;
+                }
+                if (this.history[this.historyIndex + 1]) {
+                    this.history = this.history.slice(0, this.historyIndex);
+                }
+            }
             if (this.history.length >= this.historyLimit) {
                 this.history.shift();
             }
@@ -1145,18 +1163,26 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 action,
                 object,
                 ctrlZAction,
-                ctrlYAction,
+                ctrlYAction: null,
+                objectY: null,
                 // forwardAction: null,
             };
             if (this.history.length) {}
             this.history.push(obj);
+            this.historyIndex++;
         }
     }
 
     ctrlZHistoryAction() {
         if (this.enableHistory) {
-            if (this.history && this.history.length) {
-                const lastHistory = this.history.pop();
+            let lastHistory;
+            if (this.historyEnableCtrlY) {
+                lastHistory = this.history[this.historyIndex - 1];
+            } else {
+                lastHistory = this.history.pop();
+            }
+            if (lastHistory) {
+                this.historyIndex--;
                 this[lastHistory.ctrlZAction](lastHistory.object);
                 setTimeout(() => {
                     this.onChangeBlocks();
@@ -1165,7 +1191,17 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }
     }
     ctrlYHistoryAction() {
-        // console.log('this.history', this.history);
+        if (this.enableHistory && this.historyEnableCtrlY) {
+            if (this.history && this.history.length && this.history[this.historyIndex - 1] && this.history[this.historyIndex - 1].ctrlYAction) {
+                const lastHistory = this.history[this.historyIndex - 1];
+                console.log('lastHistory', lastHistory)
+                this.historyIndex++;
+                this[lastHistory.ctrlYAction](lastHistory.objectY);
+                setTimeout(() => {
+                    this.onChangeBlocks();
+                });
+            }
+        }
     }
 
     onKeyDown(obj) {
