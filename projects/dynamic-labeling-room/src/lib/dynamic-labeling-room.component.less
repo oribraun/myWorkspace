@@ -446,6 +446,12 @@
             width: 100%;
             height: 100%;
             text-align: center;
+            &-link {
+                overflow: auto;
+                a {
+                    word-wrap: break-word;
+                }
+            }
             iframe {
                 border: none;
                 width: 100%;
@@ -521,7 +527,7 @@
         right:0;
         cursor: move;
         padding: 5px 0;
-        z-index: 1;
+        z-index: 3;
         text-align: center;
         &-top {
             top: 0;
@@ -554,6 +560,7 @@
         bottom:0;
         cursor: move;
         padding: 0 3px;
+        z-index: 3;
         &-left {
             border-right: 1px solid @color-triangle;
             right: 0;
@@ -648,26 +655,36 @@
         right:0;
         padding: unit(@padding, px);
         z-index: 2;
-        overflow: hidden;
-        &:before {
-            content: '';
+        //overflow: hidden;
+        .menu-icon {
             position: absolute;
-            top:0;
-            right:0;
-            transition: all @animateTime ease-in-out;
-            border: solid 5px @borderStartColor;
-            border-left: solid 5px transparent;
-            border-bottom: solid 5px transparent;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 5px;
+            cursor: pointer;
+            &:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                transition: border-top-color border-right-color @animateTime ease-in-out;
+                border: solid 5px @borderStartColor;
+                border-left: solid 5px transparent;
+                border-bottom: solid 5px transparent;
+            }
         }
         .inner-menu {
             overflow: hidden;
-            position: relative;
+            position: absolute;
             transition: all @animateTime ease-in-out;
-            right: unit(-1* (@numIcons * @iconWidth + @numIcons * @iconMargin * 2 + @padding), px);
+            right: unit(-1* (@numIcons * @iconWidth + @numIcons * @iconMargin * 2 + @padding * 2), px);
+            width: unit(1* (@numIcons * @iconWidth + @numIcons * @iconMargin * 2 + @padding * 2), px);
             [class*=d-icon-] {
-                display: inline-block;
+                float: left;
                 vertical-align: middle;
                 position: relative;
+                cursor: pointer;
                 //font-style: normal;
                 //color: currentColor;
                 //text-align: left;
@@ -825,7 +842,7 @@
                     transform: rotate(135deg);
                 }
             }
-            .d-icon-reset, .d-icon-sync,.d-icon-expend  {
+            .d-icon-reset, .d-icon-sync,.d-icon-expend, .d-icon-shrink  {
                 border-radius: 50%;
                 margin: unit(@iconMargin, px);
                 border-left-color: transparent;
@@ -835,12 +852,57 @@
             }
         }
         &:hover, &-hover-animate {
-            &:before {
-                border-top-color: @borderHoverColor;
-                border-right-color: @borderHoverColor;
+            .menu-icon {
+                &:before {
+                    border-top-color: @borderHoverColor;
+                    border-right-color: @borderHoverColor;
+                }
             }
             .inner-menu {
                 right: 0;
+                margin-right: 0 !important;
+            }
+        }
+        &-left {
+            right: auto;
+            left: 0;
+            .menu-icon {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 5px;
+                height: 5px;
+
+                &:before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: auto;
+                    transition: border-bottom-color border-right-color @animateTime ease-in-out;
+                    border: solid 5px @borderStartColor;
+                    border-right: solid 5px transparent;
+                    border-bottom: solid 5px transparent;
+                }
+            }
+            .inner-menu {
+                transition: all @animateTime ease-in-out;
+                left: unit(-1* (@numIcons * @iconWidth + @numIcons * @iconMargin * 2 + @padding * 2), px);
+                [class*=d-icon-] {
+                    float: right;
+                }
+            }
+            &:hover, &-hover-animate {
+                .menu-icon {
+                    &:before {
+                        border-top-color: @borderHoverColor;
+                        border-left-color: @borderHoverColor;
+                        border-right-color: transparent;
+                    }
+                }
+                .inner-menu {
+                    left: 0;
+                }
             }
         }
     }

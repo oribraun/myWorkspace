@@ -14,7 +14,7 @@
         <div class="view-text view-text-template-{{templateType}}"
              [style]="!data.url ? viewCssObj : ''"
              *ngIf="!data.url && data.text"><span #viewText [innerHTML]="data.text"></span></div>
-        <div class="iframe-wrapper" *ngIf="data.url">
+        <div class="iframe-wrapper" [ngClass]="{'iframe-wrapper-link': data.url && !data.showInIframe}" *ngIf="data.url">
             <ng-container *ngIf="data.showInIframe">
                 <div class="iframe-loader-wrapper" *ngIf="iframeLoading">
                     <div class="iframe-loader"><div></div><div></div><div></div><div></div></div>
@@ -175,8 +175,11 @@
             </div>
         </div>
     </form>
-    <div class="menu" [ngClass]="{'menu-hover-animate': animateMenu}">
-        <div class="inner-menu">
+    <div class="menu" [ngClass]="{'menu-left': !menuOnRight, 'menu-hover-animate': animateMenu}"
+    [ngStyle]="menuOnRight && {'margin-right': viewScrollSize + 'px'}">
+        <div class="menu-icon" (click)="switchMenuPos()"></div>
+        <div class="inner-menu"
+             [ngStyle]="menuOnRight && {'margin-right': -viewScrollSize + 'px'}">
             <i class="d-icon-sync" title="change template" (click)="changeTemplateType()" [ngClass]="{'d-icon-animate': changeTemplateAnimation}"></i>
             <!--      <i class="d-icon-reset" [ngClass]="{'d-icon-animate': false}"></i>-->
             <i class="d-icon-expend" title="full screen" (click)="expand()" [ngClass]="{'d-icon-animate': false}"><span class="line"></span></i>

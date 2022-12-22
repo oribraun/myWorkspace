@@ -32,6 +32,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     public dragStarted = false;
     public resetViewAnimate = false;
     public animateMenu = false;
+    public menuOnRight = true;
     public animateMenuTimeout;
     public changeTemplateAnimation = false;
     public changeTemplateAnimationTimeout;
@@ -196,6 +197,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     public blocksErrMessage = '';
     public history = [];
     public historyIndex = 0;
+    public viewScrollSize = 0;
     constructor(
         private ref: ChangeDetectorRef,
         @Inject(DOCUMENT) document?: any
@@ -265,6 +267,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         if (this.enableHistory) {
             this.resetHistory();
         }
+        this.detectViewScrollSize();
     }
 
     setListFixedHeader() {
@@ -765,6 +768,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                             this.autoDragBasedOnViewSize(true);
                         }, 300);
                     }
+                    this.detectViewScrollSize();
                 }
             }
             if (changes.data.previousValue.isList !==  changes.data.currentValue.isList) {
@@ -786,6 +790,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                     this.autoDragBasedOnViewSize(true);
                 }, 300);
             }
+            this.detectViewScrollSize();
         }
     }
 
@@ -795,6 +800,44 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         } else {
             this.currentDrag = JSON.parse(JSON.stringify(this.horizontalDrag));
         }
+    }
+
+    detectViewScrollSize() {
+        setTimeout(() => {
+            let el;
+            if (this.viewText) {
+                el = this.viewText.nativeElement;
+            }
+            if (this.urlText) {
+                el = this.urlText.nativeElement;
+            }
+            if (this.iframe) {
+                el = this.iframe.nativeElement;
+            }
+            if (el) {
+                try {
+                    if (!this.iframe) {
+                        const parent = el.parentNode;
+                        const style = getComputedStyle(parent);
+                        const parentWidth = parent.offsetWidth;
+                        const scrollerWidth = parentWidth - parent.clientWidth;
+                        if (scrollerWidth) {
+                            this.viewScrollSize = scrollerWidth;
+                        }
+                    } else {
+                        if (el.contentWindow.document.documentElement.scrollHeight > 0) {
+                            const body = el.contentWindow.document.documentElement.getElementsByTagName('body');
+                            if (body.length) {
+                                const scrollerWidth = el.offsetWidth - body[0].offsetWidth;
+                                if (scrollerWidth) {
+                                    this.viewScrollSize = scrollerWidth;
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {}
+            }
+        });
     }
 
     autoDragBasedOnViewSize(animate = false) {
@@ -1040,6 +1083,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             this.animateMenu = false;
         }, 300 * 4);
     }
+    switchMenuPos() {
+        this.menuOnRight = !this.menuOnRight;
+    }
     expand() {
         const el = this.dynamicLabelingRoom.nativeElement;
         const rect = el.getBoundingClientRect();
@@ -1139,6 +1185,11 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                     this.ctrlYHistoryAction();
                 }
             }
+        }
+        // ctrl M
+        if (($event.ctrlKey || $event.metaKey) && $event.keyCode === 77) {
+            $event.preventDefault();
+            this.switchMenuPos();
         }
     }
 
