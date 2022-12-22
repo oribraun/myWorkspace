@@ -13,7 +13,7 @@
     >
         <div class="view-text view-text-template-{{templateType}}"
              [style]="!data.url ? viewCssObj : ''"
-             *ngIf="!data.url && data.text"><span #viewText>{{data.text}}</span></div>
+             *ngIf="!data.url && data.text"><span #viewText [innerHTML]="data.text"></span></div>
         <div class="iframe-wrapper" *ngIf="data.url">
             <ng-container *ngIf="data.showInIframe">
                 <div class="iframe-loader-wrapper" *ngIf="iframeLoading">

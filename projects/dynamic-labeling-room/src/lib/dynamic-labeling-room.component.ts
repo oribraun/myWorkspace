@@ -817,6 +817,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                         const moveY = parentHeight - height - extraSpace;
                         // if (moveY > 0) {
                         const moveYPercent = -moveY / this.dynamicLabelingRoom.nativeElement.clientHeight * 100;
+                        if (moveYPercent > 0) {
+                            return;
+                        }
                         const type = 'view';
                         if (animate) {
                             this.resetView(false);
@@ -831,6 +834,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                         const moveX = parentWidth - width;
                         // if (moveX > 0) {
                         const moveXPercent = moveX / this.dynamicLabelingRoom.nativeElement.clientWidth * 100;
+                        if (moveXPercent < 0) {
+                            return;
+                        }
                         const type = 'view';
                         if (animate) {
                             this.resetView(false);
