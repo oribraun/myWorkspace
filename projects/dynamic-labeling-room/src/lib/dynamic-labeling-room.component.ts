@@ -127,6 +127,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         maxLeft: 100
     };
     public expandDetails: any = {
+        inProgress: false,
         expended: false,
         parent: {},
         original: {},
@@ -1087,6 +1088,10 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         this.menuOnRight = !this.menuOnRight;
     }
     expand() {
+        if (this.expandDetails.inProgress) {
+            return;
+        }
+        this.expandDetails.inProgress = true;
         const el = this.dynamicLabelingRoom.nativeElement;
         const rect = el.getBoundingClientRect();
         const animation = 500;
@@ -1094,20 +1099,27 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             const parent = el.parentElement;
             this.expandDetails.parent = parent;
             this.expandDetails.original = rect;
-            el.style.position = 'fixed';
-            el.style.background = '#fff';
-            el.style.zIndex = '9999';
-            el.style.top = rect.top + 'px';
-            el.style.left = rect.left + 'px';
             el.style.width = rect.width + 'px';
             el.style.height = rect.height + 'px';
             requestAnimationFrame(() => {
-                el.style.transition = 'all ' + animation + 'ms ease-in-out';
-                el.style.top = '0';
-                el.style.left = '0';
-                el.style.width = '100%';
-                el.style.height = '100%';
-                this.expandDetails.expended = true;
+                el.style.position = 'fixed';
+                el.style.background = '#fff';
+                el.style.zIndex = '9999';
+                el.style.top = rect.top + 'px';
+                el.style.left = rect.left + 'px';
+                el.style.width = rect.width + 'px';
+                el.style.height = rect.height + 'px';
+                requestAnimationFrame(() => {
+                    el.style.transition = 'all ' + animation + 'ms ease-in-out';
+                    el.style.top = '0';
+                    el.style.left = '0';
+                    el.style.width = '100%';
+                    el.style.height = '100%';
+                    this.expandDetails.expended = true;
+                    setTimeout(() => {
+                        this.expandDetails.inProgress = false;
+                    }, animation);
+                });
             });
         } else {
             requestAnimationFrame(() => {
@@ -1125,6 +1137,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                     el.style.width = '';
                     el.style.height = '';
                     this.expandDetails.expended = false;
+                    this.expandDetails.inProgress = false;
                 }, animation);
             });
         }
@@ -1186,10 +1199,21 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                 }
             }
         }
-        // ctrl M
-        if (($event.ctrlKey || $event.metaKey) && $event.keyCode === 77) {
+        // ctrl M - menu
+        if (($event.altKey || $event.metaKey) && $event.keyCode === 77) {
             $event.preventDefault();
             this.switchMenuPos();
+        }
+        console.log('$event.keyCode', $event.keyCode)
+        // ctrl E - expand
+        if (($event.altKey || $event.metaKey) && $event.keyCode === 69) {
+            $event.preventDefault();
+            this.expand();
+        }
+        // ctrl T - template
+        if (($event.altKey || $event.metaKey) && $event.keyCode === 84) {
+            $event.preventDefault();
+            this.changeTemplateType();
         }
     }
 

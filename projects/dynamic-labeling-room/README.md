@@ -185,6 +185,14 @@ class OutputObj {
     ],
 }
 ```
+Key shortcuts
+```angular2html
+* Alt M - toggle top right menu from right t left
+* Alt E - toggle expand to full screen
+* Alt T - toggle template type horizontal and vertical
+* Ctrl Z - when enableHistory is true will revert last steps
+```
+```
 * Example use
 ```angular2html
 <style>
