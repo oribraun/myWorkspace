@@ -31,6 +31,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     public formSubmitted = false;
     public dragStarted = false;
     public resetViewAnimate = false;
+    public resetViewAnimateTimeout;
     public animateMenu = false;
     public menuOnRight = true;
     public animateMenuTimeout;
@@ -901,7 +902,8 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         if (setDragDirection) {
             this.setDragDirection();
         }
-        setTimeout(() => {
+        clearTimeout(this.resetViewAnimateTimeout);
+        this.resetViewAnimateTimeout = setTimeout(() => {
             this.resetViewAnimate = false;
             this.changeDetectorRefresh();
         }, 300);
