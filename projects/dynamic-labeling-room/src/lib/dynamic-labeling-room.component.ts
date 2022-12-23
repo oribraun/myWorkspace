@@ -1204,7 +1204,6 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
             $event.preventDefault();
             this.switchMenuPos();
         }
-        console.log('$event.keyCode', $event.keyCode)
         // ctrl E - expand
         if (($event.altKey || $event.metaKey) && $event.keyCode === 69) {
             $event.preventDefault();
