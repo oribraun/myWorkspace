@@ -1,21 +1,26 @@
 <div class="buttons">
     <button (click)="changedsProjectRoomData()">text</button>
-    <button (click)="changedsProjectRoomObj()">obj</button>
+    <button (click)="changedsProjectRoomBlocks()">blocks</button>
     <button (click)="change()">url</button>
-    <button (click)="changedsProjectRoomData();changedsProjectRoomObj()">both</button>
+    <button (click)="changedsProjectRoomData();changedsProjectRoomBlocks()">both</button>
 <button (click)="changeTemplate();">template</button>
 </div>
 
 <div class="home">
-    <lib-dynamic-labeling-room
-        [data]="dsProjectRoomData"
-        [obj]="dsProjectRoomObj"
-        [templateType]="templateType"
-        [mainCssObj]="mainCssObj"
-        [viewCssObj]="viewCssObj"
-        [formCssObj]="formCssObj"
-        (onChange)="onDsProjectRoomChange($event)"
-    ></lib-dynamic-labeling-room>
+  <div class="left">left menu</div>
+  <div class="right">
+      <lib-dynamic-labeling-room
+          [data]="dsProjectRoomData"
+          [blocks]="dsProjectRoomBlocks"
+          [templateType]="templateType"
+          [initDragBasedOnViewTextSize]="initDragBasedOnViewTextSize"
+          [mainCssObj]="mainCssObj"
+          [viewCssObj]="viewCssObj"
+          [formCssObj]="formCssObj"
+          [enableHistory]="enableHistory"
+          (onChange)="onDsProjectRoomChange($event)"
+      ></lib-dynamic-labeling-room>
+    </div>
 </div>
 <!--<lib-dynamic-template-->
 <!--  [settings]="settings"-->

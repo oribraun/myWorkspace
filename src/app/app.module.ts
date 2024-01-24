@@ -19,7 +19,7 @@ import { Test3Component } from './test3.component';
     AppComponent,
     TestComponent,
     Test2Component,
-    Test3Component
+    Test3Component,
   ],
   imports: [
     BrowserModule,
