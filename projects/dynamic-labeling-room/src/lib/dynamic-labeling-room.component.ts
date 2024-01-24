@@ -754,10 +754,15 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         this.formSubmitted = false;
     }
     ngOnChanges(changes: SimpleChanges): void {
+        let needToInitObj = false;
+        let doNotAutoDrag = false;
+        let detectViewScrollSize = false;
+
         if (changes.blocks) {
             this.setUpMainBlocks();
             this.validateBlocks();
-            this.initObj();
+            needToInitObj = true;
+            // this.initObj();
             if (!changes.blocks.firstChange) {
                 this.onChangeBlocks();
                 this.resetFormSubmitted();
@@ -784,17 +789,14 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                             this.autoDragBasedOnViewSize(true);
                         }, 300);
                     }
-                    this.detectViewScrollSize();
+                    detectViewScrollSize = true;
                 }
             }
             if (changes.data.previousValue.isList !==  changes.data.currentValue.isList) {
-                let doNotAutoDrag = false;
                 if (textOrUrlChanged || changes.templateType) {
                     doNotAutoDrag = true;
                 }
-                setTimeout(() => {
-                    this.initObj(doNotAutoDrag);
-                });
+                needToInitObj = true;
             }
         }
         if (changes.templateType && !changes.templateType.firstChange) {
@@ -806,6 +808,14 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
                     this.autoDragBasedOnViewSize(true);
                 }, 300);
             }
+            detectViewScrollSize = true;
+            doNotAutoDrag = true;
+        }
+
+        if (needToInitObj) {
+            this.initObj(doNotAutoDrag);
+        }
+        if (detectViewScrollSize) {
             this.detectViewScrollSize();
         }
     }
