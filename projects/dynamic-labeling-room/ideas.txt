@@ -1,0 +1,9 @@
+*auto placeholder based on label - need to check if there is duplicate label - auto added already
+*merge two blocks into one line
+add more html input options
+responsive full with on screen size
+*add short obj
+
+fix url shows on side view
+
+
