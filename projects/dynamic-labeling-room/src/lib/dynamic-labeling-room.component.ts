@@ -220,7 +220,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     setUpMainBlocks() {
-        this.mainBlocks = JSON.parse(JSON.stringify(this.blocks));
+        this.mainBlocks = this.cloneObject(this.blocks);
     }
 
     initObj(doNotAutoDrag = false): void {
@@ -306,7 +306,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     setUpListObj() {
-        this.listBlocks =  JSON.parse(JSON.stringify(this.mainBlocks));
+        this.listBlocks =  this.cloneObject(this.mainBlocks);
     }
     cleanListBlocks() {
         for (const i in this.listBlocks) {
@@ -357,7 +357,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     addToMainList(listBlocks, history = false): void {
-        const blocks = JSON.parse(JSON.stringify(listBlocks));
+        const blocks = this.cloneObject(listBlocks);
         this.mainList.push(blocks);
         this.listCurrentIndex = this.mainList.length - 1;
         this.mainBlocks = this.mainList[this.listCurrentIndex];
@@ -374,7 +374,7 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     }
 
     addToMainListForHistoryOnly(obj): void {
-        const blocks = JSON.parse(JSON.stringify(obj.listBlocks));
+        const blocks = this.cloneObject(obj.listBlocks);
         this.mainList.splice(obj.index, 0, blocks);
         this.listCurrentIndex = obj.index;
         this.mainBlocks = this.mainList[this.listCurrentIndex];
@@ -472,8 +472,22 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
     removeItemToListAsObjectForHistoryObly(obj): void {
         obj.item.value.splice(obj.index, 1);
     }
-    cloneObject(blocks): any {
-        return JSON.parse(JSON.stringify(blocks));
+    cloneObject(obj: any): any { // will ignore functions
+        return JSON.parse(JSON.stringify(obj));
+    }
+    deepCloneObject(obj) { // recursive will include functions
+        if (obj === null) { return null; }
+        const clone = Object.assign({}, obj);
+        Object.keys(clone).forEach(
+            key =>
+                (clone[key] =
+                    typeof obj[key] === 'object' ? this.deepCloneObject(obj[key]) : obj[key])
+        );
+        if (Array.isArray(obj)) {
+            clone.length = obj.length;
+            return Array.from(clone);
+        }
+        return clone;
     }
     isArray(arr): boolean {
         return Array.isArray(arr);
@@ -798,9 +812,9 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
 
     setDragDirection(): void {
         if (this.templateType ===  this.templateTypes.horizontal) {
-            this.currentDrag = JSON.parse(JSON.stringify(this.verticalDrag));
+            this.currentDrag = this.cloneObject(this.verticalDrag);
         } else {
-            this.currentDrag = JSON.parse(JSON.stringify(this.horizontalDrag));
+            this.currentDrag = this.cloneObject(this.horizontalDrag);
         }
     }
 
@@ -929,36 +943,41 @@ export class DynamicLabelingRoomComponent implements OnInit, AfterViewInit, OnCh
         }, 1000);
     }
 
+    getOutputObject() {
+        let obj: OutputObj;
+        if (this.data && this.data.isList) {
+            if (this.mainList[this.listCurrentIndex]) {
+                this.mainList[this.listCurrentIndex].isValid = !this.form.invalid;
+            }
+            // this.checkValidBlock(this.mainList[this.listCurrentIndex]);
+            const isValid = this.checkValidList(this.listCurrentIndex);
+            const map = this.mainList.map((o) => this.getFinalObject(o));
+            obj = {
+                blocks: this.mainList,
+                valid: isValid,
+                cleanBlocks: map,
+            };
+        } else {
+            obj = {
+                blocks: this.mainBlocks,
+                valid: !this.form.invalid,
+                cleanBlocks: this.getFinalObject(this.mainBlocks)
+            };
+        }
+        return obj;
+    }
+
     onChangeBlocks(): void {
         if (this.form) {
             this.formSubmitted = true;
             this.form.onSubmit(undefined);
-            if (this.data && this.data.isList) {
-                if (this.mainList[this.listCurrentIndex]) {
-                    this.mainList[this.listCurrentIndex].isValid = !this.form.invalid;
-                }
-                // this.checkValidBlock(this.mainList[this.listCurrentIndex]);
-                const isValid = this.checkValidList(this.listCurrentIndex);
-                const map = this.mainList.map((o) => this.getFinalObject(o));
-                const obj: OutputObj = {
-                    blocks: this.mainList,
-                    valid: isValid,
-                    cleanBlocks: map,
-                };
-                this.onChange.emit(obj);
-            } else {
-                const obj = {
-                    blocks: this.mainBlocks,
-                    valid: !this.form.invalid,
-                    cleanBlocks: this.getFinalObject(this.mainBlocks)
-                };
-                this.onChange.emit(obj);
-            }
+            const obj = this.getOutputObject();
+            this.onChange.emit(obj);
         }
     }
 
     getFinalObject(currentBlocks): any[] {
-        const copyCurrentBlocks = JSON.parse(JSON.stringify(currentBlocks));
+        const copyCurrentBlocks = this.cloneObject(currentBlocks);
         const cleanBlocks = [];
         for (const block of copyCurrentBlocks) {
             const obj = {
